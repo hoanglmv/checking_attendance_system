@@ -9,14 +9,10 @@ public class hw1 {
     }
     public static void main(String[] args) {
         hw1 a = new hw1();
-        System.out.println("\tHo va ten : HUNG MINH TUAN");
-        a.bob();
-        System.out.println("\tMSV : 22022210");
-        a.bob();
-        System.out.println("\tClass : K67 - K1");
-        a.bob();
-        System.out.println("\tUsername Github : 8MTi");
-        a.bob();
+        System.out.print("Ho va ten : HUNG MINH TUAN");
+        System.out.print("\tMSV : 22022210");
+        System.out.print("\tClass : K67 - K1");
+        System.out.print("\tUsername Github : 8MTi");
         System.out.println("\tEmail : 22022210@vnu.edu.vn");
         a.bob();
 
