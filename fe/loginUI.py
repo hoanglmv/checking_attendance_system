@@ -1,17 +1,17 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
-class Ui_LoginUI(object):
-    def setupUi(self, LoginUI):
-        LoginUI.setObjectName("LoginUI")
-        LoginUI.resize(750, 574)
+class Ui_loginUI(object):
+    def setupUi(self, loginUI):
+        loginUI.setObjectName("loginUI")
+        loginUI.resize(750, 574)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(LoginUI.sizePolicy().hasHeightForWidth())
-        LoginUI.setSizePolicy(sizePolicy)
-        LoginUI.setWindowOpacity(1.0)
-        LoginUI.setStyleSheet("background-color: #131A2D;")
-        self.centralwidget = QtWidgets.QWidget(parent=LoginUI)
+        sizePolicy.setHeightForWidth(loginUI.sizePolicy().hasHeightForWidth())
+        loginUI.setSizePolicy(sizePolicy)
+        loginUI.setWindowOpacity(1.0)
+        loginUI.setStyleSheet("background-color: #131A2D;")
+        self.centralwidget = QtWidgets.QWidget(parent=loginUI)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
@@ -108,21 +108,21 @@ class Ui_LoginUI(object):
         spacerItem1 = QtWidgets.QSpacerItem(75, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 1)
-        LoginUI.setCentralWidget(self.centralwidget)
+        loginUI.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(LoginUI)
-        QtCore.QMetaObject.connectSlotsByName(LoginUI)
+        self.retranslateUi(loginUI)
+        QtCore.QMetaObject.connectSlotsByName(loginUI)
 
         self.eye.mousePressEvent = self.toggle_password_visibility
         self.blind.mousePressEvent = self.toggle_password_visibility
 
-    def retranslateUi(self, LoginUI):
+    def retranslateUi(self, loginUI):
         _translate = QtCore.QCoreApplication.translate
-        LoginUI.setWindowTitle(_translate("LoginUI", "LoginUI"))
-        self.label.setText(_translate("LoginUI", "Đăng nhập"))
-        self.login_button.setText(_translate("LoginUI", "Đăng nhập"))
-        self.register_button.setText(_translate("LoginUI", "Đăng kí"))
-        self.fogot_button.setText(_translate("LoginUI", "Quên mật khẩu"))
+        loginUI.setWindowTitle(_translate("loginUI", "loginUI"))
+        self.label.setText(_translate("loginUI", "Đăng nhập"))
+        self.login_button.setText(_translate("loginUI", "Đăng nhập"))
+        self.register_button.setText(_translate("loginUI", "Đăng kí"))
+        self.fogot_button.setText(_translate("loginUI", "Quên mật khẩu"))
 
     def toggle_password_visibility(self, event):
         if self.password.echoMode() == QtWidgets.QLineEdit.EchoMode.Password:
@@ -138,8 +138,8 @@ class Ui_LoginUI(object):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    LoginUI = QtWidgets.QMainWindow()
-    ui = Ui_LoginUI()
-    ui.setupUi(LoginUI)
-    LoginUI.show()
+    loginUI = QtWidgets.QMainWindow()
+    ui = Ui_loginUI()
+    ui.setupUi(loginUI)
+    loginUI.show()
     sys.exit(app.exec())
