@@ -1,6 +1,6 @@
 from PyQt6 import QtWidgets
-from loginUI import Ui_loginUI
-from checkingUI import Ui_checkingUI
+from pages.loginUI import Ui_loginUI
+from pages.checkingUI import Ui_checkingUI
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -26,7 +26,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Kết nối nút nhấn
         self.ui_loginUI.login_button.clicked.connect(self.go_to_checkingUI)
-        self.ui_checkingUI.logout_button.clicked.connect(self.go_to_loginUI)
+        self.ui_checkingUI.sidebar.btn_logout.clicked.connect(self.go_to_loginUI)
 
         # Hiển thị trang đầu tiên
         self.stacked_widget.setCurrentWidget(self.loginUI)

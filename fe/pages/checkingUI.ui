@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1552</width>
-    <height>607</height>
+    <width>1520</width>
+    <height>697</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,7 +99,7 @@ border: none;
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="logo">
             <property name="minimumSize">
              <size>
               <width>200</width>
@@ -125,7 +125,7 @@ background-position: left center;
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_3">
+           <widget class="QGroupBox" name="fil_attendance">
             <property name="minimumSize">
              <size>
               <width>200</width>
@@ -150,7 +150,7 @@ border-radius: 5px;</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_2">
              <item row="0" column="0">
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="btn_attendance">
                <property name="minimumSize">
                 <size>
                  <width>180</width>
@@ -180,7 +180,7 @@ font: 12pt &quot;Times New Roman&quot;;</string>
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_5">
+           <widget class="QGroupBox" name="fil_manage">
             <property name="minimumSize">
              <size>
               <width>200</width>
@@ -202,7 +202,7 @@ border-radius: 5px;</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_3">
              <item row="0" column="0">
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="btn_manage">
                <property name="minimumSize">
                 <size>
                  <width>180</width>
@@ -239,13 +239,13 @@ font: 12pt &quot;Times New Roman&quot;;</string>
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>210</height>
+              <height>300</height>
              </size>
             </property>
            </spacer>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_6">
+           <widget class="QGroupBox" name="fil_logout">
             <property name="minimumSize">
              <size>
               <width>200</width>
@@ -267,7 +267,7 @@ border-radius: 5px;</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_4">
              <item row="0" column="0">
-              <widget class="QPushButton" name="logout_button">
+              <widget class="QPushButton" name="btn_logout">
                <property name="minimumSize">
                 <size>
                  <width>180</width>
@@ -361,7 +361,7 @@ font: 12pt &quot;Times New Roman&quot;;</string>
               </spacer>
              </item>
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="header_title">
                <property name="minimumSize">
                 <size>
                  <width>120</width>
@@ -393,14 +393,14 @@ font: 18pt &quot;Times New Roman&quot;;</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>308</width>
+                 <width>276</width>
                  <height>20</height>
                 </size>
                </property>
               </spacer>
              </item>
              <item>
-              <widget class="QSplitter" name="splitter">
+              <widget class="QSplitter" name="company">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -433,7 +433,7 @@ border-bottom-left-radius: 5px;</string>
                  <string/>
                 </property>
                </widget>
-               <widget class="QPushButton" name="pushButton_5">
+               <widget class="QPushButton" name="btn_company_name">
                 <property name="minimumSize">
                  <size>
                   <width>240</width>
@@ -476,7 +476,7 @@ font: 12pt &quot;Times New Roman&quot;;</string>
               </spacer>
              </item>
              <item>
-              <widget class="QSplitter" name="splitter_2">
+              <widget class="QSplitter" name="time">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -509,7 +509,7 @@ border-bottom-left-radius: 5px;</string>
                  <string/>
                 </property>
                </widget>
-               <widget class="QPushButton" name="pushButton_7">
+               <widget class="QPushButton" name="btn_year">
                 <property name="minimumSize">
                  <size>
                   <width>160</width>
@@ -561,63 +561,89 @@ font: 12pt &quot;Times New Roman&quot;;</string>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>140</width>
+                 <width>126</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">margin: 2px;
+</string>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
                <property name="handleWidth">
-                <number>20</number>
+                <number>1</number>
                </property>
-               <widget class="QLabel" name="label_3">
+               <widget class="QLabel" name="btn_add">
                 <property name="minimumSize">
                  <size>
-                  <width>30</width>
+                  <width>40</width>
                   <height>0</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>30</width>
+                  <width>40</width>
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
                 <property name="styleSheet">
-                 <string notr="true">padding-left: 30px;
+                 <string notr="true">
 background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-plus-30.png); 
 background-repeat: no-repeat;
-background-position: left center;</string>
+background-position: center center;
+</string>
                 </property>
                 <property name="text">
                  <string/>
                 </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
                </widget>
-               <widget class="QLabel" name="label_4">
+               <widget class="QLabel" name="btn_search">
                 <property name="minimumSize">
                  <size>
-                  <width>30</width>
+                  <width>40</width>
                   <height>0</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>30</width>
+                  <width>40</width>
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
                 <property name="styleSheet">
-                 <string notr="true">padding-left: 30px;
-background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-search-30.png); 
+                 <string notr="true">background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-search-30.png); 
 background-repeat: no-repeat;
-background-position: left center;</string>
+background-position: center center;
+</string>
                 </property>
                 <property name="text">
                  <string/>
                 </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="margin">
+                 <number>0</number>
+                </property>
+                <property name="indent">
+                 <number>-1</number>
+                </property>
+                <property name="openExternalLinks">
+                 <bool>false</bool>
+                </property>
                </widget>
-               <widget class="QLabel" name="label_5">
+               <widget class="QLabel" name="btn_bell">
                 <property name="minimumSize">
                  <size>
                   <width>40</width>
@@ -634,7 +660,8 @@ background-position: left center;</string>
                  <string notr="true">padding-left: 30px;
 background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-bell-40.png); 
 background-repeat: no-repeat;
-background-position: left center;</string>
+background-position: center center;
+</string>
                 </property>
                 <property name="text">
                  <string/>
@@ -659,7 +686,7 @@ background-position: left center;</string>
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_8">
+              <widget class="QPushButton" name="btn_admin">
                <property name="minimumSize">
                 <size>
                  <width>35</width>
@@ -690,17 +717,34 @@ border: 2px solid #a7a7a7;</string>
            </widget>
           </item>
           <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="minimumSize">
              <size>
-              <width>20</width>
-              <height>527</height>
+              <width>0</width>
+              <height>70</height>
              </size>
             </property>
-           </spacer>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="title">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="styleSheet">
+             <string notr="true">background-color: #192E44;</string>
+            </property>
+            <property name="title">
+             <string/>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_5"/>
+           </widget>
           </item>
          </layout>
         </widget>
