@@ -1,0 +1,8 @@
+{
+    "cSpell.words": [
+        "centralwidget"
+    ],
+    "python.analysis.extraPaths": [
+        "./fe/pages"
+    ]
+}
