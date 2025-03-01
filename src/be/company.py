@@ -1,45 +1,7 @@
 import sqlite3
 import numpy as np
 import json
-
-class Employee:
-    def __init__(self, emp_id: str, name: str, position: str, gmail: str, phone_number: str, 
-                 face_embedding=None, profile_image: str = None):
-        """
-        Constructor
-        """
-        self.emp_id = emp_id
-        self.name = name
-        self.position = position
-        self.gmail = gmail
-        self.phone_number = phone_number
-        self.face_embedding = face_embedding if face_embedding is not None else np.array([])  
-        self.profile_image = profile_image  
-
-    def set_face_embedding(self, embedding):
-        """Cập nhật embedding khuôn mặt của nhân viên"""
-        self.face_embedding = np.array(embedding)  
-
-    def set_profile_image(self, image_path: str):
-        """Cập nhật đường dẫn ảnh cá nhân"""
-        self.profile_image = image_path
-
-    def get_info(self):
-        """Trả về thông tin nhân viên dưới dạng dict"""
-        return {
-            "ID": self.emp_id,
-            "Name": self.name,
-            "Position": self.position,
-            "Email": self.gmail,
-            "Phone": self.phone_number,
-            "Profile Image": self.profile_image if self.profile_image else "Chưa có ảnh"
-        }
-
-    def __str__(self):
-        return f"Employee(ID: {self.emp_id}, Name: {self.name}, Position: {self.position}, " \
-               f"Email: {self.gmail}, Phone: {self.phone_number}, Image: {self.profile_image})"
-
-
+from employee import Employee
 class Company:
     def __init__(self, db_path="company.db"):
         """
@@ -93,20 +55,3 @@ class Company:
     def close(self):
         """Đóng kết nối database"""
         self.conn.close()
-
-
-# --- Cách sử dụng ---
-if __name__ == "__main__":
-    company = Company()
-
-    # Thêm nhân viên mới
-    new_employee = Employee("E002", "Trần Văn B", "Quản lý", "tranvanb@gmail.com", "0987654321")
-    company.add_employee(new_employee)
-
-    # Hiển thị danh sách nhân viên
-    employees = company.get_all_employees()
-    for emp in employees:
-        print(emp)
-
-    # Đóng kết nối database
-    company.close()
