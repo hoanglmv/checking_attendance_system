@@ -23,14 +23,14 @@ class Header(QtWidgets.QWidget):
         
         # Company Info
         self.company_container = self.create_info_section(
-            "D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png", 
+            "src/fe/Image_and_icon/icons8-user-30.png", 
             "HKPTT Company", 240
         )
         self.layout.addWidget(self.company_container)
         
         # Year Info
         self.year_container = self.create_info_section(
-            "D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png", 
+            "src/fe/Image_and_icon/icons8-user-30.png", 
             "2025-2026", 160
         )
         self.layout.addWidget(self.year_container)
@@ -47,7 +47,7 @@ class Header(QtWidgets.QWidget):
         self.btn_admin.setMinimumSize(QtCore.QSize(35, 37))
         self.btn_admin.setMaximumSize(QtCore.QSize(35, 37))
         self.btn_admin.setStyleSheet(
-            "background-color: #9FEF00; background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); "
+            "background-color: #9FEF00; background-image: url(src/fe/Image_and_icon/icons8-user-30.png); "
             "background-repeat: no-repeat; background-position: center center; border-radius: 15px; border: 2px solid #a7a7a7;"
         )
         self.layout.addWidget(self.btn_admin)
@@ -80,9 +80,9 @@ class Header(QtWidgets.QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         
         icons = [
-            "D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-plus-30.png",
-            "D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-search-30.png",
-            "D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-bell-40.png"
+            "src/fe/Image_and_icon/icons8-plus-30.png",
+            "src/fe/Image_and_icon/icons8-search-30.png",
+            "src/fe/Image_and_icon/icons8-bell-40.png"
         ]
         
         for icon in icons:

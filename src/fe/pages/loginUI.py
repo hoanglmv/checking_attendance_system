@@ -71,7 +71,7 @@ class Ui_loginUI(object):
         self.label_2 = QtWidgets.QLabel(parent=self.groupBox_2)
         self.label_2.setGeometry(QtCore.QRect(60, 110, 31, 31))
         self.label_2.setStyleSheet("padding-left: 30px;\n"
-                                    "background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); \n"
+                                    "background-image: url(src/fe/Image_and_icon/icons8-user-30.png); \n"
                                     "background-repeat: no-repeat;\n"
                                     "background-position: left center; ")
         self.label_2.setText("")
@@ -80,7 +80,7 @@ class Ui_loginUI(object):
         self.label_3 = QtWidgets.QLabel(parent=self.groupBox_2)
         self.label_3.setGeometry(QtCore.QRect(60, 160, 31, 31))
         self.label_3.setStyleSheet("padding-left: 30px;\n"
-                                    "background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-password-30.png); \n"
+                                    "background-image: url(src/fe/Image_and_icon/icons8-password-30.png); \n"
                                     "background-repeat: no-repeat;\n"
                                     "background-position: left center; ")
         self.label_3.setText("")
@@ -89,7 +89,7 @@ class Ui_loginUI(object):
         self.eye = QtWidgets.QLabel(parent=self.groupBox_2)
         self.eye.setGeometry(QtCore.QRect(420, 165, 21, 21))
         self.eye.setStyleSheet("padding-left: 30px;\n"
-                               "background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-eye-20.png); \n"
+                               "background-image: url(src/fe/Image_and_icon/icons8-eye-20.png); \n"
                                "background-repeat: no-repeat;\n"
                                "background-position: left center; ")
         self.eye.setText("")
@@ -98,7 +98,7 @@ class Ui_loginUI(object):
         self.blind = QtWidgets.QLabel(parent=self.groupBox_2)
         self.blind.setGeometry(QtCore.QRect(420, 165, 21, 21))
         self.blind.setStyleSheet("padding-left: 30px;\n"
-                                 "background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-blind-20.png); \n"
+                                 "background-image: url(src/fe/Image_and_icon/icons8-blind-20.png); \n"
                                  "background-repeat: no-repeat;\n"
                                  "background-position: left center; ")
         self.blind.setText("")
