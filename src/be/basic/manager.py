@@ -1,5 +1,5 @@
-from person import Personal
-from employee import Employee
+from be.basic.person import Personal
+from be.basic.employee import Employee
 
 class Manager(Personal):
     def __init__(self, per_id, name, gmail, phone_number, profile_image=None):

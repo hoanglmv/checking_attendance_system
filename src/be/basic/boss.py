@@ -1,6 +1,6 @@
 from personal import Personal
-from manager import Manager
-from employee import Employee
+from be.basic.manager import Manager
+from be.basic.employee import Employee
 
 class Boss(Personal):
     def __init__(self, per_id, name, gmail, phone_number, profile_image=None):

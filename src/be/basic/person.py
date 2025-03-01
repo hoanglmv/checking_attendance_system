@@ -1,5 +1,5 @@
 import numpy as np
-from face_embedding import FaceEmbedding  # Import class FaceEmbedding
+from be.basic.face_embedding import FaceEmbedding  # Import class FaceEmbedding
 
 class Personal:
     def __init__(self, per_id: str, name: str, position: str, gmail: str, phone_number: str, 

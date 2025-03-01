@@ -1,7 +1,7 @@
 import sqlite3
 import numpy as np
 import json
-from be.person import Employee
+from be.basic.person import Employee
 class Company:
     def __init__(self, db_path="company.db"):
         """
