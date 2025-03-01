@@ -1,16 +1,15 @@
 import torch
-import torchvision.transforms as transforms
+import numpy as np
 from facenet_pytorch import InceptionResnetV1, MTCNN
 from PIL import Image
-import numpy as np
 
 class FaceEmbedding:
     def __init__(self, device=None):
         """Khởi tạo mô hình FaceNet pretrain để trích xuất embedding."""
         self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = InceptionResnetV1(pretrained='vggface2').eval().to(self.device)
-        self.mtcnn = MTCNN(image_size=160, margin=10, keep_all=True, device=self.device) 
-        
+        self.mtcnn = MTCNN(image_size=160, margin=10, keep_all=True, device=self.device)
+
     def get_embedding(self, image_path):
         """Chuyển ảnh khuôn mặt thành vector embedding."""
         image = Image.open(image_path).convert('RGB')
@@ -32,12 +31,3 @@ class FaceEmbedding:
             embedding = self.model(face)
         
         return embedding.cpu().numpy().flatten()
-
-# Ví dụ sử dụng
-if __name__ == "__main__":
-    face_embedder = FaceEmbedding()
-    embedding = face_embedder.get_embedding("face.jpg")
-    if embedding is not None:
-        print("Embedding vector:", embedding)
-    else:
-        print("Không tìm thấy khuôn mặt.")
