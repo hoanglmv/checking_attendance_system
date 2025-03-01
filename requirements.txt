@@ -6,3 +6,5 @@ lightning
 facenet_pytorch
 opencv-python
 kafka-python 
+sqlite3
+json
