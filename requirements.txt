@@ -9,3 +9,4 @@ kafka-python
 sqlite3
 json
 pydantic
+jose
