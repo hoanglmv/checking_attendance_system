@@ -1,6 +1,6 @@
 from PyQt6 import QtWidgets, QtCore
 
-class Header(QtWidgets.QWidget):
+class Header(QtWidgets.QGroupBox):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -8,39 +8,42 @@ class Header(QtWidgets.QWidget):
         self.setMaximumSize(QtCore.QSize(16777215, 77))
         self.setStyleSheet("background-color: #192E44;")
 
-        self.layout = QtWidgets.QHBoxLayout(self)
-        self.layout.setContentsMargins(20, 0, 20, 0)
-        self.layout.setSpacing(10)
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self)
+        self.horizontalLayout.setContentsMargins(20, 0, 20, 0)
+        self.horizontalLayout.setSpacing(0)
         
         # Title
         self.header_title = QtWidgets.QLabel("Điểm danh", self)
         self.header_title.setMinimumSize(QtCore.QSize(120, 37))
         self.header_title.setMaximumSize(QtCore.QSize(120, 37))
         self.header_title.setStyleSheet("color: white; font: 18pt 'Times New Roman';")
-        self.layout.addWidget(self.header_title)
+        self.horizontalLayout.addWidget(self.header_title)
         
-        self.layout.addStretch()
+        self.horizontalLayout.addStretch()
         
         # Company Info
         self.company_container = self.create_info_section(
             "src/fe/Image_and_icon/icons8-user-30.png", 
             "HKPTT Company", 240
         )
-        self.layout.addWidget(self.company_container)
+        self.horizontalLayout.addWidget(self.company_container)
+        
+        self.horizontalLayout.addSpacing(30)
         
         # Year Info
         self.year_container = self.create_info_section(
             "src/fe/Image_and_icon/icons8-user-30.png", 
             "2025-2026", 160
         )
-        self.layout.addWidget(self.year_container)
+        self.horizontalLayout.addWidget(self.year_container)
         
-        # Spacer
-        self.layout.addStretch()
+        self.horizontalLayout.addSpacing(10)
         
         # Icons Section
         self.icon_container = self.create_icon_section()
-        self.layout.addWidget(self.icon_container)
+        self.horizontalLayout.addWidget(self.icon_container)
+        
+        self.horizontalLayout.addSpacing(20)
         
         # Admin Button
         self.btn_admin = QtWidgets.QPushButton(self)
@@ -50,7 +53,7 @@ class Header(QtWidgets.QWidget):
             "background-color: #9FEF00; background-image: url(src/fe/Image_and_icon/icons8-user-30.png); "
             "background-repeat: no-repeat; background-position: center center; border-radius: 15px; border: 2px solid #a7a7a7;"
         )
-        self.layout.addWidget(self.btn_admin)
+        self.horizontalLayout.addWidget(self.btn_admin)
     
     def create_info_section(self, icon_path, text, width):
         container = QtWidgets.QWidget(self)

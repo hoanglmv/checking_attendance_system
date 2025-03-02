@@ -1,6 +1,6 @@
 from PyQt6 import QtWidgets, QtCore
 
-class Sidebar(QtWidgets.QWidget):
+class Sidebar(QtWidgets.QGroupBox):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -10,7 +10,7 @@ class Sidebar(QtWidgets.QWidget):
 
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
         self.verticalLayout.setContentsMargins(35, 0, 35, 0)
-        self.verticalLayout.setSpacing(10)
+        self.verticalLayout.setSpacing(0) 
 
         # Logo
         self.logo = QtWidgets.QLabel(self)
@@ -72,7 +72,7 @@ class Sidebar(QtWidgets.QWidget):
         button.setStyleSheet(f"""
             background-image: url({icon_path});
             background-repeat: no-repeat;
-            background-position: center center;
+            background-position: left center;
             background-size: 24px 24px;
             color: white;
             font: 12pt "Times New Roman";

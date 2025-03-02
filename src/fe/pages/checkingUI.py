@@ -10,43 +10,45 @@ from fe.components.sidebar import Sidebar
 class Ui_checkingUI(object):
     def setupUi(self, checkingUI):
         checkingUI.setObjectName("checkingUI")
-        checkingUI.resize(1552, 607)
+        checkingUI.resize(1560, 610)
         checkingUI.setStyleSheet("background-color: #0B121F; border: none;")
         
         self.centralwidget = QtWidgets.QWidget(parent=checkingUI)
         self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout.setSpacing(0)
-        self.gridLayout.setObjectName("gridLayout")
         
-        self.groupBox = QtWidgets.QGroupBox(parent=self.centralwidget)
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setSpacing(0)
+        
+        self.sidebar = Sidebar(parent=self.centralwidget)
+        self.horizontalLayout.addWidget(self.sidebar)       
+        
+        self.main = QtWidgets.QGroupBox(parent=self.centralwidget)
+        self.main.setObjectName("main")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.main)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setSpacing(0)   
+        
+        self.header = Header(parent=self.main)
+        self.verticalLayout.addWidget(self.header)     
+        
+        self.groupBox = QtWidgets.QGroupBox(parent=self.main)
+        self.groupBox.setMinimumSize(QtCore.QSize(0, 77))
+        self.groupBox.setMaximumSize(QtCore.QSize(16777215, 77))
         self.groupBox.setTitle("")
         self.groupBox.setObjectName("groupBox")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.groupBox)
-        self.horizontalLayout.setContentsMargins(1, 0, 1, 0)
-        self.horizontalLayout.setSpacing(0)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        
-        # Sidebar
-        self.sidebar = Sidebar(parent=self.groupBox)
-        self.horizontalLayout.addWidget(self.sidebar)
-        
-        self.main = QtWidgets.QGroupBox(parent=self.groupBox)
-        self.main.setStyleSheet("")
-        self.main.setTitle("")
-        self.main.setObjectName("main")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.main)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_2.setSpacing(0)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        
-        # Header
-        self.header = Header(parent=self.main)
-        self.verticalLayout_2.addWidget(self.header)
-        
+        self.verticalLayout.addWidget(self.groupBox)
+         
+        self.content = QtWidgets.QGroupBox(parent=self.main)
+        self.content.setStyleSheet("background-color: #192E44;")
+        self.content.setTitle("")
+        self.content.setObjectName("content")
+        self.verticalLayout.addWidget(self.content)
+
         self.horizontalLayout.addWidget(self.main)
-        self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 1)
+        
         checkingUI.setCentralWidget(self.centralwidget)
     
     def retranslateUi(self, checkingUI):
