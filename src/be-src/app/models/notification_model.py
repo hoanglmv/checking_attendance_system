@@ -10,7 +10,6 @@ class Notification(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     message = Column(Text, nullable=False)
     created_at = Column(DateTime, nullable=False)
-
     user = relationship("User", back_populates="notifications")
 
 
