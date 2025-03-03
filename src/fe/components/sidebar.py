@@ -10,7 +10,7 @@ class Sidebar(QtWidgets.QGroupBox):
 
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
         self.verticalLayout.setContentsMargins(35, 0, 35, 0)
-        self.verticalLayout.setSpacing(0) 
+        self.verticalLayout.setSpacing(20) 
 
         # Logo
         self.logo = QtWidgets.QLabel(self)
@@ -59,7 +59,6 @@ class Sidebar(QtWidgets.QGroupBox):
         container = QtWidgets.QGroupBox(self)
         container.setMinimumSize(QtCore.QSize(200, 58))
         container.setMaximumSize(QtCore.QSize(200, 58))
-        container.setStyleSheet("background-color: #122131; border-radius: 5px;")
         layout = QtWidgets.QGridLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
         return container
