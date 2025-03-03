@@ -13,162 +13,56 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
+        MainWindow.setStyleSheet("background-color: rgb(85, 170, 0);")
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.header = QtWidgets.QGroupBox(parent=self.centralwidget)
-        self.header.setGeometry(QtCore.QRect(-120, 20, 1238, 77))
-        self.header.setMinimumSize(QtCore.QSize(0, 77))
-        self.header.setMaximumSize(QtCore.QSize(16777215, 77))
-        self.header.setStyleSheet("background-color: #192E44;")
-        self.header.setTitle("")
-        self.header.setObjectName("header")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.header)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem = QtWidgets.QSpacerItem(30, 20, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
-        self.header_title = QtWidgets.QLabel(parent=self.header)
-        self.header_title.setMinimumSize(QtCore.QSize(120, 37))
-        self.header_title.setMaximumSize(QtCore.QSize(120, 37))
-        self.header_title.setStyleSheet("color: white;\n"
-"font: 18pt \"Times New Roman\";")
-        self.header_title.setObjectName("header_title")
-        self.horizontalLayout_2.addWidget(self.header_title)
-        spacerItem1 = QtWidgets.QSpacerItem(276, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
-        self.company = QtWidgets.QSplitter(parent=self.header)
-        self.company.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        self.company.setHandleWidth(0)
-        self.company.setObjectName("company")
-        self.pushButton_4 = QtWidgets.QPushButton(parent=self.company)
-        self.pushButton_4.setMinimumSize(QtCore.QSize(30, 37))
-        self.pushButton_4.setMaximumSize(QtCore.QSize(30, 37))
-        self.pushButton_4.setStyleSheet("background-color: #9FEF00;\n"
-"padding-left: 30px;\n"
-"background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); \n"
-"background-repeat: no-repeat;\n"
-"background-position: left center;;\n"
-"border-top-left-radius: 5px;\n"
-"border-bottom-left-radius: 5px;")
-        self.pushButton_4.setText("")
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.btn_company_name = QtWidgets.QPushButton(parent=self.company)
-        self.btn_company_name.setMinimumSize(QtCore.QSize(240, 37))
-        self.btn_company_name.setMaximumSize(QtCore.QSize(240, 37))
-        self.btn_company_name.setStyleSheet("border: 1px solid #9FEF00;\n"
-"border-top-right-radius: 5px;\n"
-"border-bottom-right-radius: 5px;\n"
-"color: white;\n"
-"font: 12pt \"Times New Roman\";")
-        self.btn_company_name.setObjectName("btn_company_name")
-        self.horizontalLayout_2.addWidget(self.company)
-        spacerItem2 = QtWidgets.QSpacerItem(30, 20, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem2)
-        self.time = QtWidgets.QSplitter(parent=self.header)
-        self.time.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        self.time.setHandleWidth(0)
-        self.time.setObjectName("time")
-        self.pushButton_6 = QtWidgets.QPushButton(parent=self.time)
-        self.pushButton_6.setMinimumSize(QtCore.QSize(30, 37))
-        self.pushButton_6.setMaximumSize(QtCore.QSize(30, 37))
-        self.pushButton_6.setStyleSheet("background-color: #9FEF00;\n"
-"padding-left: 30px;\n"
-"background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); \n"
-"background-repeat: no-repeat;\n"
-"background-position: left center;;\n"
-"border-top-left-radius: 5px;\n"
-"border-bottom-left-radius: 5px;")
-        self.pushButton_6.setText("")
-        self.pushButton_6.setObjectName("pushButton_6")
-        self.btn_year = QtWidgets.QPushButton(parent=self.time)
-        self.btn_year.setMinimumSize(QtCore.QSize(160, 37))
-        self.btn_year.setMaximumSize(QtCore.QSize(160, 37))
-        self.btn_year.setStyleSheet("border: 1px solid #9FEF00;\n"
-"border-top-right-radius: 5px;\n"
-"border-bottom-right-radius: 5px;\n"
-"color: white;\n"
-"font: 12pt \"Times New Roman\";")
-        self.btn_year.setObjectName("btn_year")
-        self.horizontalLayout_2.addWidget(self.time)
-        spacerItem3 = QtWidgets.QSpacerItem(30, 20, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem3)
-        self.splitter_3 = QtWidgets.QSplitter(parent=self.header)
-        self.splitter_3.setMinimumSize(QtCore.QSize(0, 37))
-        self.splitter_3.setMaximumSize(QtCore.QSize(126, 16777215))
-        self.splitter_3.setStyleSheet("margin: 2px;\n"
-"")
-        self.splitter_3.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        self.splitter_3.setHandleWidth(1)
-        self.splitter_3.setObjectName("splitter_3")
-        self.btn_add = QtWidgets.QLabel(parent=self.splitter_3)
-        self.btn_add.setMinimumSize(QtCore.QSize(40, 0))
-        self.btn_add.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.btn_add.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
-        self.btn_add.setStyleSheet("\n"
-"background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-plus-30.png); \n"
-"background-repeat: no-repeat;\n"
-"background-position: center center;\n"
-"")
-        self.btn_add.setText("")
-        self.btn_add.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.btn_add.setObjectName("btn_add")
-        self.btn_search = QtWidgets.QLabel(parent=self.splitter_3)
-        self.btn_search.setMinimumSize(QtCore.QSize(40, 0))
-        self.btn_search.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.btn_search.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
-        self.btn_search.setStyleSheet("background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-search-30.png); \n"
-"background-repeat: no-repeat;\n"
-"background-position: center center;\n"
-"")
-        self.btn_search.setText("")
-        self.btn_search.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.btn_search.setIndent(-1)
-        self.btn_search.setOpenExternalLinks(False)
-        self.btn_search.setObjectName("btn_search")
-        self.btn_bell = QtWidgets.QLabel(parent=self.splitter_3)
-        self.btn_bell.setMinimumSize(QtCore.QSize(40, 0))
-        self.btn_bell.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.btn_bell.setStyleSheet("padding-left: 30px;\n"
-"background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-bell-40.png); \n"
-"background-repeat: no-repeat;\n"
-"background-position: center center;\n"
-"")
-        self.btn_bell.setText("")
-        self.btn_bell.setObjectName("btn_bell")
-        self.horizontalLayout_2.addWidget(self.splitter_3)
-        spacerItem4 = QtWidgets.QSpacerItem(30, 20, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem4)
-        self.btn_admin = QtWidgets.QPushButton(parent=self.header)
-        self.btn_admin.setMinimumSize(QtCore.QSize(35, 37))
-        self.btn_admin.setMaximumSize(QtCore.QSize(35, 37))
-        self.btn_admin.setStyleSheet("background-color: #9FEF00;\n"
-"padding-left: 30px;\n"
-"background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); \n"
-"background-repeat: no-repeat;\n"
-"background-position: left center;;\n"
-"border-radius: 15px;\n"
-"border: 2px solid #a7a7a7;")
-        self.btn_admin.setText("")
-        self.btn_admin.setObjectName("btn_admin")
-        self.horizontalLayout_2.addWidget(self.btn_admin)
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.sidebar_gr = QtWidgets.QGroupBox(parent=self.centralwidget)
+        self.sidebar_gr.setMinimumSize(QtCore.QSize(200, 0))
+        self.sidebar_gr.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.sidebar_gr.setStyleSheet("border: none;\n"
+"background-color: rgb(255, 85, 127);")
+        self.sidebar_gr.setTitle("")
+        self.sidebar_gr.setObjectName("sidebar_gr")
+        self.horizontalLayout.addWidget(self.sidebar_gr)
+        self.main_gr = QtWidgets.QGroupBox(parent=self.centralwidget)
+        self.main_gr.setStyleSheet("background-color: rgb(255, 85, 0);")
+        self.main_gr.setTitle("")
+        self.main_gr.setObjectName("main_gr")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.main_gr)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.header_gr = QtWidgets.QGroupBox(parent=self.main_gr)
+        self.header_gr.setMinimumSize(QtCore.QSize(0, 77))
+        self.header_gr.setMaximumSize(QtCore.QSize(16777215, 77))
+        self.header_gr.setStyleSheet("background-color: rgb(255, 170, 127);")
+        self.header_gr.setTitle("")
+        self.header_gr.setObjectName("header_gr")
+        self.verticalLayout.addWidget(self.header_gr)
+        self.groupBox = QtWidgets.QGroupBox(parent=self.main_gr)
+        self.groupBox.setMinimumSize(QtCore.QSize(0, 77))
+        self.groupBox.setMaximumSize(QtCore.QSize(16777215, 77))
+        self.groupBox.setStyleSheet("background-color: rgb(255, 255, 127);")
+        self.groupBox.setTitle("")
+        self.groupBox.setObjectName("groupBox")
+        self.verticalLayout.addWidget(self.groupBox)
+        self.content_gr = QtWidgets.QGroupBox(parent=self.main_gr)
+        self.content_gr.setStyleSheet("background-color: rgb(85, 255, 0);")
+        self.content_gr.setTitle("")
+        self.content_gr.setObjectName("content_gr")
+        self.verticalLayout.addWidget(self.content_gr)
+        self.horizontalLayout.addWidget(self.main_gr)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
-        self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.header_title.setText(_translate("MainWindow", "Điểm danh"))
-        self.btn_company_name.setText(_translate("MainWindow", "HKPTT Company"))
-        self.btn_year.setText(_translate("MainWindow", "2025-2026"))
-
 
 if __name__ == "__main__":
     import sys

@@ -1,6 +1,6 @@
 from PyQt6 import QtWidgets, QtCore
 
-class Sidebar(QtWidgets.QWidget):
+class Sidebar(QtWidgets.QGroupBox):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -10,14 +10,14 @@ class Sidebar(QtWidgets.QWidget):
 
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
         self.verticalLayout.setContentsMargins(35, 0, 35, 0)
-        self.verticalLayout.setSpacing(10)
+        self.verticalLayout.setSpacing(0) 
 
         # Logo
         self.logo = QtWidgets.QLabel(self)
         self.logo.setMinimumSize(QtCore.QSize(200, 180))
         self.logo.setMaximumSize(QtCore.QSize(200, 180))
         self.logo.setStyleSheet("""
-            background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/logo.png);
+            background-image: url(src/fe/Image_and_icon/logo.png);
             background-repeat: no-repeat;
             background-position: center center;
             background-size: contain;
@@ -27,7 +27,7 @@ class Sidebar(QtWidgets.QWidget):
         # Button: Attendance
         self.fil_attendance = self.create_button_container()
         self.btn_attendance = self.create_button(
-            "D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png",
+            "src/fe/Image_and_icon/icons8-user-30.png",
             "Điểm danh"
         )
         self.fil_attendance.layout().addWidget(self.btn_attendance)
@@ -36,7 +36,7 @@ class Sidebar(QtWidgets.QWidget):
         # Button: Manage
         self.fil_manage = self.create_button_container()
         self.btn_manage = self.create_button(
-            "D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png",
+            "src/fe/Image_and_icon/icons8-user-30.png",
             "Quản lý"
         )
         self.fil_manage.layout().addWidget(self.btn_manage)
@@ -49,7 +49,7 @@ class Sidebar(QtWidgets.QWidget):
         # Button: Logout
         self.fil_logout = self.create_button_container()
         self.btn_logout = self.create_button(
-            "D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png",
+            "src/fe/Image_and_icon/icons8-user-30.png",
             "Đăng xuất"
         )
         self.fil_logout.layout().addWidget(self.btn_logout)
@@ -72,7 +72,7 @@ class Sidebar(QtWidgets.QWidget):
         button.setStyleSheet(f"""
             background-image: url({icon_path});
             background-repeat: no-repeat;
-            background-position: center center;
+            background-position: left center;
             background-size: 24px 24px;
             color: white;
             font: 12pt "Times New Roman";
