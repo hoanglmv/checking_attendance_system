@@ -1,5 +1,6 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtWidgets import QWidget, QHeaderView, QAbstractItemView, QTableWidgetItem, QHBoxLayout, QCheckBox
+from PyQt6.QtGui import QIcon
 
 import sys
 import os
@@ -93,7 +94,7 @@ class Ui_checkingUI(object):
         self.stas_time = QtWidgets.QGroupBox(parent=self.main)
         self.stas_time.setMinimumSize(QtCore.QSize(0, 75))
         self.stas_time.setMaximumSize(QtCore.QSize(16777215, 75))
-        self.stas_time.setStyleSheet("background-color: #192E44;")
+        self.stas_time.setStyleSheet("background-color: #192E44;\n margin-bottom: 5px")
         self.stas_time.setTitle("")
         self.stas_time.setObjectName("stas_time")
         self.verticalLayout.addWidget(self.stas_time)
@@ -141,7 +142,7 @@ class Ui_checkingUI(object):
         self.horizontalLayout_2.addSpacing(20)
          
         self.content = QtWidgets.QGroupBox(parent=self.main)
-        self.content.setStyleSheet("")
+        self.content.setStyleSheet("background-color: #192E44;")
         self.content.setTitle("")
         self.content.setObjectName("content")
         
@@ -157,10 +158,9 @@ class Ui_checkingUI(object):
         self.table.setColumnWidth(5, 100) 
         self.table.setColumnWidth(6, 100) 
         self.table.setColumnWidth(7, 120) 
-        # Kích thước tùy chỉnh
+
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
 
-        # Cố định kích thước các cột ID và Số điện thoại
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
         self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
         self.table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)
@@ -202,6 +202,23 @@ class Ui_checkingUI(object):
         
         # Dữ liệu người dùng
         self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
+        self.add_row("001", "Cao Lê Phụng", "Nhân viên", True, "8.00", "17.00", False, False)
         self.add_row("002", "Cao Lê Phụng", "Nhân viên", False, "8.00", "17.00", True, False)
         self.add_row("001", "Cao Lê Phụng", "Nhân viên", False, "8.00", "17.00", False, True)
 
@@ -235,20 +252,38 @@ class Ui_checkingUI(object):
         self.table.setItem(row_count, 2, QTableWidgetItem(role))
         self.table.setItem(row_count, 4, QTableWidgetItem(time_in))
         self.table.setItem(row_count, 5, QTableWidgetItem(time_out))
-        self.table.setItem(row_count, 6, QTableWidgetItem(cp))
-        self.table.setItem(row_count, 7, QTableWidgetItem(kp))
 
+        self.table.setCellWidget(row_count, 3, self.create_checkbox_widget(check))
+        self.table.setCellWidget(row_count, 6, self.create_checkbox_widget(cp))
+        self.table.setCellWidget(row_count, 7, self.create_checkbox_widget(kp))
+    
+    def create_checkbox_widget(self, checked=False):
         checkbox_widget = QWidget()
         checkbox_layout = QHBoxLayout(checkbox_widget)
         checkbox_layout.setContentsMargins(0, 0, 0, 0) 
         checkbox = QCheckBox()
-        checkbox_layout.addWidget(checkbox)
-        checkbox_layout.setAlignment(checkbox, QtCore.Qt.AlignmentFlag.AlignCenter) 
-
-        self.table.setCellWidget(row_count, 3, checkbox_widget)
-        self.table.setCellWidget(row_count, 6, checkbox_widget)
-        self.table.setCellWidget(row_count, 7, checkbox_widget)
+        checkbox.setChecked(checked)
         
+        checkbox.setStyleSheet("""
+                QCheckBox::indicator {
+                width: 15px;
+                height: 15px;
+                border-radius: 8px;
+                border: 0.5px solid white;
+                background: transparent;
+                }
+                QCheckBox::indicator:checked {
+                border: 2px solid #9FEF00;
+                image: url("src/fe/Image_and_icon/icons8-check-15.png");
+                }
+                QCheckBox::indicator:unchecked {
+                background-color: #192E44;
+                }
+        """)
+        
+        checkbox_layout.addWidget(checkbox)
+        checkbox_layout.setAlignment(checkbox, QtCore.Qt.AlignmentFlag.AlignCenter)
+        return checkbox_widget    
 
 if __name__ == "__main__":
     import sys
