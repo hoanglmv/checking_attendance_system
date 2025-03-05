@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
-from app.services.user_service import (
-    create_user, get_user_by_email, authenticate_user, get_user_by_id, 
-    update_user_info, get_all_users
+from app.services.auth_service import (
+    create_admin_user, authenticate_user, get_admin_by_email, 
+    update_admin_info, send_otp_verification_email, verify_otp
 )
 from app.services.email_service import generate_otp, send_otp_email, save_otp, verify_otp_code
-from app.schemas.user_schema import UserCreate, UserLogin, UserUpdate
+from app.schemas.user_schema import AdminCreate, AdminLogin, AdminUpdate
 from app.utils.security import create_access_token
-from app.dependencies import get_current_user, get_current_admin
+from app.dependencies import get_current_admin
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 def get_db():
     db = SessionLocal()
@@ -21,18 +21,18 @@ def get_db():
 
 # Đăng ký tài khoản
 @router.post("/register")
-def register(user: UserCreate, db: Session = Depends(get_db)):
-    if get_user_by_email(db, user.email):
+def register(admin_data: AdminCreate, db: Session = Depends(get_db)):
+    if get_admin_by_email(db, admin_data.email):
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    created_user = create_user(db, user)
+    create_admin_user(db, admin_data)
     
     # Gửi OTP sau khi tạo tài khoản
-    otp = generate_otp()
-    send_otp_email(user.email, otp)
-    save_otp(db, user.email, otp)
+    success, message = send_otp_verification_email(db, admin_data.email)
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
     
-    return {"message": "User registered successfully. Please verify your email with the OTP sent."}
+    return {"message": "Admin registered successfully. Please verify your email with the OTP sent."}
 
 # Xác minh OTP
 @router.post("/verify-otp")
@@ -43,41 +43,24 @@ def verify_email_otp(email: str, otp: str, db: Session = Depends(get_db)):
 
 # Đăng nhập
 @router.post("/login")
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = authenticate_user(db, user.email, user.password)
-    if not db_user:
+def login(admin_data: AdminLogin, db: Session = Depends(get_db)):
+    admin = authenticate_user(db, admin_data.email, admin_data.password)
+    if not admin:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
-    if not db_user.email_verified:
+    if not admin.email_verified:
         raise HTTPException(status_code=403, detail="Email not verified. Please verify your email first.")
     
-    access_token = create_access_token(data={"sub": db_user.email})
+    access_token = create_access_token(data={"sub": admin_data.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
 # Lấy thông tin cá nhân
 @router.get("/me")
-def get_my_info(current_user: dict = Depends(get_current_user)):
-    return current_user
+def get_my_info(current_admin: dict = Depends(get_current_admin)):
+    return current_admin
 
 # Cập nhật thông tin cá nhân
 @router.put("/me/update")
-def update_my_info(user_update: UserUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    return update_user_info(db, current_user["id"], user_update)
+def update_my_info(admin_update: AdminUpdate, db: Session = Depends(get_db), current_admin: dict = Depends(get_current_admin)):
+    return update_admin_info(db, current_admin["id"], admin_update)
 
-# Admin: Lấy thông tin user theo ID
-@router.get("/{user_id}")
-def get_user_by_admin(user_id: int, db: Session = Depends(get_db), admin: dict = Depends(get_current_admin)):
-    user = get_user_by_id(db, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-# Admin: Lấy danh sách tất cả user
-@router.get("/")
-def get_all_users_list(db: Session = Depends(get_db), admin: dict = Depends(get_current_admin)):
-    return get_all_users(db)
-
-# Admin: Cập nhật thông tin user theo ID
-@router.put("/{user_id}/update")
-def update_user_by_admin(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db), admin: dict = Depends(get_current_admin)):
-    return update_user_info(db, user_id, user_update)

@@ -1,13 +1,19 @@
-from sqlalchemy.orm import Session
-from app.models.notification_model import Notification
-from app.schemas.notification_schema import NotificationCreate
+from fastapi import WebSocket, WebSocketDisconnect
 
-def create_notification(db: Session, notification: NotificationCreate):
-    db_notification = Notification(
-        message=notification.message,
-        created_at=notification.created_at
-    )
-    db.add(db_notification)
-    db.commit()
-    db.refresh(db_notification)
-    return db_notification
+# Danh sách kết nối WebSocket của Admin
+admin_connections = set()
+
+async def websocket_endpoint(websocket: WebSocket):
+    """WebSocket để Admin nhận thông báo."""
+    await websocket.accept()
+    admin_connections.add(websocket)
+    try:
+        while True:
+            await websocket.receive_text()  # Giữ kết nối mở
+    except WebSocketDisconnect:
+        admin_connections.remove(websocket)
+
+async def send_notification(message: str):
+    """Gửi thông báo đến tất cả Admin đang kết nối."""
+    for connection in admin_connections:
+        await connection.send_text(message)

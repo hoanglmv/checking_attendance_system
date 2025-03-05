@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from app.core.config import SECRET_KEY, ALGORITHM
 from sqlalchemy.orm import Session
-from app.models.user_models import User
+from app.models.user import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -32,3 +32,10 @@ def save_otp(db: Session, user: User):
     user.otp_expiration = datetime.utcnow() + timedelta(minutes=10)  # OTP hết hạn sau 10 phút
     db.commit()
     return otp
+
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return None
