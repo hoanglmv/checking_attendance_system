@@ -1,0 +1,1470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1080</width>
+    <height>768</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+    background-color: #0F1B2A; /* Đen pha xanh đậm */
+}
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QListWidget" name="listWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>170</y>
+      <width>251</width>
+      <height>601</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QListWidget {
+    background-color: #1E2A38;
+    border: 2px solid #1E2A38;
+    border-radius: 8px;
+    padding: 5px;
+    color: white;
+}
+
+QListWidget::item {
+    background-color: #2D3E50;
+    border: 2px solid #5A6980;
+    border-radius: 8px;
+    margin: 10px;
+    padding: 40px;  
+}
+
+QListWidget::item:selected {
+    background-color: #3E5468;
+    border: 3px solid #A3FF7D;
+}
+
+QListWidget::item:hover {
+    background-color: #3A4F63;
+    border: 2px solid #A3FF7D;
+}
+
+QLineEdit {
+    background-color: #2D3E50;
+    color: white;
+    border: none; /* Không có viền */
+    border-radius: 6px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+QLineEdit:focus {
+    outline: none;  /* Bỏ viền khi focus */
+    border: 2px solid transparent; /* Đảm bảo không có viền */
+    background-color: #2D3E50;  /* Giữ màu nền không đổi */
+}
+</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>NV1</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>NV2</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>NV3</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>NV4</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QStackedWidget" name="stackedWidget">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>140</y>
+      <width>571</width>
+      <height>621</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QStackedWidget {
+    background-color: #1B2B3A;
+    border: 2px solid #0F1B2A;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+</string>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="pageNV1"/>
+    <widget class="QWidget" name="pageNV2">
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>60</y>
+        <width>191</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLabel {
+    border: 2px solid #A3FF7D;  /* Viền xanh */
+    border-radius: 12px;  /* Bo tròn góc */
+    background-color: #1E2A38;  /* Màu nền */
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QWidget" name="formLayoutWidget_11">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>240</y>
+        <width>361</width>
+        <height>308</height>
+       </rect>
+      </property>
+      <layout class="QFormLayout" name="formLayout_13">
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="lineEdit_109">
+         <property name="font">
+          <font>
+           <pointsize>-1</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+         <property name="text">
+          <string>ID</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEdit_110">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLineEdit" name="lineEdit_111">
+         <property name="font">
+          <font>
+           <pointsize>-1</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Họ tên</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEdit_112">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLineEdit" name="lineEdit_113">
+         <property name="font">
+          <font>
+           <pointsize>-1</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Chức vụ</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="lineEdit_114">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLineEdit" name="lineEdit_115">
+         <property name="font">
+          <font>
+           <pointsize>-1</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Nơi làm việc</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="lineEdit_116">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLineEdit" name="lineEdit_117">
+         <property name="font">
+          <font>
+           <pointsize>-1</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Email</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="lineEdit_118">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLineEdit" name="lineEdit_119">
+         <property name="font">
+          <font>
+           <pointsize>-1</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Số điện thoại</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="lineEdit_120">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 8px;  /* Tăng padding để ô nhập lớn hơn */
+    font-size: 18px; /* Tăng cỡ chữ */
+    height: 30px; /* Đặt chiều cao tối thiểu */
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ trắng */
+    border: none;  /* Không có viền */
+    font-size: 18px; /* Tăng cỡ chữ giống ô nhập */
+}
+
+/* Điều chỉnh khoảng cách giữa các ô */
+QWidget QVBoxLayout &gt; QLineEdit {
+    margin-top: 10px;  /* Tạo khoảng cách giữa các ô */
+    margin-bottom: 10px;
+}
+</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="formLayoutWidget_12">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>70</y>
+        <width>241</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <layout class="QFormLayout" name="formLayout_14">
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="lineEdit_121">
+         <property name="font">
+          <font>
+           <pointsize>-1</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+           <underline>false</underline>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ xám nhạt */
+    border: none;  /* Không có viền */
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Chuyên cần</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEdit_122">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ xám nhạt */
+    border: none;  /* Không có viền */
+}
+</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEdit_124">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ xám nhạt */
+    border: none;  /* Không có viền */
+}
+</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLineEdit" name="lineEdit_125">
+         <property name="font">
+          <font>
+           <pointsize>-1</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+           <underline>false</underline>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ xám nhạt */
+    border: none;  /* Không có viền */
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Về sớm</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="lineEdit_126">
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ xám nhạt */
+    border: none;  /* Không có viền */
+}
+</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLineEdit" name="lineEdit_127">
+         <property name="font">
+          <font>
+           <pointsize>-1</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+           <underline>false</underline>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLineEdit {
+    background-color: #2D3E50;  /* Màu nền */
+    color: white;  /* Màu chữ */
+    border: none;  /* Loại bỏ viền */
+    border-radius: 6px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Khi QLineEdit ở chế độ chỉ đọc */
+QLineEdit:read-only {
+    background-color: #1E2A38;  /* Màu nền tối hơn để phân biệt */
+    color: #FFFFFF;  /* Màu chữ xám nhạt */
+    border: none;  /* Không có viền */
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Đến muộn</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="pageNV3"/>
+    <widget class="QWidget" name="pageNV4"/>
+   </widget>
+   <widget class="QGroupBox" name="sidebar">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>210</width>
+      <height>768</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>210</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>210</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #122131;</string>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>35</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>35</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="logo_2">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>135</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>135</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding-left: 30px;
+background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/logo.png); 
+background-repeat: no-repeat;
+background-position: left center;
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="fil_attendance_2">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>58</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>58</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #68D477;
+border-radius: 5px;</string>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="btn_attendance_2">
+          <property name="minimumSize">
+           <size>
+            <width>135</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>135</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding-left: 30px;
+background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); 
+background-repeat: no-repeat;
+background-position: left center;
+color: white;
+font: 12pt &quot;Times New Roman&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Điểm danh</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="fil_manage_2">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>58</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>58</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #122131;
+border-radius: 5px;</string>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="btn_manage_2">
+          <property name="minimumSize">
+           <size>
+            <width>135</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>135</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding-left: 30px;
+background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); 
+background-repeat: no-repeat;
+background-position: left center;
+color: white;
+font: 12pt &quot;Times New Roman&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Nhân viên</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>300</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="fil_logout_2">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>58</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>58</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #122131;
+border-radius: 5px;</string>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_7">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="btn_logout_2">
+          <property name="minimumSize">
+           <size>
+            <width>180</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>180</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding-left: 30px;
+background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); 
+background-repeat: no-repeat;
+background-position: left center;
+color: white;
+font: 12pt &quot;Times New Roman&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Đăng xuất</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QGroupBox" name="header">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>0</y>
+      <width>870</width>
+      <height>58</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>58</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>58</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #192E44;</string>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="header_title">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>37</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>37</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Times New Roman</family>
+         <pointsize>18</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: white;
+font: 18pt &quot;Times New Roman&quot;;</string>
+       </property>
+       <property name="text">
+        <string>Điểm danh</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>30</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>276</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QSplitter" name="company">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="handleWidth">
+        <number>0</number>
+       </property>
+       <widget class="QPushButton" name="pushButton_4">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: #9FEF00;
+padding-left: 30px;
+background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); 
+background-repeat: no-repeat;
+background-position: left center;;
+border-top-left-radius: 5px;
+border-bottom-left-radius: 5px;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btn_company_name">
+        <property name="minimumSize">
+         <size>
+          <width>240</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>240</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 1px solid #9FEF00;
+border-top-right-radius: 5px;
+border-bottom-right-radius: 5px;
+color: white;
+font: 12pt &quot;Times New Roman&quot;;</string>
+        </property>
+        <property name="text">
+         <string>HKPTT Company</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>30</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QSplitter" name="time">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="handleWidth">
+        <number>0</number>
+       </property>
+       <widget class="QPushButton" name="pushButton_6">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: #9FEF00;
+padding-left: 30px;
+background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); 
+background-repeat: no-repeat;
+background-position: left center;;
+border-top-left-radius: 5px;
+border-bottom-left-radius: 5px;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btn_year">
+        <property name="minimumSize">
+         <size>
+          <width>160</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>160</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 1px solid #9FEF00;
+border-top-right-radius: 5px;
+border-bottom-right-radius: 5px;
+color: white;
+font: 12pt &quot;Times New Roman&quot;;</string>
+        </property>
+        <property name="text">
+         <string>2025-2026</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>30</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_3">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>37</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>126</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">margin: 2px;
+</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="handleWidth">
+        <number>1</number>
+       </property>
+       <widget class="QLabel" name="btn_add">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-plus-30.png); 
+background-repeat: no-repeat;
+background-position: center center;
+</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="btn_search">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-search-30.png); 
+background-repeat: no-repeat;
+background-position: center center;
+</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <property name="indent">
+         <number>-1</number>
+        </property>
+        <property name="openExternalLinks">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="btn_bell">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">padding-left: 30px;
+background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-bell-40.png); 
+background-repeat: no-repeat;
+background-position: center center;
+</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>30</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_admin">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>37</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>35</width>
+         <height>37</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #9FEF00;
+padding-left: 30px;
+background-image: url(D:/NMCNPM/checking_attendance_system/fe/Image_and_icon/icons8-user-30.png); 
+background-repeat: no-repeat;
+background-position: left center;;
+border-radius: 15px;
+border: 2px solid #a7a7a7;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>listWidget_2</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>stackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>304</x>
+     <y>235</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>556</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
