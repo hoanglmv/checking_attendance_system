@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(1420, 600)
         MainWindow.setStyleSheet("background-color: rgb(85, 170, 0);")
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -44,25 +44,35 @@ class Ui_MainWindow(object):
         self.header_gr.setObjectName("header_gr")
         self.verticalLayout.addWidget(self.header_gr)
         self.groupBox = QtWidgets.QGroupBox(parent=self.main_gr)
-        self.groupBox.setMinimumSize(QtCore.QSize(0, 77))
-        self.groupBox.setMaximumSize(QtCore.QSize(16777215, 77))
-        self.groupBox.setStyleSheet("background-color: rgb(255, 255, 127);")
+        self.groupBox.setMinimumSize(QtCore.QSize(0, 60))
+        self.groupBox.setMaximumSize(QtCore.QSize(16777215, 60))
+        self.groupBox.setStyleSheet("")
         self.groupBox.setTitle("")
         self.groupBox.setObjectName("groupBox")
         self.verticalLayout.addWidget(self.groupBox)
-        self.content_gr = QtWidgets.QGroupBox(parent=self.main_gr)
-        self.content_gr.setStyleSheet("background-color: rgb(85, 255, 0);")
-        self.content_gr.setTitle("")
-        self.content_gr.setObjectName("content_gr")
-        self.verticalLayout.addWidget(self.content_gr)
+        self.stas_time = QtWidgets.QGroupBox(parent=self.main_gr)
+        self.stas_time.setMinimumSize(QtCore.QSize(0, 75))
+        self.stas_time.setMaximumSize(QtCore.QSize(16777215, 75))
+        self.stas_time.setStyleSheet("background-color: rgb(36, 38, 28);")
+        self.stas_time.setTitle("")
+        self.stas_time.setObjectName("stas_time")
+        self.verticalLayout.addWidget(self.stas_time)
+        self.content = QtWidgets.QGroupBox(parent=self.main_gr)
+        self.content.setTitle("")
+        self.content.setObjectName("content")
+        self.gridLayout = QtWidgets.QGridLayout(self.content)
+        self.gridLayout.setObjectName("gridLayout")
+        self.verticalLayout.addWidget(self.content)
         self.horizontalLayout.addWidget(self.main_gr)
         MainWindow.setCentralWidget(self.centralwidget)
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+
 
 if __name__ == "__main__":
     import sys

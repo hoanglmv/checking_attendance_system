@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1420</width>
     <height>600</height>
    </rect>
   </property>
@@ -107,17 +107,17 @@ background-color: rgb(255, 85, 127);</string>
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>77</height>
+           <height>60</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>77</height>
+           <height>60</height>
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(255, 255, 127);</string>
+          <string notr="true"/>
          </property>
          <property name="title">
           <string/>
@@ -125,13 +125,33 @@ background-color: rgb(255, 85, 127);</string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="content_gr">
+        <widget class="QGroupBox" name="stas_time">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>75</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>75</height>
+          </size>
+         </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(85, 255, 0);</string>
+          <string notr="true">background-color: rgb(36, 38, 28);</string>
          </property>
          <property name="title">
           <string/>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="content">
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QGridLayout" name="gridLayout"/>
         </widget>
        </item>
       </layout>

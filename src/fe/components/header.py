@@ -59,6 +59,7 @@ class Header(QtWidgets.QGroupBox):
         container = QtWidgets.QWidget(self)
         layout = QtWidgets.QHBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         
         icon_button = QtWidgets.QPushButton(self)
         icon_button.setMinimumSize(QtCore.QSize(30, 37))
