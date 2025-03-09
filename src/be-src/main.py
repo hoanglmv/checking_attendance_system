@@ -6,16 +6,13 @@ from app.services.auth_service import create_admin_user
 from app.services.notification_service import websocket_endpoint
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
-
 # Tạo bảng trong database
 Base.metadata.create_all(bind=engine)
 # Khởi tạo ứng dụng FastAPI
 app = FastAPI()
 
 # Khởi tạo ADMIN nếu chưa có
-def init_admin():
-    
-    
+def init_admin():    
     db = SessionLocal()
     try:
         create_admin_user(db)
