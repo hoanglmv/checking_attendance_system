@@ -7,7 +7,7 @@ class Attendance(Base):
     __tablename__ = "attendances"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    employee_id = Column(Integer, ForeignKey("employees.id"), nullable=False)  # Nhân viên điểm danh
+    employee_id = Column(Integer, ForeignKey("employees.id"), nullable=False)  
     check_in_time = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))  
     is_late = Column(Boolean, default=False)  
     is_absent = Column(Boolean, default=False)  

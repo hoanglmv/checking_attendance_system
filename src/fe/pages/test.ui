@@ -1,165 +1,60 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1420</width>
-    <height>600</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">background-color: rgb(85, 170, 0);</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <property name="spacing">
-     <number>0</number>
-    </property>
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <item>
-     <widget class="QGroupBox" name="sidebar_gr">
-      <property name="minimumSize">
-       <size>
-        <width>200</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>200</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border: none;
-background-color: rgb(255, 85, 127);</string>
-      </property>
-      <property name="title">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="main_gr">
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 85, 0);</string>
-      </property>
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QGroupBox" name="header_gr">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>77</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>77</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(255, 170, 127);</string>
-         </property>
-         <property name="title">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>60</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>60</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="title">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="stas_time">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>75</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>75</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(36, 38, 28);</string>
-         </property>
-         <property name="title">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="content">
-         <property name="title">
-          <string/>
-         </property>
-         <layout class="QGridLayout" name="gridLayout"/>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-   </layout>
-  </widget>
- </widget>
- <resources/>
- <connections/>
-</ui>
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QListWidget, QPushButton, QFrame
+from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt
+import sys
+
+class EmployeeApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Employee Management")
+        self.setGeometry(100, 100, 800, 500)
+        self.initUI()
+    
+    def initUI(self):
+        main_layout = QHBoxLayout(self)
+        
+        # Sidebar
+        sidebar = QFrame(self)
+        sidebar.setFixedWidth(200)
+        sidebar_layout = QVBoxLayout(sidebar)
+        
+        title = QLabel("Employees")
+        title.setFont(QFont("Arial", 14, QFont.Weight.Bold))
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        self.employee_list = QListWidget()
+        self.employee_list.addItems(["John Doe", "Jane Smith", "Alice Brown", "Bob White"])
+        
+        sidebar_layout.addWidget(title)
+        sidebar_layout.addWidget(self.employee_list)
+        
+        # Details Section
+        details_frame = QFrame(self)
+        details_layout = QVBoxLayout(details_frame)
+        
+        header = QLabel("Employee Details")
+        header.setFont(QFont("Arial", 16, QFont.Weight.Bold))
+        header.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        self.details_label = QLabel("Select an employee to see details.")
+        self.details_label.setFont(QFont("Arial", 12))
+        
+        details_layout.addWidget(header)
+        details_layout.addWidget(self.details_label)
+        
+        # Add widgets to main layout
+        main_layout.addWidget(sidebar)
+        main_layout.addWidget(details_frame)
+        
+        # Connect selection event
+        self.employee_list.currentTextChanged.connect(self.show_details)
+    
+    def show_details(self, name):
+        if name:
+            self.details_label.setText(f"Details of {name}")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = EmployeeApp()
+    window.show()
+    sys.exit(app.exec())
