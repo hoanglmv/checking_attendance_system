@@ -35,7 +35,7 @@ class Ui_informationUI(object):
         
         # Header
         self.EmployeeHeader = EmployeeHeader(parent=self.main)
-##--------------------------------------------------------------------------------------------------------------##
+
         # Thêm Header vào Main Layout
         self.mainLayout.addWidget(self.EmployeeHeader)
 
@@ -101,8 +101,6 @@ class Ui_informationUI(object):
         # Thêm TabWidget vào Main Layout
         self.mainLayout.addWidget(self.tabWidget)
 
-        
-##------------------------------------------------------------------------------------------------------------------##
         # Employee List
         self.employeeList = QListWidget()
         self.employeeList.setStyleSheet("""
@@ -342,14 +340,15 @@ class Ui_informationUI(object):
                 }
             """)
 
-
-
     def displayEmployeeDetails(self, item):
         emp = item.data(QtCore.Qt.ItemDataRole.UserRole)
         self.lineEdits["ID:"].setText(emp['id'])
         self.lineEdits["Họ tên:"].setText(emp['name'])
         self.lineEdits["Chức vụ:"].setText(emp['position'])
         self.lineEdits["Nơi làm việc:"].setText(emp['office'])
+
+    #Tab2
+    
 
 
 if __name__ == "__main__":
