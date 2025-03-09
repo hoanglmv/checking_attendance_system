@@ -11,3 +11,4 @@ json
 pydantic
 jose
 scipy
+pymysql
