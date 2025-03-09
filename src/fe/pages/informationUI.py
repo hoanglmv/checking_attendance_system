@@ -7,8 +7,8 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from fe.components.header import Header
-from fe.components.sidebar import Sidebar
+from fe.components.EmployeeHeader import EmployeeHeader
+from fe.components.EmployeeSidebar import EmployeeSidebar
 
 class Ui_informationUI(object):
     def setupUi(self, informationUI):
@@ -22,9 +22,10 @@ class Ui_informationUI(object):
         self.horizontalLayout.setSpacing(0)
         
         # Sidebar
-        self.sidebar = Sidebar(parent=self.centralwidget)
-        self.sidebar.fil_attendance.setStyleSheet("background-color: #68D477; border-radius: 5px;")
-        self.horizontalLayout.addWidget(self.sidebar)
+        self.EmployeeSidebar = EmployeeSidebar(parent=self.centralwidget)
+        self.EmployeeSidebar.fil_attendance.setStyleSheet("border-radius: 5px;")
+        self.EmployeeSidebar.fil_manage.setStyleSheet("background-color: #68D477; border-radius: 5px;")
+        self.horizontalLayout.addWidget(self.EmployeeSidebar)
         
         # Main Container
         self.main = QGroupBox(parent=self.centralwidget)
@@ -33,10 +34,10 @@ class Ui_informationUI(object):
         self.mainLayout.setSpacing(0)
         
         # Header
-        self.header = Header(parent=self.main)
-##--------------------------------------------------------------------------------------------------------------##
+        self.EmployeeHeader = EmployeeHeader(parent=self.main)
+
         # Thêm Header vào Main Layout
-        self.mainLayout.addWidget(self.header)
+        self.mainLayout.addWidget(self.EmployeeHeader)
 
         # Tạo Tab Widget
         self.tabWidget = QtWidgets.QTabWidget()
@@ -100,8 +101,6 @@ class Ui_informationUI(object):
         # Thêm TabWidget vào Main Layout
         self.mainLayout.addWidget(self.tabWidget)
 
-        
-##------------------------------------------------------------------------------------------------------------------##
         # Employee List
         self.employeeList = QListWidget()
         self.employeeList.setStyleSheet("""
@@ -341,14 +340,15 @@ class Ui_informationUI(object):
                 }
             """)
 
-
-
     def displayEmployeeDetails(self, item):
         emp = item.data(QtCore.Qt.ItemDataRole.UserRole)
         self.lineEdits["ID:"].setText(emp['id'])
         self.lineEdits["Họ tên:"].setText(emp['name'])
         self.lineEdits["Chức vụ:"].setText(emp['position'])
         self.lineEdits["Nơi làm việc:"].setText(emp['office'])
+
+    #Tab2
+    
 
 
 if __name__ == "__main__":
