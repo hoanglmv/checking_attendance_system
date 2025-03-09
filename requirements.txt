@@ -11,5 +11,3 @@ json
 pydantic
 jose
 scipy
-passlib
-"python-jose[cryptography]"
