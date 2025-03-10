@@ -1,6 +1,8 @@
 from PyQt6 import QtWidgets
 from pages.loginUI import Ui_loginUI
 from pages.checkingUI import Ui_checkingUI
+from pages.notificationPopup import NotificationPopup  
+from pages.adminPopup import AdminInfoPopup  
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -27,6 +29,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Kết nối nút nhấn
         self.ui_loginUI.login_button.clicked.connect(self.go_to_checkingUI)
         self.ui_checkingUI.sidebar.btn_logout.clicked.connect(self.go_to_loginUI)
+        self.ui_checkingUI.header.buttons["bell"].clicked.connect(self.show_notification)
+        self.ui_checkingUI.header.btn_admin.clicked.connect(self.show_admin)
 
         # Hiển thị trang đầu tiên
         self.stacked_widget.setCurrentWidget(self.loginUI)
@@ -36,6 +40,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def go_to_checkingUI(self):
         self.stacked_widget.setCurrentWidget(self.checkingUI)
+
+    def show_notification(self):
+        self.notification_popup = NotificationPopup(self)
+        bell_button = self.ui_checkingUI.header.buttons["bell"]
+        self.notification_popup.show_near(bell_button)
+
+    def show_admin(self):
+        self.admin_popup = AdminInfoPopup(self)
+        admin_button = self.ui_checkingUI.header.btn_admin
+        self.admin_popup.show_near(admin_button)
+
 
 if __name__ == "__main__":
     import sys

@@ -82,18 +82,35 @@ class Header(QtWidgets.QGroupBox):
         container = QtWidgets.QWidget(self)
         layout = QtWidgets.QHBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
-        
-        icons = [
-            "src/fe/Image_and_icon/icons8-plus-30.png",
-            "src/fe/Image_and_icon/icons8-search-30.png",
-            "src/fe/Image_and_icon/icons8-bell-40.png"
-        ]
-        
-        for icon in icons:
-            label = QtWidgets.QLabel(self)
-            label.setMinimumSize(QtCore.QSize(40, 37))
-            label.setMaximumSize(QtCore.QSize(40, 37))
-            label.setStyleSheet(f"background-image: url({icon}); background-repeat: no-repeat; background-position: center center;")
-            layout.addWidget(label)
-        
+
+        icons = {
+            "plus": "src/fe/Image_and_icon/icons8-plus-30.png",
+            "search": "src/fe/Image_and_icon/icons8-search-30.png",
+            "bell": "src/fe/Image_and_icon/icons8-bell-40.png"
+        }
+
+        self.buttons = {} 
+
+        for key, icon in icons.items():
+            btn = QtWidgets.QPushButton(self)
+            btn.setMinimumSize(QtCore.QSize(40, 37))
+            btn.setMaximumSize(QtCore.QSize(40, 37))
+            btn.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: transparent;
+                    background-image: url({icon});
+                    background-repeat: no-repeat;
+                    background-position: center center;
+                    border: none;
+                }}
+                QPushButton:hover {{
+                    background-color: rgba(255, 255, 255, 0.1);
+                }}
+            """)
+
+            self.buttons[key] = btn
+
+            layout.addWidget(btn)
+
         return container
+
