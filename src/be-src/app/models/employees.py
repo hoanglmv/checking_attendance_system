@@ -5,7 +5,6 @@ from app.models.vector_embedding import EmployeeEmbedding
 
 class Employee(Base):
     __tablename__ = "employees"
-
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     employee_code = Column(String(255), unique=True, index=True, nullable=False)  
     full_name = Column(String(255), nullable=False)
