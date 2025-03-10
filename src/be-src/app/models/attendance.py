@@ -1,16 +1,17 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey, Boolean, func
 from sqlalchemy.orm import relationship
 from app.core.database import Base
-import datetime
 
 class Attendance(Base):
     __tablename__ = "attendances"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    employee_id = Column(Integer, ForeignKey("employees.id"), nullable=False)  
-    check_in_time = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))  
-    is_late = Column(Boolean, default=False)  
-    is_absent = Column(Boolean, default=False)  
-    is_permission_absent = Column(Boolean, default=False)  
+    employee_code = Column(String(255), ForeignKey("employees.employee_code"), nullable=False)  # Sửa lại khóa ngoại
+    date = Column(Date, default=func.current_date())  # Ngày điểm danh
+    check_in_time = Column(DateTime, default=None)  # Giờ check-in
+    check_out_time = Column(DateTime, default=None)  # Giờ check-out
+    is_late = Column(Boolean, default=False)  # Đi muộn
+    is_absent = Column(Boolean, default=False)  # Vắng mặt
+    is_permission_absent = Column(Boolean, default=False)  # Xin phép nghỉ
 
     employee = relationship("Employee", back_populates="attendances")
