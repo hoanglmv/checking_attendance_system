@@ -4,7 +4,7 @@ import pymysql
 
 host = "localhost"
 user = "root"
-password = "kien123456"
+password = "hoanglmv"
 database = "mlattendance"
 
 try:
