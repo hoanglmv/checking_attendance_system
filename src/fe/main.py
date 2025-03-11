@@ -3,6 +3,7 @@ from pages.loginUI import Ui_loginUI
 from pages.checkingUI import Ui_checkingUI
 from pages.notificationPopup import NotificationPopup  
 from pages.adminPopup import AdminInfoPopup  
+from pages.informationUI import Ui_informationUI
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -21,16 +22,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui_loginUI.setupUi(self.loginUI)
         self.stacked_widget.addWidget(self.loginUI)
 
+        # Tạo trang Checking
         self.checkingUI = QtWidgets.QMainWindow()
         self.ui_checkingUI = Ui_checkingUI()
         self.ui_checkingUI.setupUi(self.checkingUI)
         self.stacked_widget.addWidget(self.checkingUI)
+
+        # Thêm trang Information
+        self.informationUI = QtWidgets.QMainWindow()
+        self.ui_informationUI = Ui_informationUI()
+        self.ui_informationUI.setupUi(self.informationUI)
+        self.stacked_widget.addWidget(self.informationUI) 
 
         # Kết nối nút nhấn
         self.ui_loginUI.login_button.clicked.connect(self.go_to_checkingUI)
         self.ui_checkingUI.sidebar.btn_logout.clicked.connect(self.go_to_loginUI)
         self.ui_checkingUI.header.buttons["bell"].clicked.connect(self.show_notification)
         self.ui_checkingUI.header.btn_admin.clicked.connect(self.show_admin)
+        self.ui_checkingUI.sidebar.btn_manage.clicked.connect(self.go_to_informationUI)
 
         # Hiển thị trang đầu tiên
         self.stacked_widget.setCurrentWidget(self.loginUI)
@@ -40,6 +49,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def go_to_checkingUI(self):
         self.stacked_widget.setCurrentWidget(self.checkingUI)
+
+    def go_to_informationUI(self):
+        self.stacked_widget.setCurrentWidget(self.informationUI)
 
     def show_notification(self):
         self.notification_popup = NotificationPopup(self)

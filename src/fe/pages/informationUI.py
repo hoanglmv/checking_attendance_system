@@ -202,9 +202,9 @@ class Ui_informationUI(object):
             label = QLabel(label_text)
             label.setStyleSheet("""
                 color: white;
-                font-size: 18px;  /* Tăng kích thước chữ */
-                font-weight: bold;  /* Làm chữ đậm */
-                letter-spacing: 1px;  /* Tạo khoảng cách giữa các chữ */
+                font-size: 18px;
+                font-weight: bold;
+                letter-spacing: 1px;
             """)
 
             line_edit = QLineEdit()
