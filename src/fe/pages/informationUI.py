@@ -2,13 +2,14 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGroupBox, QListWidget, QLineEdit, QListWidgetItem, QGridLayout
+
 import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from fe.components.EmployeeHeader import EmployeeHeader
-from fe.components.EmployeeSidebar import EmployeeSidebar
+from fe.components.header import Header
+from fe.components.sidebar import Sidebar
 
 class Ui_informationUI(object):
     def setupUi(self, informationUI):
@@ -22,10 +23,10 @@ class Ui_informationUI(object):
         self.horizontalLayout.setSpacing(0)
         
         # Sidebar
-        self.EmployeeSidebar = EmployeeSidebar(parent=self.centralwidget)
-        self.EmployeeSidebar.fil_attendance.setStyleSheet("border-radius: 5px;")
-        self.EmployeeSidebar.fil_manage.setStyleSheet("background-color: #68D477; border-radius: 5px;")
-        self.horizontalLayout.addWidget(self.EmployeeSidebar)
+        self.sidebar = Sidebar(parent=self.centralwidget)
+        self.sidebar.fil_attendance.setStyleSheet("border-radius: 5px;")
+        self.sidebar.fil_manage.setStyleSheet("background-color: #68D477; border-radius: 5px;")
+        self.horizontalLayout.addWidget(self.sidebar)
         
         # Main Container
         self.main = QGroupBox(parent=self.centralwidget)
@@ -34,10 +35,10 @@ class Ui_informationUI(object):
         self.mainLayout.setSpacing(0)
         
         # Header
-        self.EmployeeHeader = EmployeeHeader(parent=self.main)
+        self.header = Header(parent=self.main)
 
         # Thêm Header vào Main Layout
-        self.mainLayout.addWidget(self.EmployeeHeader)
+        self.mainLayout.addWidget(self.header)
 
         # Tạo Tab Widget
         self.tabWidget = QtWidgets.QTabWidget()
