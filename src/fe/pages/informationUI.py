@@ -85,23 +85,16 @@ class Ui_informationUI(object):
         # Tạo Layout cho nội dung chính trước khi thêm vào tab
         self.contentLayout = QHBoxLayout()
         self.contentLayout.setSpacing(10)
-
-        # Layout cho Tab 1
-        self.tab1Layout = QVBoxLayout(self.tab1)
-        self.tab1Layout.addLayout(self.contentLayout)  # Giữ nguyên nội dung cũ
-
-        # Nội dung cho Tab 2 (tùy chỉnh)
-        self.tab2Layout = QVBoxLayout(self.tab2)
-        self.tab2Layout.addWidget(QLabel("Nội dung khác ở đây", alignment=Qt.AlignmentFlag.AlignCenter))
-
-        # Thêm Tab vào TabWidget
-        self.tabWidget.addTab(self.tab1, "Thông tin nhân viên")
-        self.tabWidget.addTab(self.tab2, "Thêm nhân viên")
-
+        
         # Thêm TabWidget vào Main Layout
         self.mainLayout.addWidget(self.tabWidget)
+            
+        # Layout cho Tab 1
+        self.tab1Layout = QVBoxLayout(self.tab1)
+        self.tab1Layout.addLayout(self.contentLayout)
+        self.tabWidget.addTab(self.tab1, "Thông tin nhân viên")
 
-        # Employee List
+       # Employee List
         self.employeeList = QListWidget()
         self.employeeList.setStyleSheet("""
             QListWidget {
@@ -274,6 +267,148 @@ class Ui_informationUI(object):
         # Kết nối sự kiện sau khi đã tạo editButton
         self.editButton.clicked.connect(self.toggleEditMode)
 
+##-------------------------------------------------------------------------------##
+        # Tab 2 - Thêm Nhân Viên
+        self.tab2 = QWidget()
+        self.tabWidget.addTab(self.tab2, "Thêm nhân viên")
+
+        # Layout ngang chính cho tab2
+        self.tab2Layout = QHBoxLayout(self.tab2)
+        self.tab2Layout.setContentsMargins(20, 10, 20, 20)
+        self.tab2Layout.setSpacing(40)
+ 
+        self.leftLayout = QVBoxLayout()
+        self.leftLayout.setSpacing(20)
+        self.leftLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.leftLayout.setContentsMargins(50, 0, 0, 0)
+        
+
+        # Ảnh camera (giả lập ảnh tròn, viền trắng)
+        self.cameraLabel = QLabel()
+        self.cameraLabel.setFixedSize(350, 450)
+        self.cameraLabel.setStyleSheet("border-radius: 175px; border: 2px solid white;")
+        self.cameraLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # (Tuỳ chọn) Nếu muốn hiển thị ảnh có sẵn:
+        # pixmap = QPixmap("path/to/your_image.jpg").scaled(
+        #     self.cameraLabel.width(),
+        #     self.cameraLabel.height(),
+        #     Qt.AspectRatioMode.KeepAspectRatio,
+        #     Qt.TransformationMode.SmoothTransformation
+        # )
+        # self.cameraLabel.setPixmap(pixmap)
+
+        self.leftLayout.addWidget(self.cameraLabel)
+
+        # Label hướng dẫn
+        self.instructionLabel = QLabel("Vui lòng căn chỉnh khuôn mặt của bạn \nvào giữa và nhìn thẳng vào khung hình  ")
+        self.instructionLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.instructionLabel.setStyleSheet("color: white; font-size: 20px; font-weight: bold;")
+        self.leftLayout.addWidget(self.instructionLabel)
+
+        # Thêm layout trái vào tab2Layout
+        self.tab2Layout.addLayout(self.leftLayout)
+
+        # Tạo một QGroupBox để chứa bố cục chi tiết
+        self.addEmployeeDetail = QGroupBox()
+        self.addEmployeeDetail.setStyleSheet("""
+            QGroupBox {
+                background-color: #0B121F;
+                border: 1px solid #68D477;
+                padding: 10px;
+                border-radius: 10px;
+                margin-right: 10px;
+            }
+        """)
+
+        # Layout dọc chính bên trong groupBox
+        self.addDetailLayout = QVBoxLayout(self.addEmployeeDetail)
+
+        self.topLayout2 = QHBoxLayout()
+        self.topLayout2.addSpacing(100)
+
+        # Ảnh bên phải
+        self.photoLabel2 = QLabel()
+        self.photoLabel2.setFixedSize(180, 216)
+        self.photoLabel2.setStyleSheet("border-radius: 8px; border: 2px solid white;")
+        self.photoLabel2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Thống kê điểm danh
+        self.statsLayout2 = QVBoxLayout()
+        self.attendanceStats2 = QLabel("Chuyên cần: ??\nĐến muộn: ??\nVề sớm: ??")
+        self.attendanceStats2.setStyleSheet("color: white; font-size: 18px; border: none;")
+        self.attendanceStats2.setFixedWidth(200)
+        self.attendanceStats2.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        self.statsLayout2.addStretch()
+        self.statsLayout2.addWidget(self.attendanceStats2, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.statsLayout2.addStretch()
+
+        # Thêm 2 khối vào topLayout2
+        self.topLayout2.addWidget(self.photoLabel2)
+        self.topLayout2.addSpacing(100)
+        self.topLayout2.addLayout(self.statsLayout2)
+
+        # Đưa topLayout2 vào layout dọc
+        self.addDetailLayout.addLayout(self.topLayout2)
+
+        self.infoGrid2 = QGridLayout()
+        labels_tab2 = ["ID:", "Họ tên:", "Chức vụ:", "Nơi làm việc:", "Email:", "Số điện thoại:"]
+        self.newLineEdits = {}
+
+        for i, label_text in enumerate(labels_tab2):
+            label = QLabel(label_text)
+            label.setStyleSheet("""
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+                letter-spacing: 1px;
+            """)
+            line_edit = QLineEdit()
+            line_edit.setStyleSheet("""
+                background-color: white;
+                color: black;
+                font-size: 16px;
+                padding: 5px;
+                border-radius: 5px;
+            """)
+            line_edit.setReadOnly(False)  # Mở để nhập thông tin mới
+
+            self.infoGrid2.addWidget(label, i, 0)
+            self.infoGrid2.addWidget(line_edit, i, 1)
+            self.newLineEdits[label_text] = line_edit
+
+        self.addDetailLayout.addLayout(self.infoGrid2)
+
+        self.buttonLayout2 = QHBoxLayout()
+        self.buttonLayout2.addStretch()
+
+        self.saveButton2 = QPushButton("Lưu thông tin")
+        self.saveButton2.setStyleSheet("""
+            QPushButton {
+                background-color: #68D477;
+                color: black;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+            QPushButton:hover {
+                background-color: #5AC469;
+            }
+        """)
+        self.buttonLayout2.addWidget(self.saveButton2)
+
+        self.buttonLayout2.addStretch()
+        self.addDetailLayout.addLayout(self.buttonLayout2)
+
+        # Tạo layout dọc bên phải để đặt groupBox
+        self.rightLayout = QVBoxLayout()
+        self.rightLayout.addWidget(self.addEmployeeDetail)
+
+        # Thêm layout bên phải vào tab2Layout
+        self.tab2Layout.addLayout(self.rightLayout)
+
+##-------------------------------------------------------------------------------##
     def toggleEditMode(self):
         self.isEditing = not self.isEditing  # Đảo trạng thái chỉnh sửa
 
@@ -346,9 +481,6 @@ class Ui_informationUI(object):
         self.lineEdits["Họ tên:"].setText(emp['name'])
         self.lineEdits["Chức vụ:"].setText(emp['position'])
         self.lineEdits["Nơi làm việc:"].setText(emp['office'])
-
-    #Tab2
-    
 
 
 if __name__ == "__main__":
