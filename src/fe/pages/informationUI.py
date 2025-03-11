@@ -1,13 +1,12 @@
+import json
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGroupBox, QListWidget, QLineEdit, QListWidgetItem, QGridLayout
-
 import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-
 from fe.components.header import Header
 from fe.components.sidebar import Sidebar
 
@@ -36,8 +35,6 @@ class Ui_informationUI(object):
         
         # Header
         self.header = Header(parent=self.main)
-
-        # Thêm Header vào Main Layout
         self.mainLayout.addWidget(self.header)
 
         # Tạo Tab Widget
@@ -48,7 +45,6 @@ class Ui_informationUI(object):
                 background: #0B121F;
                 border-radius: 10px;
             }
-
             QTabBar::tab {
                 background: #1E2A38;
                 color: white;
@@ -59,43 +55,32 @@ class Ui_informationUI(object):
                 margin: 4px;
                 transition: all 0.3s ease-in-out;
             }
-
             QTabBar::tab:selected {
                 background: #68D477;
                 color: black;
                 border-bottom: 3px solid #4CAF50;
                 font-size: 15px;
             }
-
             QTabBar::tab:hover {
                 background: #2E3A4E;
                 color: #A4F9C8;
             }
-
             QTabBar::tab:!selected {
                 background: #11203B;
                 color: #C0C0C0;
             }
         """)
-
-
-        # Tạo các Tab
-        self.tab1 = QWidget()  # Tab hiển thị danh sách nhân viên
-        self.tab2 = QWidget()  # Tab khác (bạn có thể thay đổi nội dung)
-
-        # Tạo Layout cho nội dung chính trước khi thêm vào tab
+        self.mainLayout.addWidget(self.tabWidget)
+        
+        # Tab 1: Thông tin nhân viên
+        self.tab1 = QWidget()
+        self.tab1Layout = QVBoxLayout(self.tab1)
         self.contentLayout = QHBoxLayout()
         self.contentLayout.setSpacing(10)
-        
-        # Thêm TabWidget vào Main Layout
-        self.mainLayout.addWidget(self.tabWidget)
-            
-        # Layout cho Tab 1
-        self.tab1Layout = QVBoxLayout(self.tab1)
         self.tab1Layout.addLayout(self.contentLayout)
         self.tabWidget.addTab(self.tab1, "Thông tin nhân viên")
-
-       # Employee List
+        
+        # Employee List
         self.employeeList = QListWidget()
         self.employeeList.setStyleSheet("""
             QListWidget {
@@ -117,88 +102,39 @@ class Ui_informationUI(object):
             }
         """)
         self.employeeList.setFixedWidth(450)
-        
-        # Example Employees
-        self.employees = [
-            {"id": "22022210", "name": "Lê Mai Việt Hoàng", "position": "Leader", "office": "vô gia cư"},
-            {"id": "", "name": "", "position": "", "office": ""},
-            {"id": "", "name": "", "position": "", "office": ""}
-        ]
-
-        for emp in self.employees:
-            item = QListWidgetItem()
-            itemWidget = QWidget()
-            layout = QHBoxLayout(itemWidget)
-            layout.setContentsMargins(10, 10, 10, 10)
-            layout.setSpacing(50)
-            layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-
-            photoLabel = QLabel()
-            photoLabel.setFixedSize(80,80)
-            photoLabel.setStyleSheet("border-radius: 30px; border: 2px solid white;")
-
-
-            info = QLabel(f"ID: {emp['id']}\nHọ tên: {emp['name']}\nChức vụ: {emp['position']}\nNơi làm việc: {emp['office']}")
-            info.setStyleSheet("color: white; font-size: 17px;")
-            
-            layout.addWidget(photoLabel)
-            layout.addWidget(info)
-            itemWidget.setLayout(layout)
-            
-            item.setSizeHint(itemWidget.sizeHint() + QtCore.QSize(50, 30))
-            self.employeeList.addItem(item)
-            self.employeeList.setItemWidget(item, itemWidget)
-            item.setData(QtCore.Qt.ItemDataRole.UserRole, emp)
-        
         self.employeeList.itemClicked.connect(self.displayEmployeeDetails)
         self.contentLayout.addWidget(self.employeeList)
-
-         # Employee Detail
+        
+        # Employee Detail (phần hiển thị thông tin chi tiết nhân viên)
         self.employeeDetail = QGroupBox()
         self.employeeDetail.setStyleSheet("""
-        background-color: #0B121F;
-        border: 1px solid #68D477;
-        padding: 10px;
-        border-radius: 10px;
-        margin-right: 10px;
-    """)
-
+            background-color: #0B121F;
+            border: 1px solid #68D477;
+            padding: 10px;
+            border-radius: 10px;
+            margin-right: 10px;
+        """)
         self.detailLayout = QVBoxLayout(self.employeeDetail)
-
-        # Tạo layout ngang chứa thống kê và ảnh
         self.topLayout = QHBoxLayout()
-
-        # Tạo layout ngang chứa ảnh và thống kê
-        self.topLayout = QHBoxLayout()
-        self.topLayout.addSpacing(100)  
-
-        # Ảnh nhân viên
+        self.topLayout.addSpacing(100)
         self.photoLabel = QLabel()
         self.photoLabel.setFixedSize(200, 240)
         self.photoLabel.setStyleSheet("border-radius: 8px; border: 2px solid white;")
         self.photoLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Thống kê điểm danh
-        self.statsLayout = QVBoxLayout()  # Xếp chữ theo chiều dọc
+        self.statsLayout = QVBoxLayout()
         self.attendanceStats = QLabel("Chuyên cần: ??  \nĐến muộn: ??  \nVề sớm: ??")
         self.attendanceStats.setStyleSheet("color: white; font-size: 18px; border: none;")
-        self.attendanceStats.setFixedWidth(200)  # Điều chỉnh kích thước phù hợp
+        self.attendanceStats.setFixedWidth(200)
         self.attendanceStats.setAlignment(Qt.AlignmentFlag.AlignLeft)
-
-        self.statsLayout.addStretch()  # Đẩy nội dung xuống giữa
-        self.statsLayout.addWidget(self.attendanceStats, alignment=Qt.AlignmentFlag.AlignCenter)  # 🌟 Căn giữa
-        self.statsLayout.addStretch() 
-
-        # Thêm ảnh trước, thống kê sau (thống kê sẽ nằm bên phải ảnh)
-        self.topLayout.addWidget(self.photoLabel) 
-        self.topLayout.addSpacing(100) 
-        self.topLayout.addLayout(self.statsLayout)  
-
-        # Thông tin nhân viên
+        self.statsLayout.addStretch()
+        self.statsLayout.addWidget(self.attendanceStats, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.statsLayout.addStretch()
+        self.topLayout.addWidget(self.photoLabel)
+        self.topLayout.addSpacing(100)
+        self.topLayout.addLayout(self.statsLayout)
         self.infoGrid = QGridLayout()
         labels = ["ID:", "Họ tên:", "Chức vụ:", "Nơi làm việc:", "Email:", "Số điện thoại:"]
         self.lineEdits = {}
-
         for i, label_text in enumerate(labels):
             label = QLabel(label_text)
             label.setStyleSheet("""
@@ -207,7 +143,6 @@ class Ui_informationUI(object):
                 font-weight: bold;
                 letter-spacing: 1px;
             """)
-
             line_edit = QLineEdit()
             line_edit.setStyleSheet("""
                 background-color: white;
@@ -217,18 +152,12 @@ class Ui_informationUI(object):
                 border-radius: 5px;
             """)
             line_edit.setReadOnly(True)
-
             self.infoGrid.addWidget(label, i, 0)
             self.infoGrid.addWidget(line_edit, i, 1)
-            self.lineEdits[label_text] = line_edit  # Lưu QLineEdit vào từ điển
-
-        # Thêm vào layout chính
-        self.detailLayout.addLayout(self.topLayout)  # Đặt ảnh + thống kê lên đầu
-        self.detailLayout.addLayout(self.infoGrid)  # Đặt thông tin nhân viên bên dưới
-
+            self.lineEdits[label_text] = line_edit
+        self.detailLayout.addLayout(self.topLayout)
+        self.detailLayout.addLayout(self.infoGrid)
         self.isEditing = False
-
-        # Button Layout
         self.buttonLayout = QHBoxLayout()
         self.deleteButton = QPushButton("Xóa nhân viên")
         self.deleteButton.setStyleSheet("""
@@ -242,7 +171,6 @@ class Ui_informationUI(object):
                 background-color: darkred;
             }
         """)
-        
         self.editButton = QPushButton("Thay đổi thông tin")
         self.editButton.setStyleSheet("""
             QPushButton {
@@ -255,62 +183,34 @@ class Ui_informationUI(object):
                 background-color: #5AC469;
             }
         """)
-        
         self.buttonLayout.addWidget(self.deleteButton)
         self.buttonLayout.addWidget(self.editButton)
         self.detailLayout.addLayout(self.buttonLayout)
-        
         self.contentLayout.addWidget(self.employeeDetail)
-        # self.mainLayout.addLayout(self.contentLayout)
         self.horizontalLayout.addWidget(self.main)
         informationUI.setCentralWidget(self.centralwidget)
-        
-        # Kết nối sự kiện sau khi đã tạo editButton
         self.editButton.clicked.connect(self.toggleEditMode)
-
-##-------------------------------------------------------------------------------##
-        # Tab 2 - Thêm Nhân Viên
+        
+        # Tab 2: Thêm nhân viên (tương tự như code gốc)
         self.tab2 = QWidget()
         self.tabWidget.addTab(self.tab2, "Thêm nhân viên")
-
-        # Layout ngang chính cho tab2
         self.tab2Layout = QHBoxLayout(self.tab2)
         self.tab2Layout.setContentsMargins(20, 10, 20, 20)
         self.tab2Layout.setSpacing(40)
- 
         self.leftLayout = QVBoxLayout()
         self.leftLayout.setSpacing(20)
         self.leftLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.leftLayout.setContentsMargins(50, 0, 0, 0)
-        
-
-        # Ảnh camera (giả lập ảnh tròn, viền trắng)
         self.cameraLabel = QLabel()
         self.cameraLabel.setFixedSize(350, 450)
         self.cameraLabel.setStyleSheet("border-radius: 175px; border: 2px solid white;")
         self.cameraLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # (Tuỳ chọn) Nếu muốn hiển thị ảnh có sẵn:
-        # pixmap = QPixmap("path/to/your_image.jpg").scaled(
-        #     self.cameraLabel.width(),
-        #     self.cameraLabel.height(),
-        #     Qt.AspectRatioMode.KeepAspectRatio,
-        #     Qt.TransformationMode.SmoothTransformation
-        # )
-        # self.cameraLabel.setPixmap(pixmap)
-
         self.leftLayout.addWidget(self.cameraLabel)
-
-        # Label hướng dẫn
         self.instructionLabel = QLabel("Vui lòng căn chỉnh khuôn mặt của bạn \nvào giữa và nhìn thẳng vào khung hình  ")
         self.instructionLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.instructionLabel.setStyleSheet("color: white; font-size: 20px; font-weight: bold;")
         self.leftLayout.addWidget(self.instructionLabel)
-
-        # Thêm layout trái vào tab2Layout
         self.tab2Layout.addLayout(self.leftLayout)
-
-        # Tạo một QGroupBox để chứa bố cục chi tiết
         self.addEmployeeDetail = QGroupBox()
         self.addEmployeeDetail.setStyleSheet("""
             QGroupBox {
@@ -321,42 +221,28 @@ class Ui_informationUI(object):
                 margin-right: 10px;
             }
         """)
-
-        # Layout dọc chính bên trong groupBox
         self.addDetailLayout = QVBoxLayout(self.addEmployeeDetail)
-
         self.topLayout2 = QHBoxLayout()
         self.topLayout2.addSpacing(100)
-
-        # Ảnh bên phải
         self.photoLabel2 = QLabel()
         self.photoLabel2.setFixedSize(180, 216)
         self.photoLabel2.setStyleSheet("border-radius: 8px; border: 2px solid white;")
         self.photoLabel2.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Thống kê điểm danh
         self.statsLayout2 = QVBoxLayout()
         self.attendanceStats2 = QLabel("Chuyên cần: ??\nĐến muộn: ??\nVề sớm: ??")
         self.attendanceStats2.setStyleSheet("color: white; font-size: 18px; border: none;")
         self.attendanceStats2.setFixedWidth(200)
         self.attendanceStats2.setAlignment(Qt.AlignmentFlag.AlignLeft)
-
         self.statsLayout2.addStretch()
         self.statsLayout2.addWidget(self.attendanceStats2, alignment=Qt.AlignmentFlag.AlignCenter)
         self.statsLayout2.addStretch()
-
-        # Thêm 2 khối vào topLayout2
         self.topLayout2.addWidget(self.photoLabel2)
         self.topLayout2.addSpacing(100)
         self.topLayout2.addLayout(self.statsLayout2)
-
-        # Đưa topLayout2 vào layout dọc
         self.addDetailLayout.addLayout(self.topLayout2)
-
         self.infoGrid2 = QGridLayout()
         labels_tab2 = ["ID:", "Họ tên:", "Chức vụ:", "Nơi làm việc:", "Email:", "Số điện thoại:"]
         self.newLineEdits = {}
-
         for i, label_text in enumerate(labels_tab2):
             label = QLabel(label_text)
             label.setStyleSheet("""
@@ -373,17 +259,13 @@ class Ui_informationUI(object):
                 padding: 5px;
                 border-radius: 5px;
             """)
-            line_edit.setReadOnly(False)  # Mở để nhập thông tin mới
-
+            line_edit.setReadOnly(False)
             self.infoGrid2.addWidget(label, i, 0)
             self.infoGrid2.addWidget(line_edit, i, 1)
             self.newLineEdits[label_text] = line_edit
-
         self.addDetailLayout.addLayout(self.infoGrid2)
-
         self.buttonLayout2 = QHBoxLayout()
         self.buttonLayout2.addStretch()
-
         self.saveButton2 = QPushButton("Lưu thông tin")
         self.saveButton2.setStyleSheet("""
             QPushButton {
@@ -398,23 +280,121 @@ class Ui_informationUI(object):
             }
         """)
         self.buttonLayout2.addWidget(self.saveButton2)
-
         self.buttonLayout2.addStretch()
         self.addDetailLayout.addLayout(self.buttonLayout2)
-
-        # Tạo layout dọc bên phải để đặt groupBox
         self.rightLayout = QVBoxLayout()
         self.rightLayout.addWidget(self.addEmployeeDetail)
-
-        # Thêm layout bên phải vào tab2Layout
         self.tab2Layout.addLayout(self.rightLayout)
 
-##-------------------------------------------------------------------------------##
+        # Sau khi xây dựng giao diện, thay vì dùng dữ liệu cứng, load dữ liệu từ file:
+        self.employees = self.load_employees_from_file("employees.json")
+        self.populate_employee_list()
+
+        # Kết nối sự kiện nút lưu ở tab2 (nếu bạn muốn thêm nhân viên mới từ tab này)
+        self.saveButton2.clicked.connect(self.add_new_employee)
+
+    # ------------------- Các hàm tổng quát -------------------# ------------------- Các hàm tổng quát -------------------
+
+    def load_employees_from_file(self, file_path):
+        """
+        Load dữ liệu nhân viên từ file JSON.
+        Cấu trúc file JSON mẫu:
+        {
+            "employees": [
+                {"id": "22022210", "name": "Lê Mai Việt Hoàng", "position": "Leader", "office": "vô gia cư"},
+                {"id": "22022211", "name": "Nguyễn Văn A", "position": "Staff", "office": "Hà Nội"},
+                ...
+            ]
+        }
+        """
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return data.get("employees", [])
+        except Exception as e:
+            print("Lỗi khi load dữ liệu nhân viên:", e)
+            return []
+
+    def populate_employee_list(self):
+        """Xóa danh sách cũ và thêm lại các mục nhân viên từ self.employees."""
+        self.employeeList.clear()
+        for emp in self.employees:
+            self.add_employee_to_list(emp)
+
+    def add_employee_to_list(self, emp):
+        """
+        Tạo widget cho một nhân viên và thêm vào QListWidget.
+        Dữ liệu emp là dictionary chứa các thông tin: id, name, position, office.
+        """
+        item = QListWidgetItem()
+        itemWidget = QWidget()
+        layout = QHBoxLayout(itemWidget)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(50)
+        layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        
+        photoLabel = QLabel()
+        photoLabel.setFixedSize(80, 80)
+        photoLabel.setStyleSheet("border-radius: 30px; border: 2px solid white;")
+        
+        info_text = (
+            f"ID: {emp.get('id', '')}\n"
+            f"Họ tên: {emp.get('name', '')}\n"
+            f"Chức vụ: {emp.get('position', '')}\n"
+            f"Nơi làm việc: {emp.get('office', '')}"
+        )
+        info = QLabel(info_text)
+        info.setStyleSheet("color: white; font-size: 17px;")
+        
+        layout.addWidget(photoLabel)
+        layout.addWidget(info)
+        itemWidget.setLayout(layout)
+        
+        item.setSizeHint(itemWidget.sizeHint() + QtCore.QSize(50, 30))
+        self.employeeList.addItem(item)
+        self.employeeList.setItemWidget(item, itemWidget)
+        item.setData(QtCore.Qt.ItemDataRole.UserRole, emp)
+
+    def add_new_employee(self):
+        new_emp = {
+            "id": self.newLineEdits["ID:"].text(),
+            "name": self.newLineEdits["Họ tên:"].text(),
+            "position": self.newLineEdits["Chức vụ:"].text(),
+            "office": self.newLineEdits["Nơi làm việc:"].text(),
+            "email": self.newLineEdits["Email:"].text(),
+            "phone": self.newLineEdits["Số điện thoại:"].text()
+        }
+
+        # Kiểm tra cơ bản
+        if not new_emp["id"] or not new_emp["name"]:
+            print("Vui lòng nhập đầy đủ ID và Họ tên!")
+            return
+
+        # Cập nhật employeeDetail
+        self.lineEdits["ID:"].setText(new_emp["id"])
+        self.lineEdits["Họ tên:"].setText(new_emp["name"])
+        self.lineEdits["Chức vụ:"].setText(new_emp["position"])
+        self.lineEdits["Nơi làm việc:"].setText(new_emp["office"])
+        self.lineEdits["Email:"].setText(new_emp["email"])
+        self.lineEdits["Số điện thoại:"].setText(new_emp["phone"])
+
+        # Chuyển tab về "Thông tin nhân viên" (index = 0)
+        self.tabWidget.setCurrentIndex(0)
+
+        # Thêm vào danh sách chung
+        self.employees.append(new_emp)
+        self.add_employee_to_list(new_emp)
+
+        # Xóa dữ liệu ở tab "Thêm nhân viên" sau khi lưu
+        for line_edit in self.newLineEdits.values():
+            line_edit.clear()
+
+
     def toggleEditMode(self):
         self.isEditing = not self.isEditing  # Đảo trạng thái chỉnh sửa
 
         for key in ["ID:", "Họ tên:", "Chức vụ:", "Nơi làm việc:", "Email:", "Số điện thoại:"]:
-            self.lineEdits[key].setReadOnly(not self.isEditing)  # Cho phép chỉnh sửa nếu đang ở chế độ chỉnh sửa
+            self.lineEdits[key].setReadOnly(not self.isEditing)
 
         if self.isEditing:
             self.editButton.setText("Lưu thay đổi")
@@ -430,7 +410,7 @@ class Ui_informationUI(object):
                 }
             """)
         else:
-            # Lưu dữ liệu vào danh sách nhân viên
+            # Khi lưu thay đổi
             selected_item = self.employeeList.currentItem()
             if selected_item:
                 emp = selected_item.data(QtCore.Qt.ItemDataRole.UserRole)
@@ -438,15 +418,21 @@ class Ui_informationUI(object):
                 emp["name"] = self.lineEdits["Họ tên:"].text()
                 emp["position"] = self.lineEdits["Chức vụ:"].text()
                 emp["office"] = self.lineEdits["Nơi làm việc:"].text()
+                emp["email"] = self.lineEdits["Email:"].text()
+                emp["phone"] = self.lineEdits["Số điện thoại:"].text()
 
-                # KHÔNG CẬP NHẬT EMAIL & SĐT vào danh sách
-                new_text = f"ID: {emp['id']}\nHọ tên: {emp['name']}\nChức vụ: {emp['position']}\nNơi làm việc: {emp['office']}"
-                
+                new_text = (
+                    f"ID: {emp['id']}\n"
+                    f"Họ tên: {emp['name']}\n"
+                    f"Chức vụ: {emp['position']}\n"
+                    f"Nơi làm việc: {emp['office']}"
+                )
+
                 itemWidget = QWidget()
                 layout = QHBoxLayout(itemWidget)
                 layout.setContentsMargins(10, 10, 10, 10)
                 layout.setSpacing(50)
-                layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
                 photoLabel = QLabel()
                 photoLabel.setFixedSize(80, 80)
@@ -482,6 +468,8 @@ class Ui_informationUI(object):
         self.lineEdits["Họ tên:"].setText(emp['name'])
         self.lineEdits["Chức vụ:"].setText(emp['position'])
         self.lineEdits["Nơi làm việc:"].setText(emp['office'])
+        self.lineEdits["Email:"].setText(emp.get('email', ''))
+        self.lineEdits["Số điện thoại:"].setText(emp.get('phone', ''))
 
 
 if __name__ == "__main__":
