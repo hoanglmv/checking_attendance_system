@@ -5,7 +5,6 @@ from pages.checkingUI_2 import Ui_checkingUI_2
 from pages.informationUI import Ui_informationUI
 from pages.notificationPopup import NotificationPopup  
 from pages.adminPopup import AdminInfoPopup  
-from pages.informationUI import Ui_informationUI
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -24,7 +23,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui_loginUI.setupUi(self.loginUI)
         self.stacked_widget.addWidget(self.loginUI)
 
-        # Tạo trang Checking
         self.checkingUI = QtWidgets.QMainWindow()
         self.ui_checkingUI = Ui_checkingUI()
         self.ui_checkingUI.setupUi(self.checkingUI)
@@ -68,6 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.ui_informationUI.header.buttons["bell"].clicked.connect(self.show_notification)
         self.ui_informationUI.header.btn_admin.clicked.connect(self.show_admin)
+        
 
         # Hiển thị trang đầu tiên
         self.stacked_widget.setCurrentWidget(self.loginUI)
