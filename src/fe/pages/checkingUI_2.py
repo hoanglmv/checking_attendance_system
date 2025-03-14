@@ -1,5 +1,5 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtWidgets import QWidget, QHeaderView, QAbstractItemView, QTableWidgetItem, QHBoxLayout, QCheckBox
+from PyQt6.QtWidgets import QWidget, QHeaderView, QAbstractItemView, QTableWidgetItem, QHBoxLayout, QCheckBox, QListWidget, QListWidgetItem, QLabel
 from PyQt6.QtGui import QIcon, QTextCharFormat, QBrush, QPen, QColor
 from PyQt6.QtCore import QDate, Qt
 
@@ -28,7 +28,7 @@ class Ui_checkingUI_2(object):
         self.sidebar = Sidebar(parent=self.centralwidget)
         self.sidebar.fil_attendance.setStyleSheet("background-color: #68D477; \n border-radius: 5px;")
         self.horizontalLayout.addWidget(self.sidebar)       
-        
+       
         self.main = QtWidgets.QGroupBox(parent=self.centralwidget)
         self.main.setObjectName("main")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.main)
@@ -53,17 +53,14 @@ class Ui_checkingUI_2(object):
         self.line_day = QtWidgets.QFrame(parent=self.splitter)
         self.line_day.setMinimumSize(QtCore.QSize(150, 4))
         self.line_day.setMaximumSize(QtCore.QSize(150, 4))
-        self.line_day.setStyleSheet("background-color: none;\n"
-"border-radius: 10px;")
+        self.line_day.setStyleSheet("background-color: none;\nborder-radius: 10px;")
         self.line_day.setFrameShape(QtWidgets.QFrame.Shape.HLine)
         self.line_day.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
         self.line_day.setObjectName("line_day")
         self.btn_day_attendance = QtWidgets.QPushButton(parent=self.splitter)
         self.btn_day_attendance.setMinimumSize(QtCore.QSize(150, 30))
         self.btn_day_attendance.setMaximumSize(QtCore.QSize(150, 30))
-        self.btn_day_attendance.setStyleSheet("border: none;\n"
-"font: 9pt \"Times New Roman\";\n"
-"color: white;")
+        self.btn_day_attendance.setStyleSheet("border: none;\nfont: 9pt \"Times New Roman\";\ncolor: white;")
         self.btn_day_attendance.setText("Điểm danh theo ngày")
         self.btn_day_attendance.setObjectName("btn_day_attendance")
         
@@ -76,35 +73,64 @@ class Ui_checkingUI_2(object):
         self.line_month = QtWidgets.QFrame(parent=self.splitter_2)
         self.line_month.setMinimumSize(QtCore.QSize(150, 4))
         self.line_month.setMaximumSize(QtCore.QSize(150, 4))
-        self.line_month.setStyleSheet("background-color: #9FEF00;\n"
-"border-radius: 10px;")
+        self.line_month.setStyleSheet("background-color: #9FEF00;\nborder-radius: 10px;")
         self.line_month.setFrameShape(QtWidgets.QFrame.Shape.HLine)
         self.line_month.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
         self.line_month.setObjectName("line_month")
         self.btn_month_attendance = QtWidgets.QPushButton(parent=self.splitter_2)
         self.btn_month_attendance.setMinimumSize(QtCore.QSize(150, 30))
         self.btn_month_attendance.setMaximumSize(QtCore.QSize(150, 30))
-        self.btn_month_attendance.setStyleSheet("border: none;\n"
-"font: 9pt \"Times New Roman\";\n"
-"color: #9FEF00;\n"
-"")
+        self.btn_month_attendance.setStyleSheet("border: none;\nfont: 9pt \"Times New Roman\";\ncolor: #9FEF00;")
         self.btn_month_attendance.setText("Điểm danh theo tháng")
         self.btn_month_attendance.setObjectName("btn_month_attendance")
         self.verticalLayout.addWidget(self.groupBox)
         
+        # Employee row - hiển thị danh sách card nhân viên theo hàng ngang
         self.employee_row = QtWidgets.QGroupBox(parent=self.main)
         self.employee_row.setMinimumSize(QtCore.QSize(0, 150))
-        self.employee_row.setMaximumSize(QtCore.QSize(16777215, 150))
-        self.employee_row.setStyleSheet("background-color: #192E44;\n margin-bottom: 5px")
+        self.employee_row.setMaximumSize(QtCore.QSize(1300, 150))
+        self.employee_row.setStyleSheet("background-color: #192E44; margin-bottom: 2px;")
         self.employee_row.setTitle("")
         self.employee_row.setObjectName("employee_row")
         self.verticalLayout.addWidget(self.employee_row)
         
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.employee_row)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        # Layout riêng cho employee_row
+        self.employeeLayout = QtWidgets.QHBoxLayout(self.employee_row)
+        self.employeeLayout.setObjectName("employeeLayout")
         
-        # self.horizontalLayout_2.addCard
-         
+        # Tạo QListWidget hiển thị theo hàng ngang
+        self.employeeList = QtWidgets.QListWidget(self.employee_row)
+        self.employeeList.setStyleSheet("""
+            QListWidget {
+                background-color: #0B121F;
+                border: none;
+            }
+            QListWidget::item {
+                background-color: #11203B;
+                border: 1px solid #5A6986;
+                border-radius: 8px;
+                padding: 2px;
+                margin: 5px;
+                color: white;
+                font-size: 8px;
+            }
+            QListWidget::item:selected {
+                border: 2px solid #68D477;
+                background-color: #0F2A47;
+            }
+        """)
+        self.employeeList.setFixedHeight(150)
+        self.employeeList.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
+        self.employeeList.setViewMode(QtWidgets.QListView.ViewMode.IconMode)
+        self.employeeList.setFlow(QtWidgets.QListView.Flow.LeftToRight)
+        self.employeeList.setWrapping(False)  # Không xuống dòng, hiển thị theo hàng ngang
+        self.employeeList.setFixedHeight(200)   # Chiều cao phù hợp với employee_row
+        
+        # Kết nối sự kiện click vào item
+        self.employeeLayout.addWidget(self.employeeList)
+        
+        # Phần nội dung chính phía dưới (content)
         self.content = QtWidgets.QGroupBox(parent=self.main)
         self.content.setTitle("")
         self.content.setObjectName("content")
@@ -122,33 +148,30 @@ class Ui_checkingUI_2(object):
         self.content_header.setTitle("")
         self.content_header.setObjectName("content_header")
         
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.content_header)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-
-        self.horizontalLayout_2.addSpacing(30)
+        # Layout riêng cho content_header
+        self.contentHeaderLayout = QtWidgets.QHBoxLayout(self.content_header)
+        self.contentHeaderLayout.setObjectName("contentHeaderLayout")
+        self.contentHeaderLayout.addSpacing(30)
         
         self.pushButton = QtWidgets.QPushButton(parent=self.content_header)
         self.pushButton.setObjectName("pushButton")
         self.pushButton.setStyleSheet("border: none; color: white; font: 12pt 'Times New Roman';")
         self.pushButton.setText("12345 - Cao Lê Phụng")
-        self.horizontalLayout_2.addWidget(self.pushButton)
+        self.contentHeaderLayout.addWidget(self.pushButton)
         
-        self.horizontalLayout_2.addStretch()
+        self.contentHeaderLayout.addStretch()
         
         self.tooltip_kp = self.tooltip(self.content_header, "#EEBE3C", "Không phép")
-        self.horizontalLayout_2.addWidget(self.tooltip_kp)
-        
-        self.horizontalLayout_2.addSpacing(10)
+        self.contentHeaderLayout.addWidget(self.tooltip_kp)
+        self.contentHeaderLayout.addSpacing(10)
         
         self.tooltip_cp = self.tooltip(self.content_header, "#2A4CFA", "Có phép")
-        self.horizontalLayout_2.addWidget(self.tooltip_cp)
-        
-        self.horizontalLayout_2.addSpacing(10)
+        self.contentHeaderLayout.addWidget(self.tooltip_cp)
+        self.contentHeaderLayout.addSpacing(10)
         
         self.tooltip_tg = self.tooltip(self.content_header, "#33D64B", "Thiếu giờ")
-        self.horizontalLayout_2.addWidget(self.tooltip_tg)
-        
-        self.horizontalLayout_2.addSpacing(10)
+        self.contentHeaderLayout.addWidget(self.tooltip_tg)
+        self.contentHeaderLayout.addSpacing(10)
         
         self.verticalLayout_2.addWidget(self.content_header)
         
@@ -165,7 +188,6 @@ class Ui_checkingUI_2(object):
                 alternate-background-color: #2C3E50;
                 color: white;
         }
-
         QCalendarWidget QToolButton {
                 color: white;
                 font-size: 14px;
@@ -173,19 +195,16 @@ class Ui_checkingUI_2(object):
                 background-color: #34495E;
                 padding: 10px;
         }
-
         QCalendarWidget QToolButton::icon {
                 width: 25px;
                 height: 25px;
         }
-
         QCalendarWidget QHeaderView {
                 background-color: #9FEF00;
                 color: white;
                 font-weight: bold;
                 font-size: 16px;
         }
-
         QCalendarWidget QTableView {
                 selection-background-color: #68D477;
                 color: white;
@@ -207,7 +226,7 @@ class Ui_checkingUI_2(object):
         self.horizontalLayout.addWidget(self.main)
         
         checkingUI_2.setCentralWidget(self.centralwidget)
-    
+        
     def retranslateUi(self, checkingUI_2):
         _translate = QtCore.QCoreApplication.translate
         checkingUI_2.setWindowTitle(_translate("checkingUI_2", "MainWindow"))
@@ -215,12 +234,46 @@ class Ui_checkingUI_2(object):
     def highlight_date(self, date, color):
         fmt = QTextCharFormat()
         if isinstance(color, str):
-                color = QColor(color)
+            color = QColor(color)
         fmt.setBackground(QBrush(color))
         self.calendar.setDateTextFormat(date, fmt)
+
+    def add_employee_to_list(self, emp):
+        """
+        Tạo widget cho một nhân viên và thêm vào QListWidget.
+        Dữ liệu emp là dictionary chứa các thông tin: id, name, position, office.
+        """
+        item = QListWidgetItem()
+        itemWidget = QWidget()
+        layout = QHBoxLayout(itemWidget)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(50)
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
+        photoLabel = QLabel()
+        photoLabel.setFixedSize(80, 80)
+        photoLabel.setStyleSheet("border-radius: 30px; border: 2px solid white;")
+        
+        info_text = (
+            f"ID: {emp.get('id', '')}\n"
+            f"Họ tên: {emp.get('name', '')}\n"
+            f"Chức vụ: {emp.get('position', '')}\n"
+            f"Nơi làm việc: {emp.get('office', '')}"
+        )
+        info = QLabel(info_text)
+        info.setStyleSheet("color: white; font-size: 14px;")
+        
+        layout.addWidget(photoLabel)
+        layout.addWidget(info)
+        itemWidget.setLayout(layout)
+        
+        item.setSizeHint(itemWidget.sizeHint() + QtCore.QSize(50, 30))
+        self.employeeList.addItem(item)
+        self.employeeList.setItemWidget(item, itemWidget)
+        item.setData(Qt.ItemDataRole.UserRole, emp)
+
     def tooltip(self, pr, color, text):
-        container = QtWidgets.QWidget(parent = pr)
+        container = QtWidgets.QWidget(parent=pr)
         container.setStyleSheet("background: transparent;")  
         layout = QtWidgets.QHBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -249,5 +302,15 @@ if __name__ == "__main__":
     checkingUI_2 = QtWidgets.QMainWindow()
     ui = Ui_checkingUI_2()
     ui.setupUi(checkingUI_2)
+    ui.retranslateUi(checkingUI_2)
+    # Ví dụ: thêm nhân viên mẫu
+    ui.add_employee_to_list({"id": "2004", "name": "Lê Đoàn T", "position": "Nhân viên", "office": "Phòng 301"})
+    ui.add_employee_to_list({"id": "20043", "name": "Nguyễn Hữu T", "position": "Nhân viên", "office": "Phòng 302"})
+    ui.add_employee_to_list({"id": "2004", "name": "Lê Đoàn T", "position": "Nhân viên", "office": "Phòng 301"})
+    ui.add_employee_to_list({"id": "20043", "name": "Nguyễn Hữu T", "position": "Nhân viên", "office": "Phòng 302"})
+    ui.add_employee_to_list({"id": "2004", "name": "Lê Đoàn T", "position": "Nhân viên", "office": "Phòng 301"})
+    ui.add_employee_to_list({"id": "20043", "name": "Nguyễn Hữu T", "position": "Nhân viên", "office": "Phòng 302"})
+    ui.add_employee_to_list({"id": "2004", "name": "Lê Đoàn T", "position": "Nhân viên", "office": "Phòng 301"})
+    ui.add_employee_to_list({"id": "20043", "name": "Nguyễn Hữu T", "position": "Nhân viên", "office": "Phòng 302"})
     checkingUI_2.show()
     sys.exit(app.exec())

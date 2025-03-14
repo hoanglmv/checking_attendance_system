@@ -296,17 +296,6 @@ class Ui_informationUI(object):
     # ------------------- Các hàm tổng quát -------------------# ------------------- Các hàm tổng quát -------------------
 
     def load_employees_from_file(self, file_path):
-        """
-        Load dữ liệu nhân viên từ file JSON.
-        Cấu trúc file JSON mẫu:
-        {
-            "employees": [
-                {"id": "22022210", "name": "Lê Mai Việt Hoàng", "position": "Leader", "office": "vô gia cư"},
-                {"id": "22022211", "name": "Nguyễn Văn A", "position": "Staff", "office": "Hà Nội"},
-                ...
-            ]
-        }
-        """
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -461,7 +450,7 @@ class Ui_informationUI(object):
                     background-color: #5AC469;
                 }
             """)
-
+    
     def displayEmployeeDetails(self, item):
         emp = item.data(QtCore.Qt.ItemDataRole.UserRole)
         self.lineEdits["ID:"].setText(emp['id'])
