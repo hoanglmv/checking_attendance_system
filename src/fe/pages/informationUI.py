@@ -1,4 +1,4 @@
-import json
+import csv
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt
@@ -287,7 +287,7 @@ class Ui_informationUI(object):
         self.tab2Layout.addLayout(self.rightLayout)
 
         # Sau khi xây dựng giao diện, thay vì dùng dữ liệu cứng, load dữ liệu từ file:
-        self.employees = self.load_employees_from_file("employees.json")
+        self.employees = self.load_employees_from_csv("employees.csv")
         self.populate_employee_list()
 
         # Kết nối sự kiện nút lưu ở tab2 (nếu bạn muốn thêm nhân viên mới từ tab này)
@@ -295,25 +295,24 @@ class Ui_informationUI(object):
 
     # ------------------- Các hàm tổng quát -------------------# ------------------- Các hàm tổng quát -------------------
 
-    def load_employees_from_file(self, file_path):
-        """
-        Load dữ liệu nhân viên từ file JSON.
-        Cấu trúc file JSON mẫu:
-        {
-            "employees": [
-                {"id": "22022210", "name": "Lê Mai Việt Hoàng", "position": "Leader", "office": "vô gia cư"},
-                {"id": "22022211", "name": "Nguyễn Văn A", "position": "Staff", "office": "Hà Nội"},
-                ...
-            ]
-        }
-        """
+    def load_employees_from_csv(self, file_path):
+        employees = []
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            return data.get("employees", [])
+            with open(file_path, mode='r', encoding='utf-8') as csv_file:
+                csv_reader = csv.DictReader(csv_file)
+                for row in csv_reader:
+                    # Giả sử file CSV có header: id, name, position, office, email, phone
+                    employees.append({
+                        "id": row.get("id", ""),
+                        "name": row.get("name", ""),
+                        "position": row.get("position", ""),
+                        "office": row.get("office", ""),
+                        "email": row.get("email", ""),
+                        "phone": row.get("phone", "")
+                    })
         except Exception as e:
-            print("Lỗi khi load dữ liệu nhân viên:", e)
-            return []
+            print("Lỗi khi load dữ liệu từ CSV:", e)
+        return employees
 
     def populate_employee_list(self):
         """Xóa danh sách cũ và thêm lại các mục nhân viên từ self.employees."""
@@ -355,7 +354,9 @@ class Ui_informationUI(object):
         self.employeeList.setItemWidget(item, itemWidget)
         item.setData(QtCore.Qt.ItemDataRole.UserRole, emp)
 
-    def add_new_employee(self):
+    import csv
+
+    def add_new_employee(self, file_path):
         new_emp = {
             "id": self.newLineEdits["ID:"].text(),
             "name": self.newLineEdits["Họ tên:"].text(),
@@ -365,12 +366,12 @@ class Ui_informationUI(object):
             "phone": self.newLineEdits["Số điện thoại:"].text()
         }
 
-        # Kiểm tra cơ bản
+        # Kiểm tra dữ liệu bắt buộc
         if not new_emp["id"] or not new_emp["name"]:
             print("Vui lòng nhập đầy đủ ID và Họ tên!")
             return
 
-        # Cập nhật employeeDetail
+        # Cập nhật thông tin chi tiết nhân viên trong tab thông tin
         self.lineEdits["ID:"].setText(new_emp["id"])
         self.lineEdits["Họ tên:"].setText(new_emp["name"])
         self.lineEdits["Chức vụ:"].setText(new_emp["position"])
@@ -381,14 +382,24 @@ class Ui_informationUI(object):
         # Chuyển tab về "Thông tin nhân viên" (index = 0)
         self.tabWidget.setCurrentIndex(0)
 
-        # Thêm vào danh sách chung
+        # Thêm nhân viên mới vào danh sách chung và cập nhật giao diện
         self.employees.append(new_emp)
         self.add_employee_to_list(new_emp)
 
-        # Xóa dữ liệu ở tab "Thêm nhân viên" sau khi lưu
+        # Lưu danh sách nhân viên vào file CSV
+        fieldnames = ["id", "name", "position", "office", "email", "phone"]
+        try:
+            with open(file_path, mode='w', newline='', encoding='utf-8') as csv_file:
+                writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+                writer.writeheader()
+                for emp in self.employees:
+                    writer.writerow(emp)
+        except Exception as e:
+            print("Lỗi khi lưu dữ liệu vào file CSV:", e)
+
+        # Xóa dữ liệu nhập ở tab "Thêm nhân viên" sau khi lưu
         for line_edit in self.newLineEdits.values():
             line_edit.clear()
-
 
     def toggleEditMode(self):
         self.isEditing = not self.isEditing  # Đảo trạng thái chỉnh sửa
@@ -461,7 +472,7 @@ class Ui_informationUI(object):
                     background-color: #5AC469;
                 }
             """)
-
+    
     def displayEmployeeDetails(self, item):
         emp = item.data(QtCore.Qt.ItemDataRole.UserRole)
         self.lineEdits["ID:"].setText(emp['id'])
