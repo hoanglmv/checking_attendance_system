@@ -30,10 +30,8 @@ class AdminLogin(BaseModel):
 # Schema cập nhật user
 class AdminUpdate(BaseModel):
     full_name: Optional[str] = None
-    email: Optional[EmailStr] = None
     phone: Optional[str] = None
     position: Optional[str] = None
-    password: Optional[str] = None
     department: Optional[str] = None
     status: Optional[AdminStatus] = None
 

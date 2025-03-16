@@ -13,6 +13,8 @@ class Employee(Base):
     email = Column(String(255), unique=True, index=True, nullable=False)
     phone = Column(String(255), nullable=True)
     face_embedding = Column(LargeBinary, nullable=True)  
+    avatar_url = Column(String(512), nullable=True)  # Lưu đường dẫn ảnh
+
 
     attendances = relationship("Attendance", back_populates="employee")
     embedding = relationship("EmployeeEmbedding", back_populates="employee", uselist=False)

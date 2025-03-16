@@ -4,8 +4,6 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from app.core.config import SECRET_KEY, ALGORITHM
-from sqlalchemy.orm import Session
-from app.models.user import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -17,25 +15,22 @@ def verify_password(plain_password, hashed_password):
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta if expires_delta else timedelta(minutes=30))
+    expire = datetime.now() + (expires_delta if expires_delta else timedelta(minutes=30))
     to_encode.update({"exp": expire})
+    
+    print(f"🛠 Creating token with payload: {to_encode}")  # Debug
+    
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-# Tạo mã OTP ngẫu nhiên (6 chữ số)
+# ✅ Chuyển generate_otp() vào đây để tránh xung đột
 def generate_otp():
     return ''.join(random.choices(string.digits, k=6))
-
-# Lưu mã OTP vào database
-def save_otp(db: Session, user: User):
-    otp = generate_otp()
-    user.otp_code = otp
-    user.otp_expiration = datetime.utcnow() + timedelta(minutes=10)  # OTP hết hạn sau 10 phút
-    db.commit()
-    return otp
 
 def verify_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(f"🔍 Token payload: {payload}")  # Debug log
         return payload
-    except JWTError:
+    except JWTError as e:
+        print(f"🔴 JWT Error: {e}")  # Debug log
         return None

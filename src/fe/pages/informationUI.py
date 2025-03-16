@@ -5,6 +5,8 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGroupBox, QListWidget, QLineEdit, QListWidgetItem, QGridLayout
 import sys
 import os
+import sys
+sys.stdout.reconfigure(encoding='utf-8')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from fe.components.header import Header
@@ -295,6 +297,22 @@ class Ui_informationUI(object):
 
     # ------------------- Các hàm tổng quát -------------------# ------------------- Các hàm tổng quát -------------------
 
+<<<<<<< kien
+    def load_employees_from_file(self,file_path):
+        """Load dữ liệu nhân viên từ file JSON, tạo file nếu chưa tồn tại."""
+        if not os.path.exists(file_path):
+            print(f"File {file_path} không tồn tại, tạo file mới...")
+            with open(file_path, "w", encoding="utf-8") as f:
+                json.dump({"employees": []}, f, ensure_ascii=False, indent=4)  # Ghi dữ liệu rỗng vào file
+
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return data.get("employees", [])
+        except json.JSONDecodeError:
+            print(f"Lỗi đọc file {file_path}, tạo dữ liệu mới...")
+            return []
+=======
     def load_employees_from_csv(self, file_path):
         employees = []
         try:
@@ -314,6 +332,7 @@ class Ui_informationUI(object):
             print("Lỗi khi load dữ liệu từ CSV:", e)
         return employees
 
+>>>>>>> main
     def populate_employee_list(self):
         """Xóa danh sách cũ và thêm lại các mục nhân viên từ self.employees."""
         self.employeeList.clear()
