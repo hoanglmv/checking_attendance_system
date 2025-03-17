@@ -12,7 +12,9 @@ sys.stdout.reconfigure(encoding='utf-8')
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from fe.components.header import Header
 from fe.components.sidebar import Sidebar
-
+import torch
+from facenet_pytorch import MTCNN
+from PIL import Image
 class Ui_informationUI(object):
     def setupUi(self, informationUI):
         informationUI.setObjectName("informationUI")
@@ -75,6 +77,10 @@ class Ui_informationUI(object):
         """)
         self.mainLayout.addWidget(self.tabWidget)
         
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.mtcnn = MTCNN(image_size=160, margin=10, keep_all=False, device=device)
+
         # Tab 1: Thông tin nhân viên
         self.tab1 = QWidget()
         self.tab1Layout = QVBoxLayout(self.tab1)
@@ -369,7 +375,8 @@ class Ui_informationUI(object):
 
     import csv
 
-    def add_new_employee(self, file_path):
+    def add_new_employee(self):
+        # Lấy dữ liệu nhân viên từ các ô nhập liệu
         new_emp = {
             "id": self.newLineEdits["ID:"].text(),
             "name": self.newLineEdits["Họ tên:"].text(),
@@ -384,7 +391,16 @@ class Ui_informationUI(object):
             print("Vui lòng nhập đầy đủ ID và Họ tên!")
             return
 
-        # Cập nhật thông tin chi tiết nhân viên trong tab thông tin
+        # Lưu ảnh chụp từ camera với tên file là ID.jpg
+        if hasattr(self, "current_frame"):
+            image_filename = f"{new_emp['id']}.jpg"
+            # Ghi file ảnh ở định dạng jpg (lưu frame gốc ở định dạng BGR)
+            cv2.imwrite(image_filename, self.current_frame)
+            print(f"Ảnh đã được lưu với tên: {image_filename}")
+        else:
+            print("Không có ảnh được chụp từ camera.")
+
+        # Cập nhật thông tin chi tiết nhân viên trên giao diện tab "Thông tin nhân viên"
         self.lineEdits["ID:"].setText(new_emp["id"])
         self.lineEdits["Họ tên:"].setText(new_emp["name"])
         self.lineEdits["Chức vụ:"].setText(new_emp["position"])
@@ -392,17 +408,17 @@ class Ui_informationUI(object):
         self.lineEdits["Email:"].setText(new_emp["email"])
         self.lineEdits["Số điện thoại:"].setText(new_emp["phone"])
 
-        # Chuyển tab về "Thông tin nhân viên" (index = 0)
+        # Chuyển về tab thông tin nhân viên
         self.tabWidget.setCurrentIndex(0)
 
-        # Thêm nhân viên mới vào danh sách chung và cập nhật giao diện
+        # Thêm nhân viên mới vào danh sách và cập nhật giao diện
         self.employees.append(new_emp)
         self.add_employee_to_list(new_emp)
 
         # Lưu danh sách nhân viên vào file CSV
         fieldnames = ["id", "name", "position", "office", "email", "phone"]
         try:
-            with open(file_path, mode='w', newline='', encoding='utf-8') as csv_file:
+            with open("employees.csv", mode='w', newline='', encoding='utf-8') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
                 for emp in self.employees:
@@ -413,6 +429,7 @@ class Ui_informationUI(object):
         # Xóa dữ liệu nhập ở tab "Thêm nhân viên" sau khi lưu
         for line_edit in self.newLineEdits.values():
             line_edit.clear()
+
 
     def toggleEditMode(self):
         self.isEditing = not self.isEditing  # Đảo trạng thái chỉnh sửa
@@ -498,14 +515,29 @@ class Ui_informationUI(object):
     def update_frame(self):
         ret, frame = self.cap.read()
         if ret:
-            # Chuyển đổi từ BGR (OpenCV) sang RGB (Qt)
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            h, w, ch = frame.shape
-            bytes_per_line = ch * w
-            qimg = QImage(frame.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
+            # Lưu lại frame gốc để có thể lưu ảnh khi cần
+            self.current_frame = frame.copy()
 
-            # Cập nhật cameraLabel với hình ảnh mới
+            # Chuyển đổi từ BGR (OpenCV) sang RGB
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            h, w, ch = rgb_frame.shape
+            bytes_per_line = ch * w
+            qimg = QImage(rgb_frame.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
             self.cameraLabel.setPixmap(QPixmap.fromImage(qimg))
+
+            # Chuyển đổi frame sang PIL Image để xử lý với MTCNN
+            pil_img = Image.fromarray(rgb_frame)
+            boxes, probs = self.mtcnn.detect(pil_img)
+
+            # Kiểm tra và lọc các giá trị None trong probs
+            if probs is not None:
+                valid_probs = [p for p in probs if p is not None]
+                if valid_probs and max(valid_probs) > 0.9:
+                    self.instructionLabel.setText("Đã phát hiện khuôn mặt")
+                else:
+                    self.instructionLabel.setText("Vui lòng căn chỉnh khuôn mặt của bạn \nvào giữa và nhìn thẳng vào khung hình")
+            else:
+                self.instructionLabel.setText("Vui lòng căn chỉnh khuôn mặt của bạn \nvào giữa và nhìn thẳng vào khung hình")
 
     def closeEvent(self, event):
         """Đảm bảo giải phóng camera khi đóng ứng dụng."""
