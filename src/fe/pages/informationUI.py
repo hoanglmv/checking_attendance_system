@@ -13,8 +13,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 from fe.components.header import Header
 from fe.components.sidebar import Sidebar
 import torch
-from facenet_pytorch import MTCNN
+from facenet_pytorch import MTCNN, InceptionResnetV1
 from PIL import Image
+import pickle
+
 class Ui_informationUI(object):
     def setupUi(self, informationUI):
         informationUI.setObjectName("informationUI")
@@ -80,7 +82,7 @@ class Ui_informationUI(object):
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.mtcnn = MTCNN(image_size=160, margin=10, keep_all=False, device=device)
-
+        self.facenet = InceptionResnetV1(pretrained="vggface2").eval().to(device)
         # Tab 1: Thông tin nhân viên
         self.tab1 = QWidget()
         self.tab1Layout = QVBoxLayout(self.tab1)
@@ -391,14 +393,37 @@ class Ui_informationUI(object):
             print("Vui lòng nhập đầy đủ ID và Họ tên!")
             return
 
-        # Lưu ảnh chụp từ camera với tên file là ID.jpg
+        # Định nghĩa các đường dẫn lưu file
+        img_dir = r"D:\vhproj\checking_attendance_system\data\image"
+        embedding_dir = r"D:\vhproj\checking_attendance_system\data\embedding"
+        employee_csv_path = r"D:\vhproj\checking_attendance_system\data\employee.csv"
+
+        # Tạo các thư mục nếu chưa tồn tại
+        os.makedirs(img_dir, exist_ok=True)
+        os.makedirs(embedding_dir, exist_ok=True)
+
+        # Lưu ảnh chụp từ camera với tên file là ID.jpg vào thư mục image
         if hasattr(self, "current_frame"):
-            image_filename = f"{new_emp['id']}.jpg"
-            # Ghi file ảnh ở định dạng jpg (lưu frame gốc ở định dạng BGR)
+            image_filename = os.path.join(img_dir, f"{new_emp['id']}.jpg")
             cv2.imwrite(image_filename, self.current_frame)
             print(f"Ảnh đã được lưu với tên: {image_filename}")
         else:
             print("Không có ảnh được chụp từ camera.")
+
+        # --- Trích xuất embedding từ khuôn mặt ---
+        pil_img = Image.fromarray(cv2.cvtColor(self.current_frame, cv2.COLOR_BGR2RGB))
+        face_crop = self.mtcnn(pil_img)
+        if face_crop is not None:
+            with torch.no_grad():
+                embedding = self.facenet(face_crop.unsqueeze(0))
+            embedding_np = embedding.squeeze(0).cpu().numpy()
+            embedding_filename = os.path.join(embedding_dir, f"{new_emp['id']}.pkl")
+            with open(embedding_filename, "wb") as f:
+                pickle.dump(embedding_np, f)
+            print(f"Embedding đã được lưu với tên: {embedding_filename}")
+        else:
+            print("Không phát hiện được khuôn mặt để trích xuất embedding.")
+        # -----------------------------------------
 
         # Cập nhật thông tin chi tiết nhân viên trên giao diện tab "Thông tin nhân viên"
         self.lineEdits["ID:"].setText(new_emp["id"])
@@ -415,10 +440,10 @@ class Ui_informationUI(object):
         self.employees.append(new_emp)
         self.add_employee_to_list(new_emp)
 
-        # Lưu danh sách nhân viên vào file CSV
+        # Lưu danh sách nhân viên vào file CSV tại đường dẫn chỉ định
         fieldnames = ["id", "name", "position", "office", "email", "phone"]
         try:
-            with open("employees.csv", mode='w', newline='', encoding='utf-8') as csv_file:
+            with open(employee_csv_path, mode='w', newline='', encoding='utf-8') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
                 for emp in self.employees:
