@@ -1,11 +1,12 @@
 import csv
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap,QImage
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGroupBox, QListWidget, QLineEdit, QListWidgetItem, QGridLayout
 import sys
 import os
 import sys
+import cv2
 sys.stdout.reconfigure(encoding='utf-8')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
@@ -204,9 +205,18 @@ class Ui_informationUI(object):
         self.leftLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.leftLayout.setContentsMargins(50, 0, 0, 0)
         self.cameraLabel = QLabel()
+        self.cameraLabel = QLabel()
         self.cameraLabel.setFixedSize(350, 450)
         self.cameraLabel.setStyleSheet("border-radius: 175px; border: 2px solid white;")
         self.cameraLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Khởi tạo camera (0 là camera mặc định, có thể thay đổi nếu có nhiều camera)
+        self.cap = cv2.VideoCapture(0)
+
+        # Tạo timer để cập nhật khung hình liên tục
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_frame)
+        self.timer.start(30)  # Cập n
         self.leftLayout.addWidget(self.cameraLabel)
         self.instructionLabel = QLabel("Vui lòng căn chỉnh khuôn mặt của bạn \nvào giữa và nhìn thẳng vào khung hình  ")
         self.instructionLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -227,6 +237,7 @@ class Ui_informationUI(object):
         self.topLayout2 = QHBoxLayout()
         self.topLayout2.addSpacing(100)
         self.photoLabel2 = QLabel()
+        self.photoLabel2.setScaledContents(True)
         self.photoLabel2.setFixedSize(180, 216)
         self.photoLabel2.setStyleSheet("border-radius: 8px; border: 2px solid white;")
         self.photoLabel2.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -297,22 +308,6 @@ class Ui_informationUI(object):
 
     # ------------------- Các hàm tổng quát -------------------# ------------------- Các hàm tổng quát -------------------
 
-<<<<<<< kien
-    def load_employees_from_file(self,file_path):
-        """Load dữ liệu nhân viên từ file JSON, tạo file nếu chưa tồn tại."""
-        if not os.path.exists(file_path):
-            print(f"File {file_path} không tồn tại, tạo file mới...")
-            with open(file_path, "w", encoding="utf-8") as f:
-                json.dump({"employees": []}, f, ensure_ascii=False, indent=4)  # Ghi dữ liệu rỗng vào file
-
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            return data.get("employees", [])
-        except json.JSONDecodeError:
-            print(f"Lỗi đọc file {file_path}, tạo dữ liệu mới...")
-            return []
-=======
     def load_employees_from_csv(self, file_path):
         employees = []
         try:
@@ -332,7 +327,6 @@ class Ui_informationUI(object):
             print("Lỗi khi load dữ liệu từ CSV:", e)
         return employees
 
->>>>>>> main
     def populate_employee_list(self):
         """Xóa danh sách cũ và thêm lại các mục nhân viên từ self.employees."""
         self.employeeList.clear()
@@ -501,7 +495,26 @@ class Ui_informationUI(object):
         self.lineEdits["Email:"].setText(emp.get('email', ''))
         self.lineEdits["Số điện thoại:"].setText(emp.get('phone', ''))
 
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        if ret:
+            # Chuyển đổi từ BGR (OpenCV) sang RGB (Qt)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            h, w, ch = frame.shape
+            bytes_per_line = ch * w
+            qimg = QImage(frame.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
 
+            # Cập nhật cameraLabel với hình ảnh mới
+            self.cameraLabel.setPixmap(QPixmap.fromImage(qimg))
+
+    def closeEvent(self, event):
+        """Đảm bảo giải phóng camera khi đóng ứng dụng."""
+        self.cap.release()
+        event.accept()
+    def save_frame(self):
+        return self.frame
+    def capture_frame(self):
+        return self.frame
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     informationUI = QtWidgets.QMainWindow()
