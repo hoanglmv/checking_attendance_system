@@ -22,7 +22,7 @@ def get_db():
     finally:
         db.close()
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = "data\uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Add nhân viên
