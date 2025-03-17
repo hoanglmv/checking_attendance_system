@@ -45,7 +45,7 @@ def recognize_face(face, embeddings, threshold=0.5):
 # Chạy nhận diện trên webcam
 def run_webcam():
     embeddings = load_embeddings()
-    cap = cv2.VideoCapture(0)  # Mở webcam
+    cap = cv2.VideoCapture(1)  # Mở webcam
 
     while True:
         ret, frame = cap.read()

@@ -1,16 +1,21 @@
 import csv
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap,QImage
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGroupBox, QListWidget, QLineEdit, QListWidgetItem, QGridLayout
 import sys
 import os
 import sys
+import cv2
 sys.stdout.reconfigure(encoding='utf-8')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from fe.components.header import Header
 from fe.components.sidebar import Sidebar
+import torch
+from facenet_pytorch import MTCNN, InceptionResnetV1
+from PIL import Image
+import pickle
 
 class Ui_informationUI(object):
     def setupUi(self, informationUI):
@@ -74,6 +79,10 @@ class Ui_informationUI(object):
         """)
         self.mainLayout.addWidget(self.tabWidget)
         
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.mtcnn = MTCNN(image_size=160, margin=10, keep_all=False, device=device)
+        self.facenet = InceptionResnetV1(pretrained="vggface2").eval().to(device)
         # Tab 1: Thông tin nhân viên
         self.tab1 = QWidget()
         self.tab1Layout = QVBoxLayout(self.tab1)
@@ -204,9 +213,18 @@ class Ui_informationUI(object):
         self.leftLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.leftLayout.setContentsMargins(50, 0, 0, 0)
         self.cameraLabel = QLabel()
+        self.cameraLabel = QLabel()
         self.cameraLabel.setFixedSize(350, 450)
         self.cameraLabel.setStyleSheet("border-radius: 175px; border: 2px solid white;")
         self.cameraLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Khởi tạo camera (0 là camera mặc định, có thể thay đổi nếu có nhiều camera)
+        self.cap = cv2.VideoCapture(0)
+
+        # Tạo timer để cập nhật khung hình liên tục
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_frame)
+        self.timer.start(30)  # Cập n
         self.leftLayout.addWidget(self.cameraLabel)
         self.instructionLabel = QLabel("Vui lòng căn chỉnh khuôn mặt của bạn \nvào giữa và nhìn thẳng vào khung hình  ")
         self.instructionLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -227,6 +245,7 @@ class Ui_informationUI(object):
         self.topLayout2 = QHBoxLayout()
         self.topLayout2.addSpacing(100)
         self.photoLabel2 = QLabel()
+        self.photoLabel2.setScaledContents(True)
         self.photoLabel2.setFixedSize(180, 216)
         self.photoLabel2.setStyleSheet("border-radius: 8px; border: 2px solid white;")
         self.photoLabel2.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -297,22 +316,6 @@ class Ui_informationUI(object):
 
     # ------------------- Các hàm tổng quát -------------------# ------------------- Các hàm tổng quát -------------------
 
-<<<<<<< kien
-    def load_employees_from_file(self,file_path):
-        """Load dữ liệu nhân viên từ file JSON, tạo file nếu chưa tồn tại."""
-        if not os.path.exists(file_path):
-            print(f"File {file_path} không tồn tại, tạo file mới...")
-            with open(file_path, "w", encoding="utf-8") as f:
-                json.dump({"employees": []}, f, ensure_ascii=False, indent=4)  # Ghi dữ liệu rỗng vào file
-
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            return data.get("employees", [])
-        except json.JSONDecodeError:
-            print(f"Lỗi đọc file {file_path}, tạo dữ liệu mới...")
-            return []
-=======
     def load_employees_from_csv(self, file_path):
         employees = []
         try:
@@ -332,7 +335,6 @@ class Ui_informationUI(object):
             print("Lỗi khi load dữ liệu từ CSV:", e)
         return employees
 
->>>>>>> main
     def populate_employee_list(self):
         """Xóa danh sách cũ và thêm lại các mục nhân viên từ self.employees."""
         self.employeeList.clear()
@@ -375,7 +377,8 @@ class Ui_informationUI(object):
 
     import csv
 
-    def add_new_employee(self, file_path):
+    def add_new_employee(self):
+        # Lấy dữ liệu nhân viên từ các ô nhập liệu
         new_emp = {
             "id": self.newLineEdits["ID:"].text(),
             "name": self.newLineEdits["Họ tên:"].text(),
@@ -390,7 +393,39 @@ class Ui_informationUI(object):
             print("Vui lòng nhập đầy đủ ID và Họ tên!")
             return
 
-        # Cập nhật thông tin chi tiết nhân viên trong tab thông tin
+        # Định nghĩa các đường dẫn lưu file
+        img_dir = r"D:\vhproj\checking_attendance_system\data\image"
+        embedding_dir = r"D:\vhproj\checking_attendance_system\data\embedding"
+        employee_csv_path = r"D:\vhproj\checking_attendance_system\data\employee.csv"
+
+        # Tạo các thư mục nếu chưa tồn tại
+        os.makedirs(img_dir, exist_ok=True)
+        os.makedirs(embedding_dir, exist_ok=True)
+
+        # Lưu ảnh chụp từ camera với tên file là ID.jpg vào thư mục image
+        if hasattr(self, "current_frame"):
+            image_filename = os.path.join(img_dir, f"{new_emp['id']}.jpg")
+            cv2.imwrite(image_filename, self.current_frame)
+            print(f"Ảnh đã được lưu với tên: {image_filename}")
+        else:
+            print("Không có ảnh được chụp từ camera.")
+
+        # --- Trích xuất embedding từ khuôn mặt ---
+        pil_img = Image.fromarray(cv2.cvtColor(self.current_frame, cv2.COLOR_BGR2RGB))
+        face_crop = self.mtcnn(pil_img)
+        if face_crop is not None:
+            with torch.no_grad():
+                embedding = self.facenet(face_crop.unsqueeze(0))
+            embedding_np = embedding.squeeze(0).cpu().numpy()
+            embedding_filename = os.path.join(embedding_dir, f"{new_emp['id']}.pkl")
+            with open(embedding_filename, "wb") as f:
+                pickle.dump(embedding_np, f)
+            print(f"Embedding đã được lưu với tên: {embedding_filename}")
+        else:
+            print("Không phát hiện được khuôn mặt để trích xuất embedding.")
+        # -----------------------------------------
+
+        # Cập nhật thông tin chi tiết nhân viên trên giao diện tab "Thông tin nhân viên"
         self.lineEdits["ID:"].setText(new_emp["id"])
         self.lineEdits["Họ tên:"].setText(new_emp["name"])
         self.lineEdits["Chức vụ:"].setText(new_emp["position"])
@@ -398,17 +433,17 @@ class Ui_informationUI(object):
         self.lineEdits["Email:"].setText(new_emp["email"])
         self.lineEdits["Số điện thoại:"].setText(new_emp["phone"])
 
-        # Chuyển tab về "Thông tin nhân viên" (index = 0)
+        # Chuyển về tab thông tin nhân viên
         self.tabWidget.setCurrentIndex(0)
 
-        # Thêm nhân viên mới vào danh sách chung và cập nhật giao diện
+        # Thêm nhân viên mới vào danh sách và cập nhật giao diện
         self.employees.append(new_emp)
         self.add_employee_to_list(new_emp)
 
-        # Lưu danh sách nhân viên vào file CSV
+        # Lưu danh sách nhân viên vào file CSV tại đường dẫn chỉ định
         fieldnames = ["id", "name", "position", "office", "email", "phone"]
         try:
-            with open(file_path, mode='w', newline='', encoding='utf-8') as csv_file:
+            with open(employee_csv_path, mode='w', newline='', encoding='utf-8') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
                 for emp in self.employees:
@@ -419,6 +454,7 @@ class Ui_informationUI(object):
         # Xóa dữ liệu nhập ở tab "Thêm nhân viên" sau khi lưu
         for line_edit in self.newLineEdits.values():
             line_edit.clear()
+
 
     def toggleEditMode(self):
         self.isEditing = not self.isEditing  # Đảo trạng thái chỉnh sửa
@@ -501,7 +537,41 @@ class Ui_informationUI(object):
         self.lineEdits["Email:"].setText(emp.get('email', ''))
         self.lineEdits["Số điện thoại:"].setText(emp.get('phone', ''))
 
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        if ret:
+            # Lưu lại frame gốc để có thể lưu ảnh khi cần
+            self.current_frame = frame.copy()
 
+            # Chuyển đổi từ BGR (OpenCV) sang RGB
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            h, w, ch = rgb_frame.shape
+            bytes_per_line = ch * w
+            qimg = QImage(rgb_frame.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
+            self.cameraLabel.setPixmap(QPixmap.fromImage(qimg))
+
+            # Chuyển đổi frame sang PIL Image để xử lý với MTCNN
+            pil_img = Image.fromarray(rgb_frame)
+            boxes, probs = self.mtcnn.detect(pil_img)
+
+            # Kiểm tra và lọc các giá trị None trong probs
+            if probs is not None:
+                valid_probs = [p for p in probs if p is not None]
+                if valid_probs and max(valid_probs) > 0.9:
+                    self.instructionLabel.setText("Đã phát hiện khuôn mặt")
+                else:
+                    self.instructionLabel.setText("Vui lòng căn chỉnh khuôn mặt của bạn \nvào giữa và nhìn thẳng vào khung hình")
+            else:
+                self.instructionLabel.setText("Vui lòng căn chỉnh khuôn mặt của bạn \nvào giữa và nhìn thẳng vào khung hình")
+
+    def closeEvent(self, event):
+        """Đảm bảo giải phóng camera khi đóng ứng dụng."""
+        self.cap.release()
+        event.accept()
+    def save_frame(self):
+        return self.frame
+    def capture_frame(self):
+        return self.frame
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     informationUI = QtWidgets.QMainWindow()
