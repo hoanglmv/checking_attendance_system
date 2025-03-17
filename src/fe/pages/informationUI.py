@@ -242,25 +242,42 @@ class Ui_informationUI(object):
             }
         """)
         self.addDetailLayout = QVBoxLayout(self.addEmployeeDetail)
-        self.topLayout2 = QHBoxLayout()
-        self.topLayout2.addSpacing(100)
+        # Tạo layout dọc cho photoLabel2 và button load ảnh
+        photoLayout = QVBoxLayout()
         self.photoLabel2 = QLabel()
         self.photoLabel2.setScaledContents(True)
         self.photoLabel2.setFixedSize(180, 216)
         self.photoLabel2.setStyleSheet("border-radius: 8px; border: 2px solid white;")
         self.photoLabel2.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.statsLayout2 = QVBoxLayout()
-        self.attendanceStats2 = QLabel("Chuyên cần: ??\nĐến muộn: ??\nVề sớm: ??")
-        self.attendanceStats2.setStyleSheet("color: white; font-size: 18px; border: none;")
-        self.attendanceStats2.setFixedWidth(200)
-        self.attendanceStats2.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.statsLayout2.addStretch()
-        self.statsLayout2.addWidget(self.attendanceStats2, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.statsLayout2.addStretch()
-        self.topLayout2.addWidget(self.photoLabel2)
+        photoLayout.addWidget(self.photoLabel2)
+
+        # Tạo button để load ảnh từ máy
+        self.loadImageButton = QPushButton("Chọn ảnh từ máy")
+        self.loadImageButton.setStyleSheet("""
+            QPushButton {
+                background-color: #68D477;
+                color: black;
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #5AC469;
+            }
+        """)
+        self.loadImageButton.clicked.connect(self.load_image)
+        photoLayout.addWidget(self.loadImageButton)
+
+        # Tạo layout ngang cho phần trên, thêm khoảng cách và layout chứa thông tin thống kê
+        self.topLayout2 = QHBoxLayout()
         self.topLayout2.addSpacing(100)
-        self.topLayout2.addLayout(self.statsLayout2)
+        self.topLayout2.addLayout(photoLayout)
+        self.topLayout2.addSpacing(100)
+        self.topLayout2.addLayout(self.statsLayout)  # self.statsLayout2 đã được tạo ở đoạn code khác (không cần thay đổi)
         self.addDetailLayout.addLayout(self.topLayout2)
+
+
+
         self.infoGrid2 = QGridLayout()
         labels_tab2 = ["ID:", "Họ tên:", "Chức vụ:", "Nơi làm việc:", "Email:", "Số điện thoại:"]
         self.newLineEdits = {}
@@ -568,10 +585,17 @@ class Ui_informationUI(object):
         """Đảm bảo giải phóng camera khi đóng ứng dụng."""
         self.cap.release()
         event.accept()
-    def save_frame(self):
-        return self.frame
-    def capture_frame(self):
-        return self.frame
+    def load_image(self):
+        options = QtWidgets.QFileDialog.Option.DontUseNativeDialog
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(
+            None, "Chọn ảnh", "", "Image Files (*.png *.jpg *.jpeg *.bmp)", options=options)
+        if fileName:
+            pixmap = QPixmap(fileName)
+            self.photoLabel2.setPixmap(pixmap.scaled(
+                self.photoLabel2.size(), Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation))
+            print(f"Đã load ảnh: {fileName}")
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     informationUI = QtWidgets.QMainWindow()
