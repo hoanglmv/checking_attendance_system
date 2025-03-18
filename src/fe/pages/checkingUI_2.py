@@ -89,7 +89,7 @@ class Ui_checkingUI_2(object):
         self.employee_row = QtWidgets.QGroupBox(parent=self.main)
         self.employee_row.setMinimumSize(QtCore.QSize(0, 150))
         self.employee_row.setMaximumSize(QtCore.QSize(1300, 150))
-        self.employee_row.setStyleSheet("background-color: #192E44; margin-bottom: 2px;")
+        self.employee_row.setStyleSheet("margin-bottom: 2px;")
         self.employee_row.setTitle("")
         self.employee_row.setObjectName("employee_row")
         self.verticalLayout.addWidget(self.employee_row)
@@ -103,10 +103,10 @@ class Ui_checkingUI_2(object):
         self.employeeList.setStyleSheet("""
             QListWidget {
                 background-color: #0B121F;
-                border: none;
+                border-top: 2px solid white;
             }
             QListWidget::item {
-                background-color: #11203B;
+                background-color: #192E44;
                 border: 1px solid #5A6986;
                 border-radius: 8px;
                 padding: 2px;
@@ -115,7 +115,7 @@ class Ui_checkingUI_2(object):
                 font-size: 8px;
             }
             QListWidget::item:selected {
-                border: 2px solid #68D477;
+                border: 2px solid #9FEF00;
                 background-color: #0F2A47;
             }
         """)
