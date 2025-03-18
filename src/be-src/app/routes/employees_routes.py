@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+import os
+import shutil
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
+from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.services.employees_service import (
@@ -6,7 +9,7 @@ from app.services.employees_service import (
     update_employee, delete_employee, get_employees_by_department,
 )
 from app.schemas.employees_schema import EmployeeCreate, EmployeeUpdate, EmployeeResponse
-from app.dependencies import get_current_admin
+from app.utils.dependencies import get_current_admin
 from app.models.employees import Employee
 
 
@@ -19,11 +22,49 @@ def get_db():
     finally:
         db.close()
 
-# Add nhân viên
-@router.post("/", status_code=status.HTTP_201_CREATED)
-def add_employee(employee: EmployeeCreate, db: Session = Depends(get_db), admin: dict = Depends(get_current_admin)):
-    return create_employee(db, employee)
+UPLOAD_DIR = "data\uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+# Add nhân viên
+@router.post("/create", status_code=status.HTTP_201_CREATED)
+async def add_employee(
+    full_name: str = Form(...),
+    position: str = Form(...),
+    department: str = Form(...),
+    email: EmailStr = Form(...),
+    phone: str = Form(...),
+    file: UploadFile = None,  # File upload
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
+    # Nếu có file thì lưu vào thư mục uploads
+    file_path = None
+    if file:
+        file_path = os.path.join(UPLOAD_DIR, file.filename)
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+    # Tạo nhân viên
+    employee_data = EmployeeCreate(
+        full_name=full_name,
+        position=position,
+        department=department,
+        email=email,
+        phone=phone
+    )
+    new_employee = create_employee(db, employee_data)
+
+    return {
+        "message": "Employee created successfully",
+        "employee": new_employee,
+        "file_path": file_path  # Trả về đường dẫn file nếu có
+    }
+
+# Admin: Lấy thông tin tất cả nhân viên 
+@router.get("/getall", response_model=list[EmployeeResponse])
+def get_all_employees(db: Session = Depends(get_db)):
+    employees = db.query(Employee).all()
+    return [EmployeeResponse.model_validate(emp) for emp in employees]
 
 # Admin: Lấy nhân viên theo mã nhân viên
 @router.get("/{employee_code}")
@@ -31,15 +72,12 @@ def get_employee(employee_code: str, db: Session = Depends(get_db), admin: dict 
     employee = get_employee_by_code(db, employee_code)
     if not employee:
         raise HTTPException(status_code=404, detail="Employee not found")
-    return employee
+    return EmployeeResponse.model_validate(employee)
 
-@router.get("/all", response_model=list[EmployeeResponse])
-def get_all_employees(db: Session = Depends(get_db)):
-    employees = db.query(Employee).all()
-    return [EmployeeResponse.model_validate(emp) for emp in employees]
+
 
 # Admin: Cập nhật thông tin nhân viên
-@router.put("/{employee_code}")
+@router.put("/update/{employee_code}")
 def edit_employee(employee_code: str, employee_update: EmployeeUpdate, db: Session = Depends(get_db), admin: dict = Depends(get_current_admin)):
     updated_employee = update_employee(db, employee_code, employee_update)
     if not updated_employee:

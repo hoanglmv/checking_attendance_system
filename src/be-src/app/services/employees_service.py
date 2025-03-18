@@ -7,8 +7,11 @@ from app.schemas.employees_schema import EmployeeCreate, EmployeeUpdate
 
 # Add nhân viên
 def create_employee(db: Session, employee_data: EmployeeCreate):
-    employee_code = generate_employee_code(db)
-    employee = Employee(**employee_data.model_dump())
+    employee_data_dict = employee_data.model_dump(exclude={"employee_code"})  # Bỏ employee_code ra khỏi input
+    employee_code = generate_employee_code(db)  # Tự động tạo mã nhân viên
+    employee_data_dict["employee_code"] = employee_code  # Gán mã nhân viên vào dữ liệu
+
+    employee = Employee(**employee_data_dict)
     db.add(employee)
     db.commit()
     db.refresh(employee)

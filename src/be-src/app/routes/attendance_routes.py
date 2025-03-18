@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from app.core.database import SessionLocal
 from app.models import Employee, Attendance
 from app.schemas.attendance_schema import AttendanceResponse, AttendanceMonthlyResponse, AttendanceCreate
-from app.dependencies import get_current_admin
+from app.utils.dependencies import get_current_admin
 from app.services.attendance_service import check_in_employee, get_attendance_by_month, update_attendance
 
 from fastapi import status
