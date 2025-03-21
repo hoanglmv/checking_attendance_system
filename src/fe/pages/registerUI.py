@@ -1,106 +1,186 @@
-from PyQt6 import QtCore, QtGui, QtWidgets
+import re
+import sys
+import requests
+from PyQt6 import QtWidgets, QtGui, QtCore
+from pages.OTPPopup import OTPPopUp
 
-class Ui_registerUI(object):
+
+class Ui_registerUI(QtWidgets.QMainWindow):
     def setupUi(self, registerUI):
         registerUI.setObjectName("registerUI")
-        registerUI.resize(750, 650)
+        registerUI.resize(750, 950)
         registerUI.setStyleSheet("background-color: #131A2D;")
-        self.centralwidget = QtWidgets.QWidget(parent=registerUI)
-        self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName("gridLayout")
         
-        self.groupBox = QtWidgets.QGroupBox(parent=self.centralwidget)
-        self.groupBox.setStyleSheet("border: none;")
-        self.groupBox.setTitle("")
-        self.groupBox.setObjectName("groupBox")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.groupBox)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        
-        spacerItem = QtWidgets.QSpacerItem(198, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
-        
-        self.groupBox_2 = QtWidgets.QGroupBox(parent=self.groupBox)
-        self.groupBox_2.setMinimumSize(QtCore.QSize(550, 500))
-        self.groupBox_2.setMaximumSize(QtCore.QSize(550, 500))
-        self.groupBox_2.setStyleSheet("background-color: #517078;\n"
-                                       "border-radius: 3px;")
-        self.groupBox_2.setTitle("")
-        self.groupBox_2.setObjectName("groupBox_2")
-        
-        self.label = QtWidgets.QLabel(parent=self.groupBox_2)
-        self.label.setGeometry(QtCore.QRect(220, 30, 111, 51))
-        self.label.setStyleSheet("color: white;\n"
-                                 "font: 18pt \"Times New Roman\";")
-        self.label.setObjectName("label")
-        
-        self.user_name = QtWidgets.QLineEdit(parent=self.groupBox_2)
-        self.user_name.setGeometry(QtCore.QRect(100, 90, 351, 31))
-        self.user_name.setStyleSheet("border: none;\n"
-                                      "border-bottom: 2px solid white;\n"
-                                      "color: white;")
-        self.user_name.setObjectName("user_name")
-        
-        self.email = QtWidgets.QLineEdit(parent=self.groupBox_2)
-        self.email.setGeometry(QtCore.QRect(100, 140, 351, 31))
-        self.email.setStyleSheet("border: none;\n"
-                                 "border-bottom: 2px solid white;\n"
-                                 "color: white;")
-        self.email.setObjectName("email")
-        
-        self.password = QtWidgets.QLineEdit(parent=self.groupBox_2)
-        self.password.setGeometry(QtCore.QRect(100, 190, 351, 31))
-        self.password.setStyleSheet("border: none;\n"
-                                     "border-bottom: 2px solid white;\n"
-                                     "color: white;")
-        self.password.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
-        self.password.setObjectName("password")
-        
-        self.confirm_password = QtWidgets.QLineEdit(parent=self.groupBox_2)
-        self.confirm_password.setGeometry(QtCore.QRect(100, 240, 351, 31))
-        self.confirm_password.setStyleSheet("border: none;\n"
-                                            "border-bottom: 2px solid white;\n"
-                                            "color: white;")
-        self.confirm_password.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
-        self.confirm_password.setObjectName("confirm_password")
-        
-        self.register_button = QtWidgets.QPushButton(parent=self.groupBox_2)
-        self.register_button.setGeometry(QtCore.QRect(100, 300, 351, 31))
-        self.register_button.setStyleSheet("border: 2px solid white;\n"
-                                           "color: white;\n"
-                                           "font: 12pt \"Times New Roman\";")
-        self.register_button.setObjectName("register_button")
-        
-        self.back_to_login = QtWidgets.QPushButton(parent=self.groupBox_2)
-        self.back_to_login.setGeometry(QtCore.QRect(100, 350, 351, 31))
-        self.back_to_login.setStyleSheet("color: white;\n"
-                                         "font: 10pt \"Times New Roman\";")
-        self.back_to_login.setObjectName("back_to_login")
+        self.centralwidget = QtWidgets.QWidget(registerUI)
+        self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
 
-        self.horizontalLayout.addWidget(self.groupBox_2)
-        
-        spacerItem1 = QtWidgets.QSpacerItem(75, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
-        self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 1)
-        
+        # Spacer để căn giữa theo chiều dọc
+        self.mainLayout.addStretch()
+
+        self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
+        self.groupBox_2.setFixedSize(500, 580)
+        self.groupBox_2.setStyleSheet("background-color: #517078; border-radius: 10px;")
+        self.innerLayout = QtWidgets.QVBoxLayout(self.groupBox_2)
+
+        # Tiêu đề đăng ký
+        self.label = QtWidgets.QLabel("Đăng ký", self.groupBox_2)
+        self.label.setStyleSheet("color: white; font: bold 20pt 'Times New Roman';")
+        self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.innerLayout.addWidget(self.label)
+
+        # Các trường nhập liệu
+        fields = ["full_name", "email", "phone", "position", "department", "password"]
+        placeholders = ["Họ và tên", "Email", "Số điện thoại", "Vị trí", "Phòng ban", "Mật khẩu"]
+        self.inputs = {}
+
+        for field, placeholder in zip(fields, placeholders):
+            line_edit = QtWidgets.QLineEdit(self.groupBox_2)
+            line_edit.setPlaceholderText(placeholder)
+            line_edit.setFixedHeight(45)
+            line_edit.setStyleSheet(self.input_style())
+
+            if "password" in field:
+                line_edit.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
+
+            self.inputs[field] = line_edit
+            self.innerLayout.addWidget(line_edit)
+
+        # Nút đăng ký
+        self.register_button = QtWidgets.QPushButton("Đăng ký", self.groupBox_2)
+        self.register_button.setFixedSize(250, 40)
+        self.register_button.setStyleSheet(self.get_button_style())
+        self.register_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.register_button.clicked.connect(self.validate_register_form)
+        self.innerLayout.addWidget(self.register_button, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
+
+        # Label + nút đăng nhập
+        self.loginLayout = QtWidgets.QHBoxLayout()
+        self.login_label = QtWidgets.QLabel("Bạn đã có tài khoản?", self.groupBox_2)
+        self.login_label.setStyleSheet("color: white; font-size: 11pt;")
+
+        self.login_button = QtWidgets.QPushButton("Đăng nhập ngay", self.groupBox_2)
+        self.login_button.setStyleSheet(self.get_login_button_style())
+        self.login_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.login_button.clicked.connect(self.open_login)
+
+        self.loginLayout.addWidget(self.login_label, alignment=QtCore.Qt.AlignmentFlag.AlignRight)
+        self.loginLayout.addWidget(self.login_button, alignment=QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.innerLayout.addLayout(self.loginLayout)
+
+        self.mainLayout.addWidget(self.groupBox_2, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
+
+        # Spacer để căn giữa theo chiều dọc
+        self.mainLayout.addStretch()
+
         registerUI.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(registerUI)
-        QtCore.QMetaObject.connectSlotsByName(registerUI)
+        # Thêm QLabel hiển thị thông báo lỗi
+        self.error_label = QtWidgets.QLabel("", self.groupBox_2)
+        self.error_label.setStyleSheet("color: red; font-size: 12pt;")
+        self.error_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.innerLayout.addWidget(self.error_label)
 
-    def retranslateUi(self, registerUI):
-        _translate = QtCore.QCoreApplication.translate
-        registerUI.setWindowTitle(_translate("registerUI", "Đăng ký"))
-        self.label.setText(_translate("registerUI", "Đăng ký"))
-        self.user_name.setPlaceholderText(_translate("registerUI", "Tên đăng nhập"))
-        self.email.setPlaceholderText(_translate("registerUI", "Email"))
-        self.password.setPlaceholderText(_translate("registerUI", "Mật khẩu"))
-        self.confirm_password.setPlaceholderText(_translate("registerUI", "Nhập lại mật khẩu"))
-        self.register_button.setText(_translate("registerUI", "Đăng ký"))
-        self.back_to_login.setText(_translate("registerUI", "Quay lại đăng nhập"))
+    def input_style(self):
+        return """
+            border: 2px solid white;
+            border-radius: 5px;
+            color: white;
+            font-size: 14px;
+            padding: 5px;
+            background-color: transparent;
+        """
+
+    def get_button_style(self):
+        return """
+            QPushButton {
+                border: 2px solid white;
+                color: white;
+                font: bold 12pt 'Times New Roman';
+                border-radius: 5px;
+                background-color: #415A77;
+                padding: 5px;
+            }
+            QPushButton:hover {
+                background-color: #31445B;
+                border: 2px solid #FFD700;
+            }
+        """
+
+    def get_login_button_style(self):
+        return """
+            QPushButton {
+                color: #FFD700;
+                font-size: 10pt;
+                background: transparent;
+                border: none;
+            }
+            QPushButton:hover {
+                text-decoration: underline;
+                color: #FFA500;
+            }
+        """
+
+    def get_main_window(self):
+        widget = self.centralwidget
+        while widget.parent():
+            widget = widget.parent()
+        return widget
+
+    def open_login(self):
+        main_window = self.get_main_window()
+        main_window.stacked_widget.setCurrentWidget(main_window.loginUI)  # Quay lại giao diện đăng nhập
+
+    def validate_email(self, email):
+        pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        return re.match(pattern, email)
+
+    def validate_register_form(self):
+        for field_name, field in self.inputs.items():
+            if not field.text().strip():
+                self.error_label.setText("Cần phải điền đầy đủ thông tin!")
+                return
+
+        # Kiểm tra email hợp lệ
+        email = self.inputs["email"].text().strip()
+        if not self.validate_email(email):
+            self.error_label.setText("Email không hợp lệ! Vui lòng nhập đúng định dạng.")
+            return
+
+        # Xóa thông báo lỗi nếu hợp lệ
+        self.error_label.setText("")
+        self.process_registration()
+
+    def process_registration(self):
+        url = "http://127.0.0.1:8000/auth/register"
+        data = {
+            "full_name": self.inputs["full_name"].text(),
+            "email": self.inputs["email"].text(),
+            "phone": self.inputs["phone"].text(),
+            "position": self.inputs["position"].text(),
+            "department": self.inputs["department"].text(),
+            "password": self.inputs["password"].text(),
+        }
+
+        try:
+            headers = {"Content-Type": "application/json"}
+            response = requests.post(url, json=data, headers=headers)
+            if response.status_code == 200:
+                
+                QtWidgets.QMessageBox.information(self, "Thành công", "Đăng ký thành công! Vui lòng kiểm tra email để xác thực.")
+                email = data["email"]
+                otp_dialog = OTPPopUp(email)
+                if otp_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                    QtWidgets.QMessageBox.information(self, "Thành công", "Xác minh thành công! Bạn có thể đăng nhập ngay.")
+                    self.open_login() 
+                else:
+                    QtWidgets.QMessageBox.warning(self, "Thất bại", "Xác minh OTP không thành công. Vui lòng thử lại.")
+            else:
+                error_message = response.json().get('detail', 'Không rõ lỗi')
+                QtWidgets.QMessageBox.warning(self, "Lỗi", f"Lỗi: {error_message}")
+        except requests.exceptions.RequestException as e:
+            QtWidgets.QMessageBox.critical(self, "Lỗi kết nối", f"Không thể kết nối đến server: {str(e)}")
 
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
     registerUI = QtWidgets.QMainWindow()
     ui = Ui_registerUI()

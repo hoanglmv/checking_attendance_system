@@ -6,7 +6,7 @@ from pydantic import BaseModel
 load_dotenv()
 
 # Cấu hình Database
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:hoanglmv@localhost/mlattendance")
+DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:kien123456@localhost/mlattendance")
 
 # Cấu hình bảo mật
 SECRET_KEY = os.getenv("SECRET_KEY", "4d419d387f139df1138c501a02eb315e2fcffcadb369e8b7881d6f80cb6f58e8")
@@ -21,9 +21,9 @@ SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "your_email_password")
 EMAIL_FROM = os.getenv("EMAIL_FROM", SMTP_USERNAME)
 
 class MailConfig(BaseModel):
-    MAIL_USERNAME: str = "your_email@gmail.com"
+    MAIL_USERNAME: str = "kien0610minh@gmail.com"
     MAIL_PASSWORD: str = "your_password"
-    MAIL_FROM: str = "your_email@gmail.com"
+    MAIL_FROM: str = "kien0610minh@gmail.com"
     MAIL_SERVER: str = "smtp.gmail.com"
     MAIL_PORT: int = 587
     MAIL_TLS: bool = True
