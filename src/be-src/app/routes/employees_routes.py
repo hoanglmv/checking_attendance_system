@@ -1,6 +1,5 @@
 import os
-import shutil
-from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, File, status
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
@@ -12,7 +11,6 @@ from app.schemas.employees_schema import EmployeeCreate, EmployeeUpdate, Employe
 from app.utils.dependencies import get_current_admin
 from app.models.employees import Employee
 
-
 router = APIRouter(prefix="/employees", tags=["Employees"])
 
 def get_db():
@@ -22,29 +20,19 @@ def get_db():
     finally:
         db.close()
 
-UPLOAD_DIR = "data\uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-
 # Add nhân viên
-@router.post("/create", status_code=status.HTTP_201_CREATED)
+@router.post("/create", status_code=status.HTTP_201_CREATED, response_model=EmployeeResponse)
 async def add_employee(
     full_name: str = Form(...),
     position: str = Form(...),
     department: str = Form(...),
     email: EmailStr = Form(...),
     phone: str = Form(...),
-    file: UploadFile = None,  # File upload
+    file: UploadFile = File(None),  # File upload (không bắt buộc)
     db: Session = Depends(get_db),
     admin: dict = Depends(get_current_admin)
 ):
-    # Nếu có file thì lưu vào thư mục uploads
-    file_path = None
-    if file:
-        file_path = os.path.join(UPLOAD_DIR, file.filename)
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-
-    # Tạo nhân viên
+    # Tạo dữ liệu nhân viên từ form
     employee_data = EmployeeCreate(
         full_name=full_name,
         position=position,
@@ -52,36 +40,54 @@ async def add_employee(
         email=email,
         phone=phone
     )
-    new_employee = create_employee(db, employee_data)
-
-    return {
-        "message": "Employee created successfully",
-        "employee": new_employee,
-        "file_path": file_path  # Trả về đường dẫn file nếu có
-    }
+    
+    # Gọi service để tạo nhân viên và xử lý upload ảnh
+    new_employee = await create_employee(db, employee_data, file)
+    
+    return new_employee
 
 # Admin: Lấy thông tin tất cả nhân viên 
 @router.get("/getall", response_model=list[EmployeeResponse])
-def get_all_employees(db: Session = Depends(get_db)):
-    employees = db.query(Employee).all()
-    return [EmployeeResponse.model_validate(emp) for emp in employees]
+def get_all_employees_route(db: Session = Depends(get_db)):
+    employees = get_all_employees(db)
+    return employees
 
 # Admin: Lấy nhân viên theo mã nhân viên
-@router.get("/{employee_code}")
+@router.get("/{employee_code}", response_model=EmployeeResponse)
 def get_employee(employee_code: str, db: Session = Depends(get_db), admin: dict = Depends(get_current_admin)):
     employee = get_employee_by_code(db, employee_code)
     if not employee:
         raise HTTPException(status_code=404, detail="Employee not found")
-    return EmployeeResponse.model_validate(employee)
-
-
+    return employee
 
 # Admin: Cập nhật thông tin nhân viên
-@router.put("/update/{employee_code}")
-def edit_employee(employee_code: str, employee_update: EmployeeUpdate, db: Session = Depends(get_db), admin: dict = Depends(get_current_admin)):
-    updated_employee = update_employee(db, employee_code, employee_update)
-    if not updated_employee:
-        raise HTTPException(status_code=404, detail="Employee not found")
+@router.put("/update/{employee_code}", response_model=EmployeeResponse)
+async def edit_employee(
+    employee_code: str,
+    full_name: str = Form(None),
+    position: str = Form(None),
+    department: str = Form(None),
+    email: EmailStr = Form(None),
+    phone: str = Form(None),
+    file: UploadFile = File(None),  # File upload (không bắt buộc)
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
+    # Kiểm tra nếu full_name được cung cấp thì không được rỗng
+    if full_name is not None and not full_name.strip():
+        raise HTTPException(status_code=400, detail="Họ tên không được để trống")
+
+    # Tạo dữ liệu cập nhật từ form
+    employee_data = EmployeeUpdate(
+        full_name=full_name,
+        position=position,
+        department=department,
+        email=email,
+        phone=phone
+    )
+    
+    # Gọi service để cập nhật nhân viên và xử lý upload ảnh
+    updated_employee = await update_employee(db, employee_code, employee_data, file)
     return updated_employee
 
 # Admin: Xóa nhân viên
@@ -90,10 +96,10 @@ def remove_employee(employee_code: str, db: Session = Depends(get_db), admin: di
     deleted_employee = delete_employee(db, employee_code)
     if not deleted_employee:
         raise HTTPException(status_code=404, detail="Employee not found")
-    
+    return None
 
 # Lấy danh sách nhân viên theo phòng ban
-@router.get("/department/{department}")
+@router.get("/department/{department}", response_model=list[EmployeeResponse])
 def get_employees_by_department_route(department: str, db: Session = Depends(get_db), admin: dict = Depends(get_current_admin)):
     employees = get_employees_by_department(db, department)
     if not employees:

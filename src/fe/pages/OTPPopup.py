@@ -1,89 +1,182 @@
-from PyQt6.QtWidgets import (
-    QDialog, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QApplication
-)
-from PyQt6.QtGui import QIntValidator
-from PyQt6.QtCore import Qt
 import sys
+import requests
+from PyQt6.QtWidgets import (
+    QApplication, QDialog, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit,
+    QPushButton, QMessageBox
+)
+from PyQt6.QtGui import QIntValidator, QFont
+from PyQt6.QtCore import Qt, pyqtSignal
 
-class OtpPopup(QDialog):
-    def __init__(self, email="example@gmail.com"):
+# API endpoint xác minh OTP
+API_URL = "http://127.0.0.1:8000/auth/verify-otp"
+
+class OTPPopUp(QDialog):
+
+    otp_verified = pyqtSignal()
+    def __init__(self, email):
         super().__init__()
-
+        self.email = email
         self.setWindowTitle("Nhập mã OTP")
-        self.setFixedSize(350, 200)
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)  
+        self.setFixedSize(400, 250)
+        self.initUI()
+        self.setStyleSheet(self.main_style())
+
+    def initUI(self):
         layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        title_label = QLabel("Nhập mã OTP")
-        title_label.setStyleSheet("color: white; font-size: 18px; font-weight: bold;")
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(title_label)
+        # Tiêu đề
+        self.label = QLabel("Nhập mã OTP (6 số) được gửi qua email:")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setFont(QFont("Times New Roman", 12))
+        self.label.setStyleSheet("color: white;")
+        layout.addWidget(self.label)
 
-        email_label = QLabel(f"Mã OTP đã được gửi đến email:\n {email}")
-        email_label.setStyleSheet("color: white; font-size: 14px;")
-        email_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(email_label)
-
+        # Hàng chứa 6 ô nhập OTP
+        self.otp_inputs = []
         otp_layout = QHBoxLayout()
-        self.otp_fields = []
 
         for i in range(6):
-            otp_input = QLineEdit(self)
-            otp_input.setMaxLength(1)  
-            otp_input.setValidator(QIntValidator(0, 9, self))  
-            otp_input.setFixedSize(40, 40)
-            otp_input.setAlignment(Qt.AlignmentFlag.AlignCenter)  
-            otp_input.setStyleSheet(
-                "font-size: 18px; color: white; background-color: #253B54; border: 2px solid #3A5A80; border-radius: 5px;"
-            )
-
-            otp_input.textChanged.connect(lambda _, idx=i: self.move_next(idx))  
-            self.otp_fields.append(otp_input)
+            otp_input = QLineEdit()
+            otp_input.setFixedSize(50, 50)
+            otp_input.setMaxLength(1)  # Giới hạn 1 ký tự
+            otp_input.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            otp_input.setValidator(QIntValidator(0, 9))  # Chỉ cho phép nhập số
+            otp_input.setStyleSheet(self.input_style())
+            otp_input.textChanged.connect(lambda text, idx=i: self.focus_next(idx, text))
+            self.otp_inputs.append(otp_input)
             otp_layout.addWidget(otp_input)
 
         layout.addLayout(otp_layout)
 
-        self.submit_button = QPushButton("Xác nhận OTP")
-        self.submit_button.setStyleSheet(
-            "background-color: #28a745; color: white; font-size: 16px; padding: 8px; border-radius: 5px;"
-        )
-        self.submit_button.clicked.connect(self.get_otp)
-        layout.addWidget(self.submit_button)
+        # Nút Xác minh OTP
+        self.verify_btn = QPushButton("Xác minh")
+        self.verify_btn.setStyleSheet(self.get_button_style())
+        self.verify_btn.clicked.connect(self.verify_otp)
+        layout.addWidget(self.verify_btn, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        resend_layout = QHBoxLayout()
-        not_received_label = QLabel("Không nhận được mã?")
-        not_received_label.setStyleSheet("color: white; font-size: 14px;")
-
-        self.resend_button = QPushButton("Gửi lại OTP")
-        self.resend_button.setStyleSheet(
-            "background: none; color: #1E90FF; font-size: 14px; border: none; text-decoration: underline;"
-        )
-        self.resend_button.clicked.connect(self.resend_otp)
-
-        resend_layout.addWidget(not_received_label)
-        resend_layout.addWidget(self.resend_button)
-        layout.addLayout(resend_layout)
+        # Nút Gửi lại OTP
+        self.resend_btn = QPushButton("Gửi lại OTP")
+        self.resend_btn.setStyleSheet(self.get_login_button_style())
+        layout.addWidget(self.resend_btn, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.setLayout(layout)
-        self.setStyleSheet("background-color: #192E44; border-radius: 10px;")
 
-    def move_next(self, index):
-        if index < 5 and self.otp_fields[index].text():
-            self.otp_fields[index + 1].setFocus()
+    def focus_next(self, index, text):
+        """ Tự động chuyển sang ô tiếp theo khi nhập """
+        if text and index < 5:
+            self.otp_inputs[index + 1].setFocus()
 
-    def get_otp(self):
-        otp_code = ''.join(field.text() for field in self.otp_fields)
-        print("OTP Nhập:", otp_code)
-        self.accept()  
+    def get_otp_code(self):
+        """ Lấy mã OTP từ các ô nhập """
+        return "".join([box.text() for box in self.otp_inputs])
 
-    def resend_otp(self):
-        print("Gửi lại OTP...")  
+    def verify_otp(self):
+        otp_code = self.get_otp_code()
 
+        if len(otp_code) != 6:
+            QMessageBox.warning(self, "Lỗi", "Vui lòng nhập đầy đủ 6 chữ số OTP!")
+            return # Không tiếp tục xử lý nếu OTP chưa đủ 6 số
+
+        try:
+            email_cleaned = self.email.strip()  # Loại bỏ khoảng trắng/thừa ký tự
+            otp_code = self.get_otp_code().strip()
+            # Gửi yêu cầu xác minh OTP đến API
+            response = requests.post(API_URL, params={"email": email_cleaned, "otp": otp_code})
+
+            if response.status_code == 200:
+                QMessageBox.information(self, "Thành công", "Xác minh thành công!")
+                self.otp_verified.emit()  # Phát tín hiệu thành công
+                self.accept()  # Đóng cửa sổ OTP
+                
+            else:
+                # Lấy thông báo lỗi từ API hoặc hiển thị lỗi mặc định
+                error_msg = response.json().get("detail", "OTP không đúng, vui lòng nhập lại.")
+                QMessageBox.warning(self, "Lỗi", error_msg)  # Dùng warning thay vì critical
+
+                # Xóa dữ liệu trong các ô nhập OTP để người dùng nhập lại
+                for box in self.otp_inputs:
+                    box.clear()
+
+                # Đưa con trỏ về ô nhập đầu tiên
+                self.otp_inputs[0].setFocus()
+
+                # Không gọi `reject()` hoặc `accept()` để tránh đóng cửa sổ
+
+        except requests.RequestException:
+            QMessageBox.warning(self, "Lỗi", "Không thể kết nối đến máy chủ, vui lòng thử lại!")
+
+            # Không cho phép đóng cửa sổ khi gặp lỗi mạng
+            return
+        
+    def main_style(self):
+        """ Định dạng giao diện tổng thể """
+        return """
+            QDialog {
+                background-color: #1B263B;
+                border-radius: 10px;
+            }
+        """
+
+    def input_style(self):
+        """ Định dạng ô nhập OTP """
+        return """
+            QLineEdit {
+                border: 2px solid white;
+                border-radius: 10px;
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+                padding: 5px;
+                background-color: transparent;
+                text-align: center;
+            }
+            QLineEdit:focus {
+                border: 2px solid #FFD700;
+            }
+        """
+
+    def get_button_style(self):
+        """ Định dạng nút xác minh """
+        return """
+            QPushButton {
+                border: 2px solid white;
+                color: white;
+                font: bold 12pt 'Times New Roman';
+                border-radius: 10px;
+                background-color: #415A77;
+                padding: 8px;
+            }
+            QPushButton:hover {
+                background-color: #31445B;
+                border: 2px solid #FFD700;
+            }
+        """
+
+    def get_login_button_style(self):
+        """ Định dạng nút gửi lại OTP """
+        return """
+            QPushButton {
+                color: #FFD700;
+                font-size: 10pt;
+                background: transparent;
+                border: none;
+            }
+            QPushButton:hover {
+                text-decoration: underline;
+                color: #FFA500;
+            }
+        """
+
+# Chạy thử pop-up
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    email = "kien45671duong@gmail.com"  
-    dialog = OtpPopup(email)
-    if dialog.exec():
-        print("OTP đã nhập:", ''.join(field.text() for field in dialog.otp_fields))
-    sys.exit(app.exec())
+    email = "user@example.com"
+    otp_dialog = OTPPopUp(email)
+
+    if otp_dialog.exec() == QDialog.DialogCode.Accepted:
+        print("✅ Xác minh thành công!")
+    else:
+        print("❌ Xác minh thất bại hoặc bị hủy.")
+
+    # ❌ KHÔNG dùng sys.exit() ở đây nếu bạn không muốn đóng toàn bộ ứng dụng
+    app.exec()
