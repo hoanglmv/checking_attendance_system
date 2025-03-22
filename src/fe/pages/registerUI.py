@@ -2,16 +2,19 @@ import re
 import sys
 import requests
 from PyQt6 import QtWidgets, QtGui, QtCore
+from PyQt6.QtCore import QObject
 from pages.OTPPopup import OTPPopUp
 
+class Ui_registerUI(QObject):  # Kế thừa từ QObject
+    def __init__(self):
+        super().__init__()  # Gọi hàm khởi tạo của QObject
 
-class Ui_registerUI(QtWidgets.QMainWindow):
     def setupUi(self, registerUI):
         registerUI.setObjectName("registerUI")
         registerUI.resize(750, 950)
         registerUI.setStyleSheet("background-color: #131A2D;")
         
-        self.centralwidget = QtWidgets.QWidget(registerUI)
+        self.centralwidget = QtWidgets.QWidget(parent=registerUI)
         self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
 
         # Spacer để căn giữa theo chiều dọc
@@ -72,7 +75,7 @@ class Ui_registerUI(QtWidgets.QMainWindow):
         # Spacer để căn giữa theo chiều dọc
         self.mainLayout.addStretch()
 
-        registerUI.setCentralWidget(self.centralwidget)
+        registerUI.setLayout(self.mainLayout)
 
         # Thêm QLabel hiển thị thông báo lỗi
         self.error_label = QtWidgets.QLabel("", self.groupBox_2)
@@ -128,7 +131,7 @@ class Ui_registerUI(QtWidgets.QMainWindow):
 
     def open_login(self):
         main_window = self.get_main_window()
-        main_window.stacked_widget.setCurrentWidget(main_window.loginUI)  # Quay lại giao diện đăng nhập
+        main_window.stacked_widget.setCurrentWidget(main_window.loginUI)
 
     def validate_email(self, email):
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
@@ -153,36 +156,40 @@ class Ui_registerUI(QtWidgets.QMainWindow):
     def process_registration(self):
         url = "http://127.0.0.1:8000/auth/register"
         data = {
-            "full_name": self.inputs["full_name"].text(),
-            "email": self.inputs["email"].text(),
-            "phone": self.inputs["phone"].text(),
-            "position": self.inputs["position"].text(),
-            "department": self.inputs["department"].text(),
-            "password": self.inputs["password"].text(),
+            "full_name": self.inputs["full_name"].text().strip(),
+            "email": self.inputs["email"].text().strip(),
+            "phone": self.inputs["phone"].text().strip(),
+            "position": self.inputs["position"].text().strip(),
+            "department": self.inputs["department"].text().strip(),
+            "password": self.inputs["password"].text().strip(),
         }
 
         try:
             headers = {"Content-Type": "application/json"}
             response = requests.post(url, json=data, headers=headers)
+            response.raise_for_status()  # Kiểm tra lỗi HTTP
             if response.status_code == 200:
-                
-                QtWidgets.QMessageBox.information(self, "Thành công", "Đăng ký thành công! Vui lòng kiểm tra email để xác thực.")
+                QtWidgets.QMessageBox.information(None, "Thành công", "Đăng ký thành công! Vui lòng kiểm tra email để xác thực.")
                 email = data["email"]
                 otp_dialog = OTPPopUp(email)
                 if otp_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                    QtWidgets.QMessageBox.information(self, "Thành công", "Xác minh thành công! Bạn có thể đăng nhập ngay.")
-                    self.open_login() 
+                    QtWidgets.QMessageBox.information(None, "Thành công", "Xác minh thành công! Bạn có thể đăng nhập ngay.")
+                    self.open_login()
                 else:
-                    QtWidgets.QMessageBox.warning(self, "Thất bại", "Xác minh OTP không thành công. Vui lòng thử lại.")
+                    QtWidgets.QMessageBox.warning(None, "Thất bại", "Xác minh OTP không thành công. Vui lòng thử lại.")
             else:
-                error_message = response.json().get('detail', 'Không rõ lỗi')
-                QtWidgets.QMessageBox.warning(self, "Lỗi", f"Lỗi: {error_message}")
+                error_message = response.json().get('detail', 'Đăng ký thất bại! Vui lòng thử lại.')
+                QtWidgets.QMessageBox.warning(None, "Lỗi", f"Lỗi: {error_message}")
         except requests.exceptions.RequestException as e:
-            QtWidgets.QMessageBox.critical(self, "Lỗi kết nối", f"Không thể kết nối đến server: {str(e)}")
+            if hasattr(e, 'response') and e.response is not None:
+                error_message = e.response.json().get("detail", f"Không thể kết nối đến server: {str(e)}")
+                QtWidgets.QMessageBox.critical(None, "Lỗi", error_message)
+            else:
+                QtWidgets.QMessageBox.critical(None, "Lỗi kết nối", "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng!")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    registerUI = QtWidgets.QMainWindow()
+    registerUI = QtWidgets.QWidget()
     ui = Ui_registerUI()
     ui.setupUi(registerUI)
     registerUI.show()

@@ -103,13 +103,16 @@ def add_new_employee(ui):
     api_url = "http://127.0.0.1:8000/employees/create"
     headers = {"Authorization": f"Bearer {access_token}"}
     files = {}
+    file_obj = None  # Biến để lưu file object
+
     if hasattr(ui.add_employee_ui, 'selected_image_path') and ui.add_employee_ui.selected_image_path:
         try:
             # Kiểm tra file có tồn tại không
             if not os.path.exists(ui.add_employee_ui.selected_image_path):
                 QMessageBox.warning(None, "Lỗi", "File ảnh không tồn tại! Vui lòng chọn lại ảnh.")
                 return
-            files['file'] = ('avatar.jpg', open(ui.add_employee_ui.selected_image_path, 'rb'), 'image/jpeg')
+            file_obj = open(ui.add_employee_ui.selected_image_path, 'rb')
+            files['file'] = ('avatar.jpg', file_obj, 'image/jpeg')
         except Exception as e:
             QMessageBox.warning(None, "Lỗi", f"Không thể đọc file ảnh: {str(e)}")
             return
@@ -136,5 +139,8 @@ def add_new_employee(ui):
     except Exception as e:
         QMessageBox.critical(None, "Lỗi", f"Lỗi không xác định: {str(e)}")
     finally:
-        if 'file' in files:
-            files['file'].close()
+        if file_obj:  # Đóng file object, không phải tuple
+            try:
+                file_obj.close()
+            except Exception as e:
+                print(f"Không thể đóng file ảnh: {str(e)}")

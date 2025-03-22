@@ -53,7 +53,7 @@ def get_all_employees_route(db: Session = Depends(get_db)):
     return employees
 
 # Admin: Lấy nhân viên theo mã nhân viên
-@router.get("/{employee_code}", response_model=EmployeeResponse)
+@router.get("/get_employee/{employee_code}", response_model=EmployeeResponse)
 def get_employee(employee_code: str, db: Session = Depends(get_db), admin: dict = Depends(get_current_admin)):
     employee = get_employee_by_code(db, employee_code)
     if not employee:
@@ -104,4 +104,12 @@ def get_employees_by_department_route(department: str, db: Session = Depends(get
     employees = get_employees_by_department(db, department)
     if not employees:
         raise HTTPException(status_code=404, detail="No employees found in this department")
-    return employees
+    return employees 
+
+# Admin: Lấy danh sách các department 
+@router.get("/departments", response_model=list[str])
+def get_all_departments(db: Session = Depends(get_db), admin: dict = Depends(get_current_admin)):
+    # Lấy tất cả các department từ cơ sở dữ liệu
+    departments = db.query(Employee.department).distinct().all()
+    # Trả về danh sách các department (loại bỏ None và chuyển thành list[str])
+    return [dept[0] for dept in departments if dept[0] is not None]

@@ -8,7 +8,7 @@ backend_process = subprocess.Popen(
 )
 
 # Chờ 2 giây để backend khởi động
-time.sleep(2)
+time.sleep(1)
 
 # Chạy Frontend
 frontend_process = subprocess.Popen(
@@ -16,6 +16,5 @@ frontend_process = subprocess.Popen(
     cwd="E:/AttendanceCheckingApp/checking_attendance_system/src"
 )
 
-# Đợi cả hai tiến trình chạy
 backend_process.wait()
 frontend_process.wait()
