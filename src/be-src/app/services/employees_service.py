@@ -7,7 +7,7 @@ import os
 import unicodedata
 import re
 
-# Hàm chuẩn hóa tên file
+# Hàm chuẩn hóa tên file (không cần nữa nhưng giữ lại để tham khảo)
 def normalize_filename(filename: str) -> str:
     # Chuyển ký tự tiếng Việt thành không dấu
     filename = ''.join(c for c in unicodedata.normalize('NFD', filename)
@@ -19,9 +19,8 @@ def normalize_filename(filename: str) -> str:
     return filename
 
 # Thư mục lưu ảnh
-UPLOAD_DIR = "checking_attendance_system/src/be-src/app/uploads/avt_images"
+UPLOAD_DIR = "be-src/app/uploads/avt_images"
 
-# Add nhân viên
 # Add nhân viên
 async def create_employee(db: Session, employee_data: EmployeeCreate, avatar_file: UploadFile = None):
     employee_data_dict = employee_data.model_dump(exclude={"employee_code"})  # Bỏ employee_code ra khỏi input
@@ -37,9 +36,9 @@ async def create_employee(db: Session, employee_data: EmployeeCreate, avatar_fil
         # Tạo thư mục 
         os.makedirs(UPLOAD_DIR, exist_ok=True)
         
-        # Chuẩn hóa tên file
-        normalized_filename = normalize_filename(avatar_file.filename)
-        file_path = os.path.join(UPLOAD_DIR, normalized_filename)
+        # Đặt tên file ảnh theo định dạng avt_{employee_code}.jpg
+        filename = f"avt_{employee_code}.jpg"
+        file_path = os.path.join(UPLOAD_DIR, filename)
         
         print(f"Đang lưu ảnh tại: {file_path}")  # Thêm log
         # Lưu file vào uploads/avt_images
@@ -48,14 +47,13 @@ async def create_employee(db: Session, employee_data: EmployeeCreate, avatar_fil
             f.write(content)
         
         # Cập nhật avatar_url trong database
-        employee.avatar_url = f"avt_images/{normalized_filename}"
+        employee.avatar_url = f"avt_images/{filename}"
 
     db.add(employee)
     db.commit()
     db.refresh(employee)
     print(f"Đã tạo nhân viên thành công: {employee.employee_code}")  # Thêm log
     return employee
-
 
 # Lấy danh sách all nhân viên
 def get_all_employees(db: Session):
@@ -79,12 +77,18 @@ async def update_employee(db: Session, employee_code: str, employee_data: Employ
 
     # Xử lý upload ảnh nếu có
     if avatar_file:
+        # Xóa ảnh cũ nếu có
+        if employee.avatar_url:
+            old_file_path = os.path.join(UPLOAD_DIR, employee.avatar_url.split("/")[-1])
+            if os.path.exists(old_file_path):
+                os.remove(old_file_path)
+
         # Tạo thư mục app/data/uploads nếu chưa tồn tại
         os.makedirs(UPLOAD_DIR, exist_ok=True)
         
-        # Chuẩn hóa tên file
-        normalized_filename = normalize_filename(avatar_file.filename)
-        file_path = os.path.join(UPLOAD_DIR, normalized_filename)
+        # Đặt tên file ảnh theo định dạng avt_{employee_code}.jpg
+        filename = f"avt_{employee_code}.jpg"
+        file_path = os.path.join(UPLOAD_DIR, filename)
         
         # Lưu file vào uploads/avt_images
         with open(file_path, "wb") as f:
@@ -92,7 +96,7 @@ async def update_employee(db: Session, employee_code: str, employee_data: Employ
             f.write(content)
         
         # Cập nhật avatar_url trong database
-        employee.avatar_url = f"avt_images/{normalized_filename}"
+        employee.avatar_url = f"avt_images/{filename}"
 
     db.commit()
     db.refresh(employee)

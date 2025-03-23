@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator, validator
 from typing import Optional
 from enum import Enum
 
@@ -8,10 +8,6 @@ class AttendanceStatus(str, Enum):
     LATE = "LATE"
     ABSENT = "ABSENT"
     ABSENT_WITH_PERMISSION = "ABSENT_WITH_PERMISSION"
-
-class AdminStatus(str, Enum):
-    ACTIVE = "ACTIVE"
-    INACTIVE = "INACTIVE"
 
 # Schema tạo user mới
 class AdminCreate(BaseModel):
@@ -33,7 +29,12 @@ class AdminUpdate(BaseModel):
     phone: Optional[str] = None
     position: Optional[str] = None
     department: Optional[str] = None
-    status: Optional[AdminStatus] = None
+
+    @field_validator('full_name', 'phone', 'position', 'department', mode='before')
+    def strip_strings(cls, value):
+        if isinstance(value, str):
+            return value.strip()
+        return value
 
 # Schema phản hồi khi lấy thông tin user
 class AdminResponse(BaseModel):
@@ -43,11 +44,11 @@ class AdminResponse(BaseModel):
     phone: str
     position: str
     department: str
-    status: AdminStatus
+    # Xóa status vì không tồn tại trong model User
+    # status: AdminStatus
 
     class Config:
         from_attributes = True  # Cho phép chuyển đổi từ SQLAlchemy model
-    
 
 class EmployeeSearch(BaseModel):
     employee_code: str

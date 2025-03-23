@@ -1,10 +1,16 @@
 import requests
 from PyQt6 import QtCore, QtGui, QtWidgets
 import re
-from PyQt6.QtCore import QSettings
+from PyQt6.QtCore import QSettings, pyqtSignal, QObject
+from PyQt6.QtGui import QCursor
 from pages.informationUI import Ui_informationUI
 
-class Ui_loginUI(object):
+class Ui_loginUI(QObject):  # Kế thừa từ QObject
+    login_success = pyqtSignal()
+
+    def __init__(self):
+        super().__init__()  # Gọi hàm khởi tạo của QObject
+
     def setupUi(self, loginUI):
         loginUI.setObjectName("loginUI")
         loginUI.resize(750, 574)
@@ -44,19 +50,19 @@ class Ui_loginUI(object):
         self.login_button = QtWidgets.QPushButton("Đăng nhập", self.groupBox_2)
         self.login_button.setFixedSize(250, 40)
         self.login_button.setStyleSheet(self.get_button_style())
-        self.login_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.login_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.innerLayout.addWidget(self.login_button, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
 
         self.actionLayout = QtWidgets.QHBoxLayout()
         
         self.register_button = QtWidgets.QPushButton("Đăng ký", self.groupBox_2)
         self.register_button.setStyleSheet(self.get_action_button_style())
-        self.register_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.register_button.clicked.connect(self.open_register)
+        self.register_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.innerLayout.addLayout(self.actionLayout)
 
         self.forgot_button = QtWidgets.QPushButton("Quên mật khẩu", self.groupBox_2)
         self.forgot_button.setStyleSheet(self.get_action_button_style())
-        self.forgot_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.forgot_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
 
         self.actionLayout.addWidget(self.register_button)
         self.actionLayout.addWidget(self.forgot_button)
@@ -66,7 +72,7 @@ class Ui_loginUI(object):
 
         self.mainLayout.addStretch()  # Spacer dưới
 
-        loginUI.setCentralWidget(self.centralwidget)
+        loginUI.setLayout(self.mainLayout)
 
         self.error_label = QtWidgets.QLabel("", self.groupBox_2)
         self.error_label.setStyleSheet("color: red; font-size: 12pt;")
@@ -115,16 +121,6 @@ class Ui_loginUI(object):
             }
         """
 
-    def get_main_window(self):
-        widget = self.centralwidget
-        while widget.parent():
-            widget = widget.parent()
-        return widget
-    
-    def open_register(self):
-        main_window = self.get_main_window()
-        main_window.stacked_widget.setCurrentWidget(main_window.registerUI)
-
     def validate_login_form(self):
         email = self.inputs["email"].text().strip()
         password = self.inputs["password"].text().strip()
@@ -153,6 +149,7 @@ class Ui_loginUI(object):
         self.error_label.setStyleSheet("color: green; font-size: 12pt;")
 
     def process_login(self, email, password):
+        print(f"Bắt đầu đăng nhập với email: {email}")
         api_url = "http://127.0.0.1:8000/auth/login"
         login_data = {
             "email": email,
@@ -161,36 +158,45 @@ class Ui_loginUI(object):
 
         try:
             response = requests.post(api_url, json=login_data)
+            response.raise_for_status()  # Kiểm tra lỗi HTTP
             data = response.json()
 
-            if response.status_code == 200 and "access_token" in data:
-                self.show_success("Đăng nhập thành công!")
-
+            if "access_token" in data:
                 settings = QSettings("MyApp", "LoginApp")
-                settings.setValue("access_token", data["access_token"])
-
-                print("Access Token saved!")
-                
-                # Chuyển sang informationUI và tải dữ liệu nhân viên
-                main_window = self.get_main_window()
-                if not hasattr(main_window, 'informationUI'):
-                    main_window.informationUI = QtWidgets.QMainWindow()
-                    main_window.ui_informationUI = Ui_informationUI()
-                    main_window.ui_informationUI.setupUi(main_window.informationUI)
-                    main_window.stacked_widget.addWidget(main_window.informationUI)
-                main_window.stacked_widget.setCurrentWidget(main_window.informationUI)
-                main_window.ui_informationUI.load_employees_from_api()  # Tải dữ liệu sau khi đăng nhập
+                access_token = data["access_token"]
+                settings.setValue("access_token", access_token)
+                print(f"Access Token saved: {access_token}")
+                self.login_success.emit()
+                self.clear_inputs()
             else:
                 error_message = data.get("detail", "Đăng nhập thất bại! Kiểm tra lại thông tin.")
+                print(f"Lỗi đăng nhập: {error_message}")
                 self.show_error(error_message)
 
-        except requests.RequestException:
-            self.show_error("Không thể kết nối đến máy chủ!")
+        except requests.RequestException as e:
+            if hasattr(e, 'response') and e.response is not None:
+                error_message = e.response.json().get("detail", f"Không thể kết nối đến máy chủ: {str(e)}")
+                print(f"Lỗi kết nối đến API /auth/login: {error_message}")
+                self.show_error(error_message)
+            else:
+                print("Không thể kết nối đến máy chủ! Kiểm tra xem backend có đang chạy không.")
+                self.show_error("Không thể kết nối đến máy chủ! Kiểm tra xem backend có đang chạy không.")
+        except Exception as e:
+            print(f"Lỗi không xác định trong process_login: {str(e)}")
+            self.show_error(f"Lỗi không xác định: {str(e)}")
+
+    def clear_inputs(self):
+        """Xóa nội dung các ô nhập liệu và thông báo lỗi"""
+        print("Xóa nội dung các ô nhập liệu")
+        for field in self.inputs:
+            self.inputs[field].clear()  # Xóa nội dung ô nhập liệu
+        self.error_label.setText("")  # Xóa thông báo lỗi
+        print("Đã xóa các ô nhập liệu")
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    loginUI = QtWidgets.QMainWindow()
+    loginUI = QtWidgets.QWidget()
     ui = Ui_loginUI()
     ui.setupUi(loginUI)
     loginUI.show()

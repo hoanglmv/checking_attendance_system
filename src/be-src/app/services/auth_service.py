@@ -2,11 +2,12 @@ import json
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.models.otp_codes import OTPCode
-from app.schemas.user_schema import AdminCreate, AdminUpdate
+from app.schemas.user_schema import AdminCreate, AdminUpdate, AdminResponse
 from app.utils.security import get_password_hash, verify_password, generate_otp
-from app.services.email_service import  send_otp_email, save_otp
+from app.services.email_service import send_otp_email, save_otp
 from fastapi import BackgroundTasks, HTTPException
 from datetime import datetime, timedelta
+
 import pytz
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
@@ -48,14 +49,13 @@ def register_admin(db: Session, admin_data: AdminCreate, background_tasks: Backg
         department=admin_data.department,
         hashed_password=hashed_password,
         email_verified=False,
-        is_admin = True,
+        is_admin=True,
         created_at=datetime.now()  # ✅ Đảm bảo có timestamp chính xác
     )
     db.add(new_admin)
     db.commit()
     db.refresh(new_admin)
     
-
     # Gửi OTP để xác thực email
     success, message = send_otp_verification_email(db, admin_data.email)
     if not success:
@@ -65,6 +65,7 @@ def register_admin(db: Session, admin_data: AdminCreate, background_tasks: Backg
     background_tasks.add_task(delete_unverified_accounts, db)
 
     return {"message": "Admin registered successfully. Please verify your email with the OTP sent."}
+
 # Xác thực user
 def authenticate_user(db: Session, email: str, password: str):
     admin = db.query(User).filter(User.email == email).first()
@@ -89,17 +90,67 @@ def get_all_admin(db: Session):
 
 # Cập nhật thông tin admin
 def update_admin_info(db: Session, admin_id: int, admin_update: AdminUpdate):
+    print(f"🚀 admin_id: {admin_id}")
     admin = get_admin_by_id(db, admin_id)
+    print(f"🚀 admin: {admin}")
     if not admin:
+        print("🚫 Admin not found")
         raise HTTPException(status_code=404, detail="Admin not found")
 
-    update_data = admin_update.dict(exclude_unset=True)  # Lấy dữ liệu có thay đổi
-    for key, value in update_data.items():
-        setattr(admin, key, value)  # Cập nhật từng thuộc tính
+    update_data = admin_update.model_dump(exclude_unset=True)  
+    print(f"🚀 update_data in update_admin_info: {update_data}")
+    valid_attributes = {'full_name', 'phone', 'position', 'department'}
 
-    db.commit()
-    db.refresh(admin)
-    return admin
+    # Lọc các trường cần cập nhật
+    fields_to_update = {}
+    for key, value in update_data.items():
+        if key not in valid_attributes:
+            print(f"🚫 Thuộc tính không hợp lệ: {key}")
+            raise HTTPException(status_code=400, detail=f"Invalid attribute: {key}")
+        
+        # Bỏ qua nếu giá trị là chuỗi rỗng hoặc None
+        if value is None or (isinstance(value, str) and not value):
+            print(f"🚫 Skipping update for {key}: value is empty or None")
+            continue
+        
+        fields_to_update[key] = value
+
+    # Nếu không có trường nào để cập nhật
+    if not fields_to_update:
+        print("🚫 No fields to update after validation")
+        raise HTTPException(status_code=400, detail="No valid fields to update")
+
+    # Cập nhật các trường
+    for key, value in fields_to_update.items():
+        try:
+            setattr(admin, key, value)
+            print(f"🚀 Updated {key} to {value}")
+        except AttributeError as e:
+            print(f"🚫 Lỗi khi cập nhật thuộc tính {key}: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Cannot update attribute {key}: {str(e)}")
+
+    try:
+        db.commit()
+        print("🚀 Database commit successful")
+        db.refresh(admin)
+        print(f"🚀 Refreshed admin: position={admin.position}, full_name={admin.full_name}")
+    except Exception as e:
+        db.rollback()
+        print(f"🚫 Lỗi cơ sở dữ liệu khi cập nhật admin: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+    admin_dict = {
+        "id": admin.id,
+        "full_name": admin.full_name,
+        "email": admin.email,
+        "phone": admin.phone,
+        "position": admin.position,
+        "department": admin.department
+    }
+    updated_admin = AdminResponse.model_validate(admin_dict)
+    print(f"🚀 Type of updated_admin: {type(updated_admin)}")
+    print(f"🚀 Value of updated_admin: {updated_admin}")
+    return updated_admin
 
 # Gửi mã OTP xác thực email
 def send_otp_verification_email(db: Session, email: str):
@@ -112,8 +163,6 @@ def send_otp_verification_email(db: Session, email: str):
 
     return True, "OTP sent successfully"
 
-
-# Xác minh mã OTP
 # Xác minh mã OTP
 def verify_otp(db: Session, email: str, otp: str):
     admin = get_admin_by_email(db, email)

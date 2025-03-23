@@ -1,15 +1,15 @@
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
+from typing import Optional
+from fastapi import APIRouter, BackgroundTasks, Depends, Form, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.services.auth_service import (
     create_admin_user, authenticate_user, get_admin_by_email, 
     update_admin_info, send_otp_verification_email, verify_otp, register_admin
 )
-
 from app.services.email_service import save_otp, verify_otp_code
-from app.schemas.user_schema import AdminCreate, AdminLogin, AdminUpdate
+from app.schemas.user_schema import AdminCreate, AdminLogin, AdminUpdate, AdminResponse
 from app.utils.security import create_access_token, generate_otp
-from app.utils.dependencies import get_current_admin
+from app.utils.dependencies import get_current_admin, CurrentAdmin  # Thêm import CurrentAdmin
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -23,14 +23,11 @@ def get_db():
 # Đăng ký tài khoản
 @router.post("/register")
 def register(admin_data: AdminCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    print(f"📌 Register request: {admin_data}")  # Debug log
-
+    print(f"📌 Register request: {admin_data}")
     if get_admin_by_email(db, admin_data.email):
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    # Tạo admin và gửi OTP trong cùng một hàm
     new_admin = register_admin(db, admin_data, background_tasks)
-
     return {"message": "Admin registered successfully. Please verify your email with the OTP sent."}
 
 # Xác minh OTP
@@ -54,35 +51,66 @@ def login(admin_data: AdminLogin, db: Session = Depends(get_db)):
     print(f"🆔 Admin ID: {admin.id}")  
     print(f"📧 Admin Email: {admin.email}")
 
-    access_token = create_access_token(data={"sub": str(admin.id)})  # Đảm bảo sub chứa admin.id
-
-    return {"access_token": access_token, "token_type": "bearer"}
+    access_token = create_access_token(data={"sub": str(admin.id)})
+    admin_response = AdminResponse.model_validate(admin)
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "admin": admin_response
+    }
 
 # Lấy thông tin cá nhân
 @router.get("/me")
-def get_my_info(current_admin: dict = Depends(get_current_admin)):
+def get_my_info(current_admin: CurrentAdmin = Depends(get_current_admin)):
     return current_admin
 
 # Cập nhật thông tin cá nhân
 @router.put("/me/update")
-def update_my_info(
-    admin_update: AdminUpdate, 
+async def update_my_info(
+    full_name: str = Form(None),
+    position: str = Form(None),
+    department: str = Form(None),
+    phone: str = Form(None),
     db: Session = Depends(get_db), 
-    current_admin: dict = Depends(get_current_admin)
+    current_admin: CurrentAdmin = Depends(get_current_admin)
 ):
-    # Kiểm tra nếu không có dữ liệu cần cập nhật
-    update_data = admin_update.dict(exclude_unset=True)
-    if not update_data:
-        raise HTTPException(status_code=400, detail="No fields to update.")
+    print(f"🚀 current_admin: {current_admin}")
+    try:
+        admin_id = current_admin.id
 
-    # Không cho phép cập nhật email
-    if "email" in update_data:
-        raise HTTPException(status_code=400, detail="Cannot update email.")
+        update_data = AdminUpdate(
+            full_name=full_name,
+            position=position,
+            department=department,
+            phone=phone
+        ).model_dump(exclude_unset=True)
+        print(f"🚀 update_data: {update_data}")
 
-    # Thực hiện cập nhật thông tin
-    updated_admin = update_admin_info(db, current_admin.id, admin_update)
+        if not update_data:
+            print("🚫 No fields to update")
+            raise HTTPException(status_code=400, detail="No fields to update.")
 
-    return {
-        "message": "Admin info updated successfully",
-        "updated_data": updated_admin
-    }
+        if "email" in update_data:
+            print("🚫 Cannot update email")
+            raise HTTPException(status_code=400, detail="Cannot update email.")
+
+        updated_admin = update_admin_info(db, admin_id, AdminUpdate(**update_data))
+
+        return {
+            "message": "Admin info updated successfully",
+            "updated_data": updated_admin
+        }
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(f"🚫 Lỗi không xác định trong update_my_info: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+@router.post("/logout")
+def logout(current_admin: CurrentAdmin = Depends(get_current_admin)):
+    """
+    Đăng xuất người dùng. 
+    - Backend: Chỉ kiểm tra xem người dùng có đang đăng nhập không.
+    - Frontend: Xóa access_token khỏi QSettings.
+    """
+    return {"message": "Logged out successfully"}
