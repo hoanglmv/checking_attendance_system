@@ -195,7 +195,7 @@ class Ui_informationUI(QObject):
     def add_new_employee_safe(self):
         """Gọi add_new_employee với xử lý ngoại lệ để tránh crash"""
         try:
-            add_new_employee(self)
+            add_new_employee(self,self.mtcnn,self.facenet)
             self.load_employees_from_api()
         except Exception as e:
             QMessageBox.critical(None, "Lỗi", f"Không thể thêm nhân viên: {str(e)}")
