@@ -3,6 +3,8 @@ from PyQt6.QtWidgets import QGroupBox, QPushButton, QLabel, QVBoxLayout, QGridLa
 from PyQt6.QtCore import QSettings, pyqtSignal
 from PyQt6.QtGui import QCursor, QIcon
 import requests
+import subprocess
+import os
 
 class Sidebar(QGroupBox):
     logout_signal = pyqtSignal()  # Tín hiệu để thông báo đăng xuất
@@ -51,6 +53,26 @@ class Sidebar(QGroupBox):
         self.fil_manage.layout().addWidget(self.btn_manage)
         self.verticalLayout.addWidget(self.fil_manage)
 
+        # Button: Check-in (mở/tắt)
+        self.fil_checkin = self.create_button_container()
+        self.btn_checkin = self.create_button(
+            "src/fe/Image_and_icon/icons8-camera-30.png",
+            "Chạy Check-in"
+        )
+        self.btn_checkin.clicked.connect(self.toggle_checkin)
+        self.fil_checkin.layout().addWidget(self.btn_checkin)
+        self.verticalLayout.addWidget(self.fil_checkin)
+
+        # Button: Check-out (mở/tắt)
+        self.fil_checkout = self.create_button_container()
+        self.btn_checkout = self.create_button(
+            "src/fe/Image_and_icon/icons8-camera-30.png",
+            "Chạy Check-out"
+        )
+        self.btn_checkout.clicked.connect(self.toggle_checkout)
+        self.fil_checkout.layout().addWidget(self.btn_checkout)
+        self.verticalLayout.addWidget(self.fil_checkout)
+
         # Spacer
         spacer = QSpacerItem(20, 300, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         self.verticalLayout.addItem(spacer)
@@ -69,13 +91,13 @@ class Sidebar(QGroupBox):
                 background-position: left center;
                 background-size: 24px 24px;
                 color: white;
-                font: 12pt "Times New Roman";
+                font: 12pt \"Times New Roman\";
                 padding-left: 20px;
-                padding-right: 20px;  /* Thêm padding bên phải để cân đối */
+                padding-right: 20px;
                 border: 2px solid white;
                 border-radius: 5px;
                 background-color: #F44336;
-                text-align: center;  /* Căn giữa chữ */
+                text-align: center;
             }
             QPushButton:hover {
                 background-color: #D32F2F;
@@ -86,6 +108,10 @@ class Sidebar(QGroupBox):
         self.btn_logout.clicked.connect(self.logout)
         self.fil_logout.layout().addWidget(self.btn_logout)
         self.verticalLayout.addWidget(self.fil_logout)
+
+        # Các biến lưu trữ tiến trình cho checkin và checkout
+        self.process_checkin = None
+        self.process_checkout = None
 
     def create_button_container(self):
         container = QGroupBox(self)
@@ -106,10 +132,48 @@ class Sidebar(QGroupBox):
             background-position: left center;
             background-size: 24px 24px;
             color: white;
-            font: 12pt "Times New Roman";
+            font: 12pt \"Times New Roman\";
             padding-left: 40px;
         """)
         return button
+
+    def toggle_checkin(self):
+        """Bật/Tắt chạy file checkin.py"""
+        if self.process_checkin is None:
+            try:
+                # Đường dẫn tới file checkin.py, tương đối từ cwd được chỉ định
+                checkin_path = os.path.join("be-src", "app", "tool", "checkin.py")
+                # Đặt cwd thành thư mục gốc dự án nơi file data/embedding tồn tại
+                working_dir = os.path.join("D:\\vhproj\\checking_attendance_system\\src")
+                self.process_checkin = subprocess.Popen(["python", checkin_path], cwd=working_dir)
+                self.btn_checkin.setText("Dừng Check-in")
+                print("Đã mở checkin.py")
+            except Exception as e:
+                print(f'Lỗi khi mở checkin.py: {e}')
+        else:
+            self.process_checkin.terminate()
+            self.process_checkin = None
+            self.btn_checkin.setText("Chạy Check-in")
+            print("Đã đóng checkin.py")
+
+
+    def toggle_checkout(self):
+        """Bật/Tắt chạy file checkout.py"""
+        if self.process_checkout is None:
+            try:
+                checkout_path = os.path.join("be-src", "app", "tool", "checkout.py")
+                working_dir = os.path.join("D:\\vhproj\\checking_attendance_system\\src")
+                self.process_checkout = subprocess.Popen(["python", checkout_path], cwd=working_dir)
+                self.btn_checkout.setText("Dừng Check-out")
+                print("Đã mở checkout.py")
+            except Exception as e:
+                print(f'Lỗi khi mở checkout.py: {e}')
+        else:
+            self.process_checkout.terminate()
+            self.process_checkout = None
+            self.btn_checkout.setText("Chạy Check-out")
+            print("Đã đóng checkout.py")
+
 
     def logout(self):
         """Xử lý đăng xuất: Gọi API logout và phát tín hiệu để quay lại loginUI"""
@@ -128,13 +192,11 @@ class Sidebar(QGroupBox):
         msg_box.setText("Bạn có chắc chắn muốn đăng xuất không?")
         msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         msg_box.setDefaultButton(QMessageBox.StandardButton.No)
-
-        # Tùy chỉnh giao diện của QMessageBox
         msg_box.setStyleSheet("""
             QMessageBox {
                 background-color: #1E2A38;
                 color: white;
-                font: 14pt "Times New Roman";
+                font: 14pt \"Times New Roman\";
             }
             QMessageBox QLabel {
                 color: white;
@@ -144,7 +206,7 @@ class Sidebar(QGroupBox):
                 color: black;
                 padding: 8px 16px;
                 border-radius: 5px;
-                font: 12pt "Times New Roman";
+                font: 12pt \"Times New Roman\";
                 border: 1px solid #68D477;
             }
             QMessageBox QPushButton:hover {
@@ -156,50 +218,6 @@ class Sidebar(QGroupBox):
             }
         """)
 
-        # Tùy chỉnh nút Yes và No
-        yes_button = msg_box.button(QMessageBox.StandardButton.Yes)
-        yes_button.setText("Có")
-        yes_button.setStyleSheet("""
-            QPushButton {
-                background-color: #F44336;
-                color: white;
-                padding: 8px 16px;
-                border-radius: 5px;
-                font: 12pt "Times New Roman";
-                border: 1px solid #F44336;
-            }
-            QPushButton:hover {
-                background-color: #D32F2F;
-                border: 1px solid #FFD700;
-            }
-            QPushButton:pressed {
-                background-color: #C62828;
-            }
-        """)
-
-        no_button = msg_box.button(QMessageBox.StandardButton.No)
-        no_button.setText("Không")
-        no_button.setStyleSheet("""
-            QPushButton {
-                background-color: #68D477;
-                color: black;
-                padding: 8px 16px;
-                border-radius: 5px;
-                font: 12pt "Times New Roman";
-                border: 1px solid #68D477;
-            }
-            QPushButton:hover {
-                background-color: #5AC469;
-                border: 1px solid #5AC469;
-            }
-            QPushButton:pressed {
-                background-color: #4CAF50;
-            }
-        """)
-
-        # Thêm biểu tượng (icon) cho thông báo
-        msg_box.setIcon(QMessageBox.Icon.Question)
-
         # Hiển thị thông báo và xử lý kết quả
         reply = msg_box.exec()
         if reply != QMessageBox.StandardButton.Yes:
@@ -207,7 +225,6 @@ class Sidebar(QGroupBox):
             return
 
         try:
-            # Gọi API logout
             api_url = "http://127.0.0.1:8000/auth/logout"
             headers = {"Authorization": f"Bearer {access_token}"}
             print("Gửi yêu cầu đến API /auth/logout")
@@ -215,11 +232,9 @@ class Sidebar(QGroupBox):
             response.raise_for_status()
             print("Đăng xuất thành công qua API")
 
-            # Xóa access_token khỏi QSettings
             settings.remove("access_token")
             print("Đã xóa access_token")
 
-            # Phát tín hiệu để MainWindow xử lý chuyển giao diện
             self.logout_signal.emit()
             print("Đã phát tín hiệu đăng xuất")
 
@@ -233,7 +248,7 @@ class Sidebar(QGroupBox):
                 QMessageBox {
                     background-color: #1E2A38;
                     color: white;
-                    font: 14pt "Times New Roman";
+                    font: 14pt \"Times New Roman\";
                 }
                 QMessageBox QLabel {
                     color: white;
@@ -243,7 +258,7 @@ class Sidebar(QGroupBox):
                     color: white;
                     padding: 8px 16px;
                     border-radius: 5px;
-                    font: 12pt "Times New Roman";
+                    font: 12pt \"Times New Roman\";
                     border: 1px solid #F44336;
                 }
                 QMessageBox QPushButton:hover {
