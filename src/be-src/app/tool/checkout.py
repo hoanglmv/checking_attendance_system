@@ -56,7 +56,7 @@ while True:
     # Chuyển đổi ảnh từ BGR (OpenCV) sang RGB
     img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     
-    # Phát hiện các khuôn mặt trong hình, boxes có dạng mảng [[x1,y1,x2,y2], ...]
+    # Phát hiện các khuôn mặt trong hình, boxes có dạng mảng [[x1, y1, x2, y2], ...]
     boxes, _ = mtcnn.detect(img_rgb)
     
     if boxes is not None:
@@ -69,7 +69,7 @@ while True:
             try:
                 face_img = cv2.resize(face_img, (160, 160))
             except Exception as e:
-                continue  # bỏ qua nếu không resize được
+                continue  # Bỏ qua nếu không resize được
             
             # Chuyển hình ảnh sang tensor và thêm batch dimension
             face_tensor = transform(face_img).unsqueeze(0).to(device)
@@ -94,21 +94,24 @@ while True:
             if best_distance < THRESHOLD:
                 label = f"Matched: {best_match} (dist: {best_distance:.2f})"
                 
-                # Cập nhật thông tin checkout trên database
+                # Cập nhật thông tin checkout trên database (chỉ 1 lần duy nhất)
                 try:
                     session = SessionLocal()
                     today = date.today()
-                    # Tìm bản ghi check-in của nhân viên trong ngày (chưa có check-out)
+                    # Tìm bản ghi điểm danh của nhân viên trong ngày
                     attendance = session.query(Attendance).filter(
                         Attendance.employee_code == best_match,
-                        Attendance.date == today,
-                        Attendance.check_out_time == None
+                        Attendance.date == today
                     ).first()
+                    
                     if attendance:
-                        attendance.check_out_time = datetime.now()
-                        session.commit()
-                        session.refresh(attendance)
-                        print(f"Đã cập nhật checkout cho {best_match}")
+                        if attendance.check_out_time is None:
+                            attendance.check_out_time = datetime.now()
+                            session.commit()
+                            session.refresh(attendance)
+                            print(f"Đã cập nhật checkout cho {best_match}")
+                        else:
+                            print(f"Nhân viên {best_match} đã checkout rồi hôm nay.")
                     else:
                         print(f"Không tìm thấy bản ghi check-in cho {best_match} ngày hôm nay")
                 except Exception as e:
