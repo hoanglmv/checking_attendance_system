@@ -2,9 +2,18 @@ from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtGui import QCursor
 from PyQt6.QtCore import QSettings
 import requests
-import traceback
+import subprocess
 import os
+import traceback
 from pages.adminPopup import AdminInfoPopup  # Import AdminInfoPopup
+
+def get_project_root():
+    """
+    Từ file Header nằm trong:
+      (Đường dẫn tương tự)
+    Đi lên 3 cấp sẽ cho ta thư mục gốc của dự án
+    """
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 class Header(QtWidgets.QGroupBox):
     def __init__(self, parent=None):
@@ -14,6 +23,10 @@ class Header(QtWidgets.QGroupBox):
             self.setMinimumSize(QtCore.QSize(0, 77))
             self.setMaximumSize(QtCore.QSize(16777215, 77))
             self.setStyleSheet("background-color: #192E44;")
+            
+            # Khởi tạo các biến tiến trình cho check-in và check-out
+            self.process_checkin = None
+            self.process_checkout = None
 
             self.horizontalLayout = QtWidgets.QHBoxLayout(self)
             self.horizontalLayout.setContentsMargins(20, 0, 20, 0)
@@ -51,6 +64,12 @@ class Header(QtWidgets.QGroupBox):
             self.horizontalLayout.addWidget(self.icon_container)
             
             self.horizontalLayout.addSpacing(20)
+
+            # Phần nút bật/tắt cam (Check-in & Check-out)
+            self.camera_container = self.create_camera_section()
+            self.horizontalLayout.addWidget(self.camera_container)
+
+            self.horizontalLayout.addSpacing(20)
             
             # Admin Info Frame
             self.admin_frame = QtWidgets.QWidget(self)
@@ -72,6 +91,98 @@ class Header(QtWidgets.QGroupBox):
         except Exception as e:
             print(f"Lỗi khi khởi tạo Header: {str(e)}")
             traceback.print_exc()
+    
+    def create_camera_section(self):
+        try:
+            container = QtWidgets.QWidget(self)
+            layout = QtWidgets.QHBoxLayout(container)
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setSpacing(10)
+            
+            # Nút Check-in
+            self.btn_checkin = QtWidgets.QPushButton("Chạy Check-in", self)
+            self.btn_checkin.setMinimumSize(QtCore.QSize(100, 37))
+            self.btn_checkin.setStyleSheet("""
+                QPushButton {
+                    background-color: #2E86C1;
+                    border: none;
+                    border-radius: 5px;
+                    color: white;
+                    font: 12pt 'Times New Roman';
+                    padding: 8px 16px;
+                }
+                QPushButton:hover {
+                    background-color: #3498DB;
+                }
+                QPushButton:pressed {
+                    background-color: #2980B9;
+                }
+            """)
+            self.btn_checkin.clicked.connect(self.toggle_checkin)
+            layout.addWidget(self.btn_checkin)
+            
+            # Nút Check-out
+            self.btn_checkout = QtWidgets.QPushButton("Chạy Check-out", self)
+            self.btn_checkout.setMinimumSize(QtCore.QSize(100, 37))
+            self.btn_checkout.setStyleSheet("""
+                QPushButton {
+                    background-color: #2E86C1;
+                    border: none;
+                    border-radius: 5px;
+                    color: white;
+                    font: 12pt 'Times New Roman';
+                    padding: 8px 16px;
+                }
+                QPushButton:hover {
+                    background-color: #3498DB;
+                }
+                QPushButton:pressed {
+                    background-color: #2980B9;
+                }
+            """)
+            self.btn_checkout.clicked.connect(self.toggle_checkout)
+            layout.addWidget(self.btn_checkout)
+            
+            return container
+        except Exception as e:
+            print(f"Lỗi khi tạo camera section: {str(e)}")
+            traceback.print_exc()
+            return QtWidgets.QWidget(self)
+
+    def toggle_checkin(self):
+        """Bật/Tắt chạy file checkin.py"""
+        if self.process_checkin is None:
+            try:
+                working_dir = get_project_root()  # Thư mục gốc của dự án
+                # Xây dựng đường dẫn đến checkin.py tương đối với thư mục gốc
+                checkin_path = os.path.join("src", "be-src", "app", "tool", "checkin.py")
+                self.process_checkin = subprocess.Popen(["python", checkin_path], cwd=working_dir)
+                self.btn_checkin.setText("Dừng Check-in")
+                print("Đã mở checkin.py")
+            except Exception as e:
+                print(f"Lỗi khi mở checkin.py: {e}")
+        else:
+            self.process_checkin.terminate()
+            self.process_checkin = None
+            self.btn_checkin.setText("Chạy Check-in")
+            print("Đã đóng checkin.py")
+
+    def toggle_checkout(self):
+        """Bật/Tắt chạy file checkout.py"""
+        if self.process_checkout is None:
+            try:
+                working_dir = get_project_root()  # Thư mục gốc của dự án
+                checkout_path = os.path.join("src", "be-src", "app", "tool", "checkout.py")
+                self.process_checkout = subprocess.Popen(["python", checkout_path], cwd=working_dir)
+                self.btn_checkout.setText("Dừng Check-out")
+                print("Đã mở checkout.py")
+            except Exception as e:
+                print(f"Lỗi khi mở checkout.py: {e}")
+        else:
+            self.process_checkout.terminate()
+            self.process_checkout = None
+            self.btn_checkout.setText("Chạy Check-out")
+            print("Đã đóng checkout.py")
 
     def load_admin_info(self):
         """Tải thông tin admin từ API để hiển thị tên"""
@@ -214,7 +325,6 @@ class Header(QtWidgets.QGroupBox):
                         background-color: rgba(255, 255, 255, 0.1);
                     }}
                 """)
-
                 self.buttons[key] = btn
                 layout.addWidget(btn)
 
