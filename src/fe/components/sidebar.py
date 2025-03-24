@@ -1,10 +1,19 @@
+import os
+import subprocess
+import requests
 from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import QGroupBox, QPushButton, QLabel, QVBoxLayout, QGridLayout, QSpacerItem, QSizePolicy, QMessageBox
 from PyQt6.QtCore import QSettings, pyqtSignal
 from PyQt6.QtGui import QCursor, QIcon
-import requests
-import subprocess
-import os
+
+def get_project_root():
+    """
+    Từ file Sidebar nằm trong:
+      D:\vhproj\checking_attendance_system\src\fe\components\sidebar.py
+    Đi lên 3 cấp sẽ cho ta thư mục gốc của dự án:
+      D:\vhproj\checking_attendance_system
+    """
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 class Sidebar(QGroupBox):
     logout_signal = pyqtSignal()  # Tín hiệu để thông báo đăng xuất
@@ -21,7 +30,7 @@ class Sidebar(QGroupBox):
 
         self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setContentsMargins(35, 0, 35, 0)
-        self.verticalLayout.setSpacing(20) 
+        self.verticalLayout.setSpacing(20)
 
         # Logo
         self.logo = QLabel(self)
@@ -30,8 +39,8 @@ class Sidebar(QGroupBox):
         self.logo.setStyleSheet("""
             background-image: url(src/fe/Image_and_icon/logo.png);
             background-repeat: no-repeat;
-            background-position: center center;
-            background-size: contain;
+            background-position: center;
+            /* background-size property omitted to avoid warnings */
         """)
         self.verticalLayout.addWidget(self.logo)
 
@@ -83,25 +92,21 @@ class Sidebar(QGroupBox):
             "src/fe/Image_and_icon/icons8-logout-30.png",
             "Đăng xuất"
         )
-        # Tùy chỉnh style cho nút Đăng xuất để cân xứng hơn
+        # CSS riêng cho nút Logout với màu sắc nổi bật
         self.btn_logout.setStyleSheet("""
             QPushButton {
-                background-image: url(src/fe/Image_and_icon/icons8-logout-30.png);
-                background-repeat: no-repeat;
-                background-position: left center;
-                background-size: 24px 24px;
-                color: white;
-                font: 12pt \"Times New Roman\";
-                padding-left: 20px;
-                padding-right: 20px;
-                border: 2px solid white;
+                background-color: #E74C3C;
+                border: none;
                 border-radius: 5px;
-                background-color: #F44336;
-                text-align: center;
+                color: white;
+                font: 12pt "Times New Roman";
+                padding: 10px 20px;
             }
             QPushButton:hover {
-                background-color: #D32F2F;
-                border: 2px solid #FFD700;
+                background-color: #C0392B;
+            }
+            QPushButton:pressed {
+                background-color: #A93226;
             }
         """)
         self.btn_logout.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
@@ -126,14 +131,25 @@ class Sidebar(QGroupBox):
         button.setMinimumSize(QtCore.QSize(180, 32))
         button.setMaximumSize(QtCore.QSize(180, 32))
         button.setText(text)
+        # CSS cho các nút chung
         button.setStyleSheet(f"""
-            background-image: url({icon_path});
-            background-repeat: no-repeat;
-            background-position: left center;
-            background-size: 24px 24px;
-            color: white;
-            font: 12pt \"Times New Roman\";
-            padding-left: 40px;
+            QPushButton {{
+                background-color: #2E86C1;
+                border: none;
+                border-radius: 5px;
+                color: white;
+                font: 12pt "Times New Roman";
+                padding: 8px 16px 8px 48px;
+                background-image: url({icon_path});
+                background-repeat: no-repeat;
+                background-position: 12px center;
+            }}
+            QPushButton:hover {{
+                background-color: #3498DB;
+            }}
+            QPushButton:pressed {{
+                background-color: #2980B9;
+            }}
         """)
         return button
 
@@ -141,39 +157,36 @@ class Sidebar(QGroupBox):
         """Bật/Tắt chạy file checkin.py"""
         if self.process_checkin is None:
             try:
-                # Đường dẫn tới file checkin.py, tương đối từ cwd được chỉ định
-                checkin_path = os.path.join("be-src", "app", "tool", "checkin.py")
-                # Đặt cwd thành thư mục gốc dự án nơi file data/embedding tồn tại
-                working_dir = os.path.join("D:\\vhproj\\checking_attendance_system\\src")
+                working_dir = get_project_root()  # Thư mục gốc của dự án
+                # Xây dựng đường dẫn đến checkin.py tương đối với thư mục gốc
+                checkin_path = os.path.join("src", "be-src", "app", "tool", "checkin.py")
                 self.process_checkin = subprocess.Popen(["python", checkin_path], cwd=working_dir)
                 self.btn_checkin.setText("Dừng Check-in")
                 print("Đã mở checkin.py")
             except Exception as e:
-                print(f'Lỗi khi mở checkin.py: {e}')
+                print(f"Lỗi khi mở checkin.py: {e}")
         else:
             self.process_checkin.terminate()
             self.process_checkin = None
             self.btn_checkin.setText("Chạy Check-in")
             print("Đã đóng checkin.py")
 
-
     def toggle_checkout(self):
         """Bật/Tắt chạy file checkout.py"""
         if self.process_checkout is None:
             try:
-                checkout_path = os.path.join("be-src", "app", "tool", "checkout.py")
-                working_dir = os.path.join("D:\\vhproj\\checking_attendance_system\\src")
+                working_dir = get_project_root()  # Thư mục gốc của dự án
+                checkout_path = os.path.join("src", "be-src", "app", "tool", "checkout.py")
                 self.process_checkout = subprocess.Popen(["python", checkout_path], cwd=working_dir)
                 self.btn_checkout.setText("Dừng Check-out")
                 print("Đã mở checkout.py")
             except Exception as e:
-                print(f'Lỗi khi mở checkout.py: {e}')
+                print(f"Lỗi khi mở checkout.py: {e}")
         else:
             self.process_checkout.terminate()
             self.process_checkout = None
             self.btn_checkout.setText("Chạy Check-out")
             print("Đã đóng checkout.py")
-
 
     def logout(self):
         """Xử lý đăng xuất: Gọi API logout và phát tín hiệu để quay lại loginUI"""
@@ -186,7 +199,6 @@ class Sidebar(QGroupBox):
             QMessageBox.warning(None, "Thông báo", "Bạn chưa đăng nhập!")
             return
 
-        # Tạo thông báo xác nhận với giao diện tùy chỉnh
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Xác nhận đăng xuất")
         msg_box.setText("Bạn có chắc chắn muốn đăng xuất không?")
@@ -196,7 +208,7 @@ class Sidebar(QGroupBox):
             QMessageBox {
                 background-color: #1E2A38;
                 color: white;
-                font: 14pt \"Times New Roman\";
+                font: 14pt "Times New Roman";
             }
             QMessageBox QLabel {
                 color: white;
@@ -206,19 +218,16 @@ class Sidebar(QGroupBox):
                 color: black;
                 padding: 8px 16px;
                 border-radius: 5px;
-                font: 12pt \"Times New Roman\";
+                font: 12pt "Times New Roman";
                 border: 1px solid #68D477;
             }
             QMessageBox QPushButton:hover {
                 background-color: #5AC469;
-                border: 1px solid #5AC469;
             }
             QMessageBox QPushButton:pressed {
                 background-color: #4CAF50;
             }
         """)
-
-        # Hiển thị thông báo và xử lý kết quả
         reply = msg_box.exec()
         if reply != QMessageBox.StandardButton.Yes:
             print("Người dùng hủy đăng xuất")
@@ -248,7 +257,7 @@ class Sidebar(QGroupBox):
                 QMessageBox {
                     background-color: #1E2A38;
                     color: white;
-                    font: 14pt \"Times New Roman\";
+                    font: 14pt "Times New Roman";
                 }
                 QMessageBox QLabel {
                     color: white;
@@ -258,12 +267,11 @@ class Sidebar(QGroupBox):
                     color: white;
                     padding: 8px 16px;
                     border-radius: 5px;
-                    font: 12pt \"Times New Roman\";
+                    font: 12pt "Times New Roman";
                     border: 1px solid #F44336;
                 }
                 QMessageBox QPushButton:hover {
                     background-color: #D32F2F;
-                    border: 1px solid #FFD700;
                 }
                 QMessageBox QPushButton:pressed {
                     background-color: #C62828;
