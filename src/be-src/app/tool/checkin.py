@@ -3,11 +3,10 @@ import pickle
 import cv2
 import numpy as np
 import torch
-from datetime import datetime
+from datetime import datetime, date
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from torchvision import transforms
 import sys
-import os
 # Thêm đường dẫn chứa thư mục 'app'
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 # Import model Attendance và session database (điều chỉnh lại đường dẫn import theo dự án của bạn)
@@ -68,7 +67,7 @@ while True:
             try:
                 face_img = cv2.resize(face_img, (160, 160))
             except Exception as e:
-                continue  # bỏ qua nếu không resize được
+                continue  # Bỏ qua nếu không resize được
             
             # Chuyển hình ảnh sang tensor và thêm batch dimension
             face_tensor = transform(face_img).unsqueeze(0).to(device)
@@ -93,18 +92,29 @@ while True:
             if best_distance < THRESHOLD:
                 label = f"Matched: {best_match} (dist: {best_distance:.2f})"
                 
-                # Lưu thông tin điểm danh lên database
+                # Lưu thông tin điểm danh lên database nếu chưa có trong ngày
                 try:
                     session = SessionLocal()
-                    # Tạo đối tượng Attendance, lưu check_in_time hiện tại
-                    attendance = Attendance(
-                        employee_code=best_match,
-                        check_in_time=datetime.now()
-                    )
-                    session.add(attendance)
-                    session.commit()
-                    session.refresh(attendance)
-                    print(f"Đã lưu điểm danh cho {best_match}")
+                    today = date.today()
+                    
+                    # Kiểm tra xem nhân viên đã điểm danh hôm nay chưa dựa trên cột date hoặc check_in_time
+                    existing_attendance = session.query(Attendance).filter(
+                        Attendance.employee_code == best_match,
+                        Attendance.date == today
+                    ).first()
+                    
+                    if existing_attendance:
+                        print(f"Nhân viên {best_match} đã điểm danh hôm nay, bỏ qua.")
+                    else:
+                        # Tạo đối tượng Attendance, lưu check_in_time hiện tại
+                        attendance = Attendance(
+                            employee_code=best_match,
+                            check_in_time=datetime.now()
+                        )
+                        session.add(attendance)
+                        session.commit()
+                        session.refresh(attendance)
+                        print(f"Đã lưu điểm danh cho {best_match}")
                 except Exception as e:
                     print("Lỗi khi lưu điểm danh:", e)
                     session.rollback()
@@ -127,3 +137,4 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
+my
