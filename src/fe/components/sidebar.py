@@ -62,25 +62,7 @@ class Sidebar(QGroupBox):
         self.fil_manage.layout().addWidget(self.btn_manage)
         self.verticalLayout.addWidget(self.fil_manage)
 
-        # Button: Check-in (mở/tắt)
-        self.fil_checkin = self.create_button_container()
-        self.btn_checkin = self.create_button(
-            "src/fe/Image_and_icon/icons8-camera-30.png",
-            "Chạy Check-in"
-        )
-        self.btn_checkin.clicked.connect(self.toggle_checkin)
-        self.fil_checkin.layout().addWidget(self.btn_checkin)
-        self.verticalLayout.addWidget(self.fil_checkin)
-
-        # Button: Check-out (mở/tắt)
-        self.fil_checkout = self.create_button_container()
-        self.btn_checkout = self.create_button(
-            "src/fe/Image_and_icon/icons8-camera-30.png",
-            "Chạy Check-out"
-        )
-        self.btn_checkout.clicked.connect(self.toggle_checkout)
-        self.fil_checkout.layout().addWidget(self.btn_checkout)
-        self.verticalLayout.addWidget(self.fil_checkout)
+        # Các button Check-in và Check-out đã được chuyển sang Header
 
         # Spacer
         spacer = QSpacerItem(20, 300, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
@@ -113,10 +95,6 @@ class Sidebar(QGroupBox):
         self.btn_logout.clicked.connect(self.logout)
         self.fil_logout.layout().addWidget(self.btn_logout)
         self.verticalLayout.addWidget(self.fil_logout)
-
-        # Các biến lưu trữ tiến trình cho checkin và checkout
-        self.process_checkin = None
-        self.process_checkout = None
 
     def create_button_container(self):
         container = QGroupBox(self)
@@ -152,41 +130,6 @@ class Sidebar(QGroupBox):
             }}
         """)
         return button
-
-    def toggle_checkin(self):
-        """Bật/Tắt chạy file checkin.py"""
-        if self.process_checkin is None:
-            try:
-                working_dir = get_project_root()  # Thư mục gốc của dự án
-                # Xây dựng đường dẫn đến checkin.py tương đối với thư mục gốc
-                checkin_path = os.path.join("src", "be-src", "app", "tool", "checkin.py")
-                self.process_checkin = subprocess.Popen(["python", checkin_path], cwd=working_dir)
-                self.btn_checkin.setText("Dừng Check-in")
-                print("Đã mở checkin.py")
-            except Exception as e:
-                print(f"Lỗi khi mở checkin.py: {e}")
-        else:
-            self.process_checkin.terminate()
-            self.process_checkin = None
-            self.btn_checkin.setText("Chạy Check-in")
-            print("Đã đóng checkin.py")
-
-    def toggle_checkout(self):
-        """Bật/Tắt chạy file checkout.py"""
-        if self.process_checkout is None:
-            try:
-                working_dir = get_project_root()  # Thư mục gốc của dự án
-                checkout_path = os.path.join("src", "be-src", "app", "tool", "checkout.py")
-                self.process_checkout = subprocess.Popen(["python", checkout_path], cwd=working_dir)
-                self.btn_checkout.setText("Dừng Check-out")
-                print("Đã mở checkout.py")
-            except Exception as e:
-                print(f"Lỗi khi mở checkout.py: {e}")
-        else:
-            self.process_checkout.terminate()
-            self.process_checkout = None
-            self.btn_checkout.setText("Chạy Check-out")
-            print("Đã đóng checkout.py")
 
     def logout(self):
         """Xử lý đăng xuất: Gọi API logout và phát tín hiệu để quay lại loginUI"""
