@@ -13,8 +13,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from app.models.attendance import Attendance
 from app.core.database import SessionLocal
 
-# Đường dẫn chứa file embedding
-EMBEDDING_DIR = "data/embedding"
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+EMBEDDING_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "..", "..", "data", "embedding"))
+print(EMBEDDING_DIR)
+
+
 
 # Load embedding đã lưu (giả sử mỗi file .pkl chứa 1 vector embedding dạng numpy array)
 known_embeddings = {}
@@ -137,4 +141,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-my
