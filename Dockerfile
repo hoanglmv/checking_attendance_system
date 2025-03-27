@@ -10,13 +10,15 @@ RUN apt-get update && apt-get install -y \
     libqt6widgets6 \
     libqt6core6 \
     libqt6network6 \
+    libgl1-mesa-glx \
+    libxcb1 libx11-xcb1 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Sao chép thư mục chứa mã nguồn và dữ liệu
+# Sao chép mã nguồn và dữ liệu
 COPY src /app/src
 COPY data /app/data
 
-# Sao chép và cài đặt dependencies (chỉ chứa các thư viện Python)
+# Sao chép và cài đặt dependencies cho Python
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
