@@ -24,5 +24,8 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 EXPOSE 8000
 
+# Thiết lập biến môi trường DISPLAY (nếu chưa được set thông qua docker-compose)
+ENV DISPLAY=:0
+
 # Chạy ứng dụng GUI (run.py nằm trong /app/src)
 CMD ["python", "src/run.py"]
