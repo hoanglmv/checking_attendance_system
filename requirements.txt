@@ -28,3 +28,4 @@ starlette
 pymysql
 passlib
 sqlalchemy_utils
+cryptography
