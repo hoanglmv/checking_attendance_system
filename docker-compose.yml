@@ -3,7 +3,7 @@ version: '3.8'
 services:
   fastapi:
     build: .
-    container_name: fastapi_app
+    container_name: application
     ports:
       - "8000:8000"
     depends_on:
@@ -25,8 +25,11 @@ services:
       SMTP_PASSWORD: your_email_password
       EMAIL_FROM: your_email@gmail.com
 
+      # Cho phép hiển thị GUI qua X11 (DISPLAY của host)
+      DISPLAY: ${DISPLAY}
     volumes:
       - .:/app
+      - /tmp/.X11-unix:/tmp/.X11-unix
 
   db:
     image: mysql:8

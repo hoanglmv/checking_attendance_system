@@ -2,9 +2,8 @@ FROM python:3.10
 
 WORKDIR /app
 
-# Cập nhật hệ thống và cài đặt các thư viện cần thiết
+# Cập nhật hệ thống và cài đặt thư viện hệ thống cần thiết cho GUI qua X11
 RUN apt-get update && apt-get install -y \
-    xvfb \
     libxkbcommon-x11-0 \
     libegl1-mesa \
     libqt6gui6 \
@@ -25,5 +24,5 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 EXPOSE 8000
 
-# Xoá file khóa của Xvfb, khởi động Xvfb trên display :99, sau đó chạy ứng dụng
-CMD ["sh", "-c", "rm -f /tmp/.X99-lock; Xvfb :99 -screen 0 1920x1080x24 & export DISPLAY=:99 && python src/run.py"]
+# Chạy ứng dụng GUI (run.py nằm trong /app/src)
+CMD ["python", "src/run.py"]

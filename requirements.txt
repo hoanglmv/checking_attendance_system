@@ -2,6 +2,7 @@ python-dotenv
 pydantic
 sqlalchemy
 pytz
+python-jose[cryptography]  # Giữ dòng này, xóa dòng `python-jose`
 fastapi
 email-validator
 opencv-python
@@ -14,18 +15,10 @@ PyQt6
 requests
 typing-extensions
 uvicorn
-python-multipart
-python-jose
+python-multipart  # Chỉ giữ một dòng này
 pyyaml
 pydicom
-pyqt6-tools
-pyqt6-plugins
-pyqt6-qt6
-pyqt6-sip
-qt6-applications
-qt6-tools
 starlette
 pymysql
 passlib
-sqlalchemy_utils
-cryptography
+sqlalchemy-utils
