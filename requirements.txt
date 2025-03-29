@@ -1,0 +1,24 @@
+python-dotenv
+pydantic
+sqlalchemy
+pytz
+python-jose[cryptography]  # Giữ dòng này, xóa dòng `python-jose`
+fastapi
+email-validator
+opencv-python
+numpy
+torch
+facenet-pytorch
+scipy
+torchvision
+PyQt6
+requests
+typing-extensions
+uvicorn
+python-multipart  # Chỉ giữ một dòng này
+pyyaml
+pydicom
+starlette
+pymysql
+passlib
+sqlalchemy-utils

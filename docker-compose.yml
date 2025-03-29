@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: .
+    container_name: application
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database
+      DATABASE_URL: mysql+pymysql://root:hoanglmv@db:3306/mlattendance
+
+      # Security
+      SECRET_KEY: 4d419d387f139df1138c501a02eb315e2fcffcadb369e8b7881d6f80cb6f58e8
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+
+      # SMTP (Email)
+      SMTP_SERVER: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_USERNAME: your_email@gmail.com
+      SMTP_PASSWORD: your_email_password
+      EMAIL_FROM: your_email@gmail.com
+
+      # Cho phép hiển thị GUI qua X11 (DISPLAY của host)
+      DISPLAY: ${DISPLAY}
+    volumes:
+      - .:/app
+      - /tmp/.X11-unix:/tmp/.X11-unix
+
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: hoanglmv
+      MYSQL_DATABASE: mlattendance
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  mysql_data:
