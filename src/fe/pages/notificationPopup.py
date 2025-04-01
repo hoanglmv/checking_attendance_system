@@ -1,42 +1,40 @@
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QListWidget, QListWidgetItem
-from PyQt6.QtCore import Qt
-
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel
+from PyQt6.QtCore import Qt, QTimer
 
 class NotificationPopup(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, message, parent=None):
         super().__init__(parent)
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Popup) 
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Popup)
         self.setStyleSheet("background-color: #0D1B2A; color: white; border-radius: 10px;")
-        self.resize(400, 600)
+        self.setFixedSize(300, 100)  # Kích thước cố định cho thông báo đơn lẻ
 
+        # Layout chính
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(10, 10, 10, 10)
 
-        title = QLabel("Thông báo", self)
-        title.setStyleSheet("font-size: 18px; font-weight: bold; padding: 5px;")
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(title)
+        # Thông báo
+        self.label = QLabel(message, self)
+        self.label.setStyleSheet("""
+            font-size: 14px; 
+            color: #9FEF00; 
+            background-color: rgba(159, 239, 0, 0.15); 
+            padding: 5px; 
+            border-radius: 5px;
+        """)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setWordWrap(True)
+        layout.addWidget(self.label)
 
-        self.listWidget = QListWidget(self)
-        self.listWidget.setStyleSheet("background-color: #1B263B; color: white; font-size: 14px; padding: 5px; border: 1px solid #9FEF00")
-
-        notifications = [
-            "Lê Doãn T checkin lúc 9:00 AM",
-            "ABC checkin lúc 8:30 AM",
-            "Lê Doãn T checkin lúc 8:00 AM",
-            "Lê Doãn T checkin lúc 7:50 AM",
-        ]
-
-        for text in notifications:
-            item = QListWidgetItem(text)
-            self.listWidget.addItem(item)
-
-        layout.addWidget(self.listWidget)
+        # Tự động đóng sau 5 giây
+        QTimer.singleShot(5000, self.close)
 
     def show_near(self, parent_widget):
+        """Hiển thị popup gần widget cha"""
         if parent_widget:
             parent_pos = parent_widget.mapToGlobal(parent_widget.rect().bottomRight())
             self.move(parent_pos.x() - self.width(), parent_pos.y())
         self.show()
 
     def focusOutEvent(self, event):
+        """Đóng popup khi mất focus"""
         self.close()

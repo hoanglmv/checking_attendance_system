@@ -1,3 +1,5 @@
+# E:\AttendanceCheckingApp\checking_attendance_system\src\fe\pages\utils.py
+from pathlib import Path
 import cv2
 import numpy as np
 from PyQt6.QtWidgets import QFileDialog, QMessageBox
@@ -122,14 +124,16 @@ def process_and_save_face(frame, mtcnn, facenet, employee_id):
         return
     
     # Lưu embedding vào file .pkl
-    save_dir = r"D:\vhproj\checking_attendance_system\data\embedding"
+    project_root = Path(__file__).resolve().parent.parent.parent.parent  # Từ src lên checking_attendance_system
+    save_dir = project_root / "data" / "embedding"  # Đi vào data/embedding
+
     try:
-        os.makedirs(save_dir, exist_ok=True)
+        save_dir.mkdir(parents=True, exist_ok=True)  # Tạo thư mục nếu chưa tồn tại
     except Exception as e:
         print("Lỗi khi tạo thư mục lưu file:", e)
         return
 
-    save_path = os.path.join(save_dir, f"{employee_id}.pkl")
+    save_path = save_dir / f"{employee_id}.pkl"  # Tạo đường dẫn tới file .pkl
     try:
         with open(save_path, 'wb') as f:
             pickle.dump(embedding, f)
@@ -230,3 +234,4 @@ def add_new_employee(ui, mtcnn, facenet):
                 file_obj.close()
             except Exception as e:
                 print(f"Không thể đóng file ảnh: {str(e)}")
+
