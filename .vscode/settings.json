@@ -3,6 +3,8 @@
         "centralwidget"
     ],
     "python.analysis.extraPaths": [
-        "./fe/pages"
+        "./fe/pages",
+        "./src/be-src",
+        "./src/be_src"
     ]
 }
