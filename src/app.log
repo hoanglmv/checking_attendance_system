@@ -4,3 +4,36 @@
 2025-04-02 10:00:13,419 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
 2025-04-02 10:00:13,419 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
 2025-04-02 10:00:21,604 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:02:46,480 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:02:46,545 - DEBUG - http://127.0.0.1:8000 "GET /attendance/daily?date=2025-04-02 HTTP/1.1" 500 21
+2025-04-02 10:02:51,009 - INFO - Kh\u1edfi t\u1ea1o CheckingUI_2
+2025-04-02 10:02:51,010 - INFO - B\u1eaft \u0111\u1ea7u setupUi trong Ui_checkingUI_2
+2025-04-02 10:02:51,097 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
+2025-04-02 10:02:51,097 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
+2025-04-02 10:03:05,179 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:05,496 - DEBUG - http://127.0.0.1:8000 "POST /auth/login HTTP/1.1" 200 299
+2025-04-02 10:03:05,607 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:05,612 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 500 21
+2025-04-02 10:03:05,616 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:05,633 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 2
+2025-04-02 10:03:05,653 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-02 10:03:05,655 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:05,661 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 500 21
+2025-04-02 10:03:07,997 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:08,007 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-02 10:03:08,952 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:08,967 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-02 10:03:11,306 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:11,321 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-02 10:03:11,324 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-02 10:03:11,327 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:11,332 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 500 21
+2025-04-02 10:03:17,993 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:18,006 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-02 10:03:20,174 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:20,182 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-02 10:03:20,183 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-02 10:03:20,184 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:03:20,191 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 500 21
+2025-04-02 10:06:21,177 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-02 10:06:21,240 - DEBUG - http://127.0.0.1:8000 "GET /attendance/daily?date=2025-04-02 HTTP/1.1" 500 21
