@@ -3,7 +3,7 @@ import pickle
 import cv2
 import numpy as np
 import torch
-from datetime import datetime, date
+from datetime import datetime
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from torchvision import transforms
 import sys
@@ -98,31 +98,28 @@ while True:
             if best_distance < THRESHOLD:
                 label = f"Matched: {best_match} (dist: {best_distance:.2f})"
                 
-                # Cập nhật thông tin checkout trên database (chỉ 1 lần duy nhất)
                 try:
-                    session = SessionLocal()
-                    today = date.today()
-                    # Tìm bản ghi điểm danh của nhân viên trong ngày
-                    attendance = session.query(Attendance).filter(
-                        Attendance.employee_code == best_match,
-                        Attendance.date == today
-                    ).first()
-                    
-                    if attendance:
-                        if attendance.check_out_time is None:
-                            attendance.check_out_time = datetime.now()
-                            session.commit()
-                            session.refresh(attendance)
-                            print(f"Đã cập nhật checkout cho {best_match}")
+                    # Sử dụng context manager để đảm bảo phiên làm việc được đóng sau khi dùng
+                    with SessionLocal() as session:
+                        checkout_date = datetime.now().date()
+                        # Tìm bản ghi điểm danh của nhân viên trong ngày
+                        attendance = session.query(Attendance).filter(
+                            Attendance.employee_code == best_match,
+                            Attendance.date == checkout_date
+                        ).first()
+                        
+                        if attendance:
+                            if attendance.check_out_time is None:
+                                attendance.check_out_time = datetime.now()
+                                session.commit()
+                                session.refresh(attendance)
+                                print(f"Đã cập nhật checkout cho {best_match}")
+                            else:
+                                print(f"Nhân viên {best_match} đã checkout rồi hôm nay.")
                         else:
-                            print(f"Nhân viên {best_match} đã checkout rồi hôm nay.")
-                    else:
-                        print(f"Không tìm thấy bản ghi check-in cho {best_match} ngày hôm nay")
+                            print(f"Không tìm thấy bản ghi check-in cho {best_match} ngày hôm nay")
                 except Exception as e:
                     print("Lỗi khi cập nhật checkout:", e)
-                    session.rollback()
-                finally:
-                    session.close()
             else:
                 label = f"Unknown (dist: {best_distance:.2f})"
             
