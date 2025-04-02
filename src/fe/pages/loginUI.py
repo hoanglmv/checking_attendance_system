@@ -5,11 +5,11 @@ from PyQt6.QtCore import QSettings, pyqtSignal, QObject
 from PyQt6.QtGui import QCursor
 from pages.informationUI import Ui_informationUI
 
-class Ui_loginUI(QObject):  # Kế thừa từ QObject
+class Ui_loginUI(QObject):
     login_success = pyqtSignal()
 
     def __init__(self):
-        super().__init__()  # Gọi hàm khởi tạo của QObject
+        super().__init__()
 
     def setupUi(self, loginUI):
         loginUI.setObjectName("loginUI")
@@ -19,7 +19,7 @@ class Ui_loginUI(QObject):  # Kế thừa từ QObject
         self.centralwidget = QtWidgets.QWidget(parent=loginUI)
         self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
 
-        self.mainLayout.addStretch()  # Spacer trên
+        self.mainLayout.addStretch()
 
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_2.setFixedSize(500, 350)
@@ -70,7 +70,7 @@ class Ui_loginUI(QObject):  # Kế thừa từ QObject
 
         self.mainLayout.addWidget(self.groupBox_2, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
 
-        self.mainLayout.addStretch()  # Spacer dưới
+        self.mainLayout.addStretch()
 
         loginUI.setLayout(self.mainLayout)
 
@@ -133,7 +133,7 @@ class Ui_loginUI(QObject):  # Kế thừa từ QObject
             self.show_error("Email không hợp lệ!")
             return
 
-        self.error_label.setText("")  # Xóa thông báo lỗi nếu có
+        self.error_label.setText("")
         self.process_login(email, password)
     
     def validate_email(self, email):
@@ -158,14 +158,15 @@ class Ui_loginUI(QObject):  # Kế thừa từ QObject
 
         try:
             response = requests.post(api_url, json=login_data)
-            response.raise_for_status()  # Kiểm tra lỗi HTTP
+            response.raise_for_status()
             data = response.json()
 
             if "access_token" in data:
                 settings = QSettings("MyApp", "LoginApp")
                 access_token = data["access_token"]
                 settings.setValue("access_token", access_token)
-                print(f"Access Token saved: {access_token}")
+                settings.sync()
+                print(f"Access Token saved and synced: {access_token}")
                 self.login_success.emit()
                 self.clear_inputs()
             else:
@@ -186,11 +187,10 @@ class Ui_loginUI(QObject):  # Kế thừa từ QObject
             self.show_error(f"Lỗi không xác định: {str(e)}")
 
     def clear_inputs(self):
-        """Xóa nội dung các ô nhập liệu và thông báo lỗi"""
         print("Xóa nội dung các ô nhập liệu")
         for field in self.inputs:
-            self.inputs[field].clear()  # Xóa nội dung ô nhập liệu
-        self.error_label.setText("")  # Xóa thông báo lỗi
+            self.inputs[field].clear()
+        self.error_label.setText("")
         print("Đã xóa các ô nhập liệu")
 
 if __name__ == "__main__":
