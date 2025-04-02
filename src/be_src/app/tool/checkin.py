@@ -3,7 +3,7 @@ import pickle
 import cv2
 import numpy as np
 import torch
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, timedelta
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from torchvision import transforms
 import sys
@@ -12,6 +12,7 @@ import time as time_module
 
 sys.stdout.reconfigure(encoding='utf-8')
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+
 from app.models.attendance import Attendance
 from app.models.employees import Employee
 from app.core.database import SessionLocal
@@ -43,17 +44,17 @@ transform = transforms.Compose([transforms.ToTensor()])
 # Mở camera
 cap = cv2.VideoCapture(0)
 
-# Ngưỡng khoảng cách
+# Ngưỡng khoảng cách để xác định khuôn mặt phù hợp
 THRESHOLD = 0.9
 
 # Thời gian thông báo cuối cùng
 last_notification_time = 0
-NOTIFICATION_INTERVAL = 5  # Khoảng cách 5 giây giữa các thông báo
+NOTIFICATION_INTERVAL = 5  # 5 giây giữa các thông báo
 
-# Thời gian quy định từ attendance_service.py
+# Thời gian quy định check-in
 CHECK_IN_TIME = datetime.strptime("08:00:00", "%H:%M:%S").time()
 LATE_THRESHOLD = timedelta(minutes=15)  # 15 phút
-ABSENT_THRESHOLD = timedelta(hours=1)   # 1 giờ
+ABSENT_THRESHOLD = timedelta(hours=1)     # 1 giờ
 
 while True:
     ret, frame = cap.read()
@@ -89,90 +90,87 @@ while True:
             if best_distance < THRESHOLD:
                 label = f"Matched: {best_match} (dist: {best_distance:.2f})"
                 
-                # Kiểm tra thời gian kể từ thông báo cuối cùng
                 current_time = time_module.time()
                 if current_time - last_notification_time >= NOTIFICATION_INTERVAL:
-                    session = SessionLocal()
                     try:
-                        today = date.today()
-                        existing_attendance = session.query(Attendance).filter(
-                            Attendance.employee_code == best_match,
-                            Attendance.date == today
-                        ).first()
+                        # Lấy thời gian check-in ngay tại thời điểm này
+                        check_in_time = datetime.now()
+                        # Lấy ngày từ thời gian check-in
+                        check_in_date = check_in_time.date()
                         
                         temp_file = os.path.join(BASE_DIR, "..", "..", "..", "..", "checkin_notification.json")
-                        employee = session.query(Employee).filter(Employee.employee_code == best_match).first()
-                        full_name = employee.full_name if employee else "Unknown"
                         
-                        if existing_attendance:
-                            print(f"Nhân viên {best_match} đã điểm danh hôm nay, bỏ qua.")
-                            notification_data = {
-                                "full_name": full_name,
-                                "check_in_time": existing_attendance.check_in_time.strftime("%H:%M:%S %d/%m/%Y"),
-                                "status": "already_checked_in"
-                            }
-                            with open(temp_file, "w", encoding="utf-8") as f:
-                                json.dump(notification_data, f, ensure_ascii=False)
-                            print(f"Đã ghi thông báo check-in vào {temp_file}")
-                        else:
-                            check_in_time = datetime.now()
-                            # Tính toán is_late và is_absent dựa trên CHECK_IN_TIME
-                            check_in_datetime = datetime.combine(today, check_in_time.time())
-                            check_in_threshold = datetime.combine(today, CHECK_IN_TIME)
-                            late_threshold_time = check_in_threshold + LATE_THRESHOLD
-                            absent_threshold_time = check_in_threshold + ABSENT_THRESHOLD
-
-                            # Logic mới: 
-                            # - Quá 15 phút nhưng dưới 1 tiếng: chỉ đánh dấu is_late
-                            # - Quá 1 tiếng: chỉ đánh dấu is_absent
-                            if check_in_datetime > absent_threshold_time:
-                                is_late = False
-                                is_absent = True
-                            elif check_in_datetime > late_threshold_time:
-                                is_late = True
-                                is_absent = False
+                        # Sử dụng context manager cho phiên làm việc
+                        with SessionLocal() as session:
+                            employee = session.query(Employee).filter(Employee.employee_code == best_match).first()
+                            full_name = employee.full_name if employee else "Unknown"
+                            
+                            # Kiểm tra xem đã có điểm danh của ngày check-in hay chưa
+                            existing_attendance = session.query(Attendance).filter(
+                                Attendance.employee_code == best_match,
+                                Attendance.date == check_in_date
+                            ).first()
+                            
+                            if existing_attendance:
+                                # Nếu đã check-in rồi thì chỉ thông báo
+                                print(f"Nhân viên {best_match} đã check-in hôm nay, bỏ qua.")
+                                notification_data = {
+                                    "full_name": full_name,
+                                    "check_in_time": existing_attendance.check_in_time.strftime("%H:%M:%S %d/%m/%Y"),
+                                    "status": "already_checked_in",
+                                    "message": f"Nhân viên {full_name} đã check-in hôm nay"
+                                }
                             else:
-                                is_late = False
-                                is_absent = False
+                                # Tính toán trạng thái check-in dựa trên thời gian quy định
+                                check_in_threshold = datetime.combine(check_in_date, CHECK_IN_TIME)
+                                late_threshold_time = check_in_threshold + LATE_THRESHOLD
+                                absent_threshold_time = check_in_threshold + ABSENT_THRESHOLD
 
-                            attendance = Attendance(
-                                employee_code=best_match,
-                                check_in_time=check_in_time,
-                                date=today,
-                                is_late=is_late,
-                                is_absent=is_absent,
-                                is_permission_absent=False  # Mặc định không xin phép nghỉ
-                            )
-                            session.add(attendance)
-                            session.commit()
-                            session.refresh(attendance)
-                            print(f"Đã lưu điểm danh cho {best_match} - Muộn: {is_late}, Vắng: {is_absent}")
+                                if check_in_time > absent_threshold_time:
+                                    is_late = False
+                                    is_absent = True
+                                elif check_in_time > late_threshold_time:
+                                    is_late = True
+                                    is_absent = False
+                                else:
+                                    is_late = False
+                                    is_absent = False
 
-                            # Chuẩn bị thông báo với trạng thái phù hợp
-                            if is_absent:
-                                status_message = "vắng mặt"
-                            elif is_late:
-                                status_message = "đi muộn"
-                            else:
-                                status_message = "đúng giờ"
+                                new_attendance = Attendance(
+                                    employee_code=best_match,
+                                    check_in_time=check_in_time,
+                                    date=check_in_time.date(),  # Lưu ngày lấy từ check_in_time
+                                    is_late=is_late,
+                                    is_absent=is_absent,
+                                    is_permission_absent=False
+                                )
+                                session.add(new_attendance)
+                                session.commit()
+                                session.refresh(new_attendance)
+                                print(f"Đã lưu điểm danh cho {best_match} - Muộn: {is_late}, Vắng: {is_absent}")
 
-                            notification_data = {
-                                "full_name": full_name,
-                                "check_in_time": check_in_time.strftime("%H:%M:%S %d/%m/%Y"),
-                                "status": "success",
-                                "message": f"Nhân viên {full_name} đã check-in {status_message}"
-                            }
-                            with open(temp_file, "w", encoding="utf-8") as f:
-                                json.dump(notification_data, f, ensure_ascii=False)
-                            print(f"Đã ghi thông báo check-in vào {temp_file}")
+                                if is_absent:
+                                    status_message = "vắng mặt"
+                                elif is_late:
+                                    status_message = "đi muộn"
+                                else:
+                                    status_message = "đúng giờ"
+                                
+                                notification_data = {
+                                    "full_name": full_name,
+                                    "check_in_time": check_in_time.strftime("%H:%M:%S %d/%m/%Y"),
+                                    "status": "check_in_success",
+                                    "message": f"Nhân viên {full_name} đã check-in {status_message}"
+                                }
                         
-                        # Cập nhật thời gian thông báo cuối cùng
+                        # Ghi file thông báo
+                        with open(temp_file, "w", encoding="utf-8") as f:
+                            json.dump(notification_data, f, ensure_ascii=False)
+                        print(f"Đã ghi thông báo vào {temp_file}")
+                        
                         last_notification_time = current_time
                     except Exception as e:
                         print("Lỗi khi lưu điểm danh hoặc ghi thông báo:", e)
-                        session.rollback()
-                    finally:
-                        session.close()
             else:
                 label = f"Unknown (dist: {best_distance:.2f})"
             
