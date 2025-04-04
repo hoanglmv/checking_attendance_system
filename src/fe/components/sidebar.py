@@ -124,8 +124,8 @@ class Sidebar(QGroupBox):
                 border: none;
                 border-radius: 5px;
                 color: white;
-                font: bold 12pt "Arial";
-                padding: 8px 16px 8px 48px;
+                font: 15pt "Times New Roman";
+                padding: 8px 16px 8px 32px;
                 background-image: url({icon_path});
                 background-repeat: no-repeat;
                 background-position: 12px center;
