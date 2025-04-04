@@ -1,3 +1,4 @@
+# sidebar.py
 import os
 import subprocess
 import requests
@@ -7,23 +8,17 @@ from PyQt6.QtCore import QSettings, pyqtSignal
 from PyQt6.QtGui import QCursor, QIcon
 
 def get_project_root():
-    """
-    Từ file Sidebar nằm trong:
-      D:\vhproj\checking_attendance_system\src\fe\components\sidebar.py
-    Đi lên 3 cấp sẽ cho ta thư mục gốc của dự án:
-      D:\vhproj\checking_attendance_system
-    """
     return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 class Sidebar(QGroupBox):
     logout_signal = pyqtSignal()  # Tín hiệu để thông báo đăng xuất
+    attendance_signal = pyqtSignal()  # Tín hiệu khi nhấn nút "Điểm danh"
+    manage_signal = pyqtSignal()  # Tín hiệu khi nhấn nút "Quản lý"
 
     def __init__(self, parent=None, stacked_widget=None):
         super().__init__(parent)
 
-        # Lưu tham chiếu đến stacked_widget để chuyển đổi giao diện
         self.stacked_widget = stacked_widget
-
         self.setMinimumSize(QtCore.QSize(280, 0))
         self.setMaximumSize(QtCore.QSize(280, 16777215))
         self.setStyleSheet("background-color: #122131;")
@@ -40,7 +35,6 @@ class Sidebar(QGroupBox):
             background-image: url(src/fe/Image_and_icon/logo.png);
             background-repeat: no-repeat;
             background-position: center;
-            /* background-size property omitted to avoid warnings */
         """)
         self.verticalLayout.addWidget(self.logo)
 
@@ -51,6 +45,7 @@ class Sidebar(QGroupBox):
             "Điểm danh"
         )
         self.fil_attendance.layout().addWidget(self.btn_attendance)
+        self.btn_attendance.clicked.connect(self.attendance_signal.emit)  # Kết nối tín hiệu
         self.verticalLayout.addWidget(self.fil_attendance)
 
         # Button: Manage
@@ -60,9 +55,8 @@ class Sidebar(QGroupBox):
             "Quản lý"
         )
         self.fil_manage.layout().addWidget(self.btn_manage)
+        self.btn_manage.clicked.connect(self.manage_signal.emit)  # Kết nối tín hiệu
         self.verticalLayout.addWidget(self.fil_manage)
-
-        # Các button Check-in và Check-out đã được chuyển sang Header
 
         # Spacer
         spacer = QSpacerItem(20, 300, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
@@ -74,7 +68,6 @@ class Sidebar(QGroupBox):
             "src/fe/Image_and_icon/icons8-logout-30.png",
             "Đăng xuất"
         )
-        # CSS riêng cho nút Logout với màu sắc nổi bật
         self.btn_logout.setStyleSheet("""
             QPushButton {
                 background-color: #E74C3C;
@@ -109,7 +102,6 @@ class Sidebar(QGroupBox):
         button.setMinimumSize(QtCore.QSize(180, 32))
         button.setMaximumSize(QtCore.QSize(180, 32))
         button.setText(text)
-        # CSS cho các nút chung
         button.setStyleSheet(f"""
             QPushButton {{
                 background-color: #2E86C1;
@@ -129,16 +121,14 @@ class Sidebar(QGroupBox):
                 background-color: #2980B9;
             }}
         """)
+        button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         return button
 
     def logout(self):
-        """Xử lý đăng xuất: Gọi API logout và phát tín hiệu để quay lại loginUI"""
-        print("Bắt đầu đăng xuất từ Sidebar")
         settings = QSettings("MyApp", "LoginApp")
         access_token = settings.value("access_token")
 
         if not access_token:
-            print("Không tìm thấy access_token, không cần gọi API logout")
             QMessageBox.warning(None, "Thông báo", "Bạn chưa đăng nhập!")
             return
 
@@ -173,25 +163,16 @@ class Sidebar(QGroupBox):
         """)
         reply = msg_box.exec()
         if reply != QMessageBox.StandardButton.Yes:
-            print("Người dùng hủy đăng xuất")
             return
 
         try:
             api_url = "http://127.0.0.1:8000/auth/logout"
             headers = {"Authorization": f"Bearer {access_token}"}
-            print("Gửi yêu cầu đến API /auth/logout")
             response = requests.post(api_url, headers=headers)
             response.raise_for_status()
-            print("Đăng xuất thành công qua API")
-
             settings.remove("access_token")
-            print("Đã xóa access_token")
-
             self.logout_signal.emit()
-            print("Đã phát tín hiệu đăng xuất")
-
         except requests.RequestException as e:
-            print(f"Lỗi khi gọi API /auth/logout: {str(e)}")
             error_msg = QMessageBox()
             error_msg.setWindowTitle("Lỗi")
             error_msg.setText(f"Không thể đăng xuất: {str(e)}")

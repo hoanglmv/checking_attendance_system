@@ -3,8 +3,8 @@ import time
 
 # Chạy Backend
 backend_process = subprocess.Popen(
-    ["uvicorn", "be-src.app.main:app", "--reload"],
-    cwd=r"src"
+    ["uvicorn", "be_src.app.main:app", "--reload"],
+    cwd="src"
 )
 
 # Chờ 2 giây để backend khởi động

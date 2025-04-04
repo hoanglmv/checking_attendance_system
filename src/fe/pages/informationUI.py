@@ -2,11 +2,10 @@ import sys
 import os
 from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QGroupBox, QTabWidget, QMessageBox, QFileDialog, QPushButton
-from PyQt6.QtCore import Qt, QSettings, QObject
+from PyQt6.QtCore import Qt, QSettings, QObject, pyqtSignal
 from PyQt6.QtGui import QPixmap, QCursor
 import requests
 
-# Cấu hình encoding để hỗ trợ tiếng Việt
 sys.stdout.reconfigure(encoding='utf-8')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
@@ -15,13 +14,14 @@ from fe.components.sidebar import Sidebar
 import torch
 from facenet_pytorch import MTCNN, InceptionResnetV1
 
-# Import các thành phần từ các file khác
 from pages.employee_list_ui import EmployeeListUI
 from pages.employee_detail_ui import EmployeeDetailUI
 from pages.add_employee_ui import AddEmployeeUI
 from pages.utils import update_frame, load_image, add_new_employee
 
 class Ui_informationUI(QObject):
+    logout_signal = pyqtSignal()
+
     def __init__(self):
         super().__init__()
 
@@ -42,24 +42,20 @@ class Ui_informationUI(QObject):
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setSpacing(0)
         
-        # Sidebar
         self.sidebar = Sidebar(parent=self.centralwidget, stacked_widget=self.stacked_widget)
         self.sidebar.fil_attendance.setStyleSheet("border-radius: 5px; background-color: #1E2A38;")
         self.sidebar.fil_manage.setStyleSheet("background-color: #68D477; border-radius: 5px;")
         self.horizontalLayout.addWidget(self.sidebar)
         
-        # Main Container
         self.main = QGroupBox(parent=self.centralwidget)
         self.main.setStyleSheet("background-color: #0B121F; border: none;")
         self.mainLayout = QVBoxLayout(self.main)
         self.mainLayout.setContentsMargins(10, 10, 10, 10)
         self.mainLayout.setSpacing(8)
         
-        # Header
         self.header = Header(parent=self.main)
         self.mainLayout.addWidget(self.header)
 
-        # Tab Widget
         self.tabWidget = QTabWidget()
         self.tabWidget.setStyleSheet("""
             QTabWidget::pane {
@@ -91,12 +87,10 @@ class Ui_informationUI(QObject):
         """)
         self.mainLayout.addWidget(self.tabWidget)
         
-        # Khởi tạo MTCNN và FaceNet
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.mtcnn = MTCNN(image_size=160, margin=10, keep_all=False, device=device)
         self.facenet = InceptionResnetV1(pretrained="vggface2").eval().to(device)
 
-        # Tab 1: Thông tin nhân viên
         self.tab1 = QWidget()
         self.tab1Layout = QVBoxLayout(self.tab1)
         self.tab1Layout.setContentsMargins(0, 0, 0, 0)
@@ -107,11 +101,9 @@ class Ui_informationUI(QObject):
         self.tab1Layout.addLayout(self.contentLayout)
         self.tabWidget.addTab(self.tab1, "Thông tin nhân viên")
         
-        # Employee List
         self.employee_list_ui = EmployeeListUI(self.contentLayout)
         self.employee_list_ui.employeeList.itemClicked.connect(self.displayEmployeeDetails)
         
-        # Employee Detail
         self.employee_detail_ui = EmployeeDetailUI(self.contentLayout)
         self.employee_detail_ui.editButton.clicked.connect(self.toggleEditMode)
         self.employee_detail_ui.deleteButton.clicked.connect(self.delete_employee)
@@ -121,7 +113,6 @@ class Ui_informationUI(QObject):
         
         informationUI.setLayout(self.horizontalLayout)
         
-        # Tab 2: Thêm nhân viên
         self.tab2 = QWidget()
         self.tabWidget.addTab(self.tab2, "Thêm nhân viên")
         self.add_employee_ui = AddEmployeeUI(self.tab2, self.mtcnn)
@@ -129,48 +120,51 @@ class Ui_informationUI(QObject):
         self.add_employee_ui.saveButton2.clicked.connect(lambda: self.add_new_employee_safe())
 
     def load_employees_from_api(self):
-        """Tải danh sách nhân viên từ API"""
         print("Bắt đầu load_employees_from_api")
         try:
             settings = QSettings("MyApp", "LoginApp")
             access_token = settings.value("access_token")
+            print(f"Token trong load_employees_from_api trước khi gọi API: {access_token}")
 
             if not access_token:
                 print("Không tìm thấy access_token trong load_employees_from_api")
                 self.employees = []
                 self.employee_list_ui.populate_employee_list(self.employees)
-                QMessageBox.critical(None, "Lỗi", "Không tìm thấy access_token. Vui lòng đăng nhập lại!")
-                self.stacked_widget.setCurrentWidget(self.stacked_widget.widget(0))  # Quay lại loginUI
+                if self.stacked_widget:
+                    self.logout_signal.emit()
                 return
 
             api_url = "http://127.0.0.1:8000/employees/getall"
             headers = {"Authorization": f"Bearer {access_token}"}
             print("Gửi yêu cầu đến API /employees/getall")
             response = requests.get(api_url, headers=headers)
+            print(f"Token sau khi gọi API: {access_token}")
             if response.status_code == 200:
                 self.employees = response.json()
                 print("Đã tải danh sách nhân viên từ API!")
             else:
                 error_message = response.json().get("detail", f"Không thể tải danh sách nhân viên: {response.status_code}")
                 print(f"Lỗi khi tải danh sách nhân viên: {error_message}")
-                QMessageBox.warning(None, "Lỗi", error_message)
-                if response.status_code == 401 or response.status_code == 403:
-                    self.stacked_widget.setCurrentWidget(self.stacked_widget.widget(0))  # Quay lại loginUI
+                if response.status_code in (401, 403) and self.stacked_widget:
+                    self.logout_signal.emit()
                 self.employees = []
         except requests.RequestException as e:
             print(f"Lỗi kết nối đến API /employees/getall: {str(e)}")
-            QMessageBox.critical(None, "Lỗi", f"Không thể kết nối đến API: {str(e)}")
+            self.employees = []
+        except ValueError as e:
+            print(f"Lỗi parse JSON từ API /employees/getall: {str(e)}")
             self.employees = []
         except Exception as e:
             print(f"Lỗi không xác định trong load_employees_from_api: {str(e)}")
-            QMessageBox.critical(None, "Lỗi", f"Lỗi không xác định khi tải danh sách nhân viên: {str(e)}")
             self.employees = []
         finally:
-            self.employee_list_ui.populate_employee_list(self.employees)
-            print("Hoàn tất load_employees_from_api")
+            try:
+                self.employee_list_ui.populate_employee_list(self.employees)
+                print("Hoàn tất load_employees_from_api")
+            except Exception as e:
+                print(f"Lỗi khi populate_employee_list: {str(e)}")
 
     def load_image_for_update(self):
-        """Chọn và hiển thị ảnh từ máy tính trong chế độ chỉnh sửa"""
         try:
             file_name, _ = QFileDialog.getOpenFileName(
                 None, "Chọn ảnh", "", "Image Files (*.png *.jpg *.jpeg *.bmp)"
@@ -178,7 +172,6 @@ class Ui_informationUI(QObject):
             if file_name:
                 pixmap = QPixmap(file_name)
                 if pixmap.isNull():
-                    QMessageBox.warning(None, "Lỗi", "Không thể tải ảnh. Vui lòng chọn file ảnh hợp lệ!")
                     self.employee_detail_ui.photoLabel.setText("No Image")
                     self.employee_detail_ui.selected_image_path = None
                     return
@@ -189,23 +182,20 @@ class Ui_informationUI(QObject):
             else:
                 self.employee_detail_ui.selected_image_path = None
         except Exception as e:
-            QMessageBox.critical(None, "Lỗi", f"Không thể chọn ảnh: {str(e)}")
+            print(f"Lỗi khi chọn ảnh: {str(e)}")
             self.employee_detail_ui.selected_image_path = None
 
     def add_new_employee_safe(self):
-        """Gọi add_new_employee với xử lý ngoại lệ để tránh crash"""
         try:
-            add_new_employee(self,self.mtcnn,self.facenet)
+            add_new_employee(self, self.mtcnn, self.facenet)
             self.load_employees_from_api()
         except Exception as e:
-            QMessageBox.critical(None, "Lỗi", f"Không thể thêm nhân viên: {str(e)}")
+            print(f"Lỗi khi thêm nhân viên: {str(e)}")
             
     def displayEmployeeDetails(self, item):
-        """Hiển thị chi tiết nhân viên từ API"""
         try:
             emp = item.data(QtCore.Qt.ItemDataRole.UserRole)
             if not emp:
-                QMessageBox.warning(None, "Lỗi", "Không tìm thấy thông tin nhân viên!")
                 return
 
             self.employee_detail_ui.lineEdits["Mã nhân viên:"].setText(emp.get('employee_code', ''))
@@ -220,11 +210,10 @@ class Ui_informationUI(QObject):
             
             self.employee_detail_ui.groupBox.setVisible(True)
         except Exception as e:
-            QMessageBox.critical(None, "Lỗi", f"Không thể hiển thị chi tiết nhân viên: {str(e)}")
+            print(f"Lỗi khi hiển thị chi tiết nhân viên: {str(e)}")
             self.employee_detail_ui.groupBox.setVisible(False)
 
     def toggleEditMode(self):
-        """Chuyển đổi chế độ chỉnh sửa và lưu thay đổi qua API"""
         try:
             self.isEditing = not getattr(self, 'isEditing', False)
             for key in self.employee_detail_ui.lineEdits:
@@ -279,22 +268,22 @@ class Ui_informationUI(QObject):
                     }
                 """)
         except Exception as e:
-            QMessageBox.critical(None, "Lỗi", f"Không thể chuyển chế độ chỉnh sửa: {str(e)}")
+            print(f"Lỗi khi chuyển chế độ chỉnh sửa: {str(e)}")
 
     def save_employee_changes(self):
-        """Lưu thay đổi thông tin nhân viên qua API"""
         try:
             settings = QSettings("MyApp", "LoginApp")
             access_token = settings.value("access_token")
+            print(f"Token trong save_employee_changes: {access_token}")
 
             if not access_token:
-                QMessageBox.critical(None, "Lỗi", "Không tìm thấy access_token. Vui lòng đăng nhập lại!")
-                self.stacked_widget.setCurrentWidget(self.stacked_widget.widget(0))  # Quay lại loginUI
+                print("Không tìm thấy access_token trong save_employee_changes")
+                if self.stacked_widget:
+                    self.logout_signal.emit()
                 return
 
             employee_code = self.employee_detail_ui.lineEdits["Mã nhân viên:"].text()
             if not employee_code:
-                QMessageBox.warning(None, "Lỗi", "Mã nhân viên không được để trống!")
                 return
 
             update_data = {
@@ -306,7 +295,6 @@ class Ui_informationUI(QObject):
             }
 
             if not update_data["full_name"].strip():
-                QMessageBox.warning(None, "Lỗi", "Họ tên không được để trống!")
                 return
 
             for key in update_data:
@@ -319,7 +307,6 @@ class Ui_informationUI(QObject):
 
             if hasattr(self.employee_detail_ui, 'selected_image_path') and self.employee_detail_ui.selected_image_path:
                 if not os.path.exists(self.employee_detail_ui.selected_image_path):
-                    QMessageBox.warning(None, "Lỗi", "File ảnh không tồn tại! Vui lòng chọn lại ảnh.")
                     return
                 with open(self.employee_detail_ui.selected_image_path, 'rb') as file_obj:
                     files['file'] = ('avatar.jpg', file_obj, 'image/jpeg')
@@ -328,33 +315,30 @@ class Ui_informationUI(QObject):
                 response = requests.put(api_url, data=update_data, headers=headers)
 
             if response.status_code == 200:
-                QMessageBox.information(None, "Thành công", "Đã cập nhật thông tin nhân viên!")
                 self.load_employees_from_api()
                 self.employee_detail_ui.selected_image_path = None
             else:
-                error_message = response.json().get("detail", f"Cập nhật thất bại: {response.status_code}")
-                QMessageBox.warning(None, "Lỗi", error_message)
-                if response.status_code == 401 or response.status_code == 403:
-                    self.stacked_widget.setCurrentWidget(self.stacked_widget.widget(0))  # Quay lại loginUI
+                if response.status_code in (401, 403) and self.stacked_widget:
+                    self.logout_signal.emit()
         except requests.RequestException as e:
-            QMessageBox.critical(None, "Lỗi", f"Không thể kết nối đến API: {str(e)}")
+            print(f"Lỗi khi cập nhật nhân viên: {str(e)}")
         except Exception as e:
-            QMessageBox.critical(None, "Lỗi", f"Lỗi không xác định khi cập nhật nhân viên: {str(e)}")
+            print(f"Lỗi không xác định khi cập nhật nhân viên: {str(e)}")
 
     def delete_employee(self):
-        """Xóa nhân viên qua API"""
         try:
             settings = QSettings("MyApp", "LoginApp")
             access_token = settings.value("access_token")
+            print(f"Token trong delete_employee: {access_token}")
 
             if not access_token:
-                QMessageBox.critical(None, "Lỗi", "Không tìm thấy access_token. Vui lòng đăng nhập lại!")
-                self.stacked_widget.setCurrentWidget(self.stacked_widget.widget(0))  # Quay lại loginUI
+                print("Không tìm thấy access_token trong delete_employee")
+                if self.stacked_widget:
+                    self.logout_signal.emit()
                 return
 
             employee_code = self.employee_detail_ui.lineEdits["Mã nhân viên:"].text()
             if not employee_code:
-                QMessageBox.warning(None, "Lỗi", "Không tìm thấy mã nhân viên để xóa!")
                 return
 
             reply = QMessageBox.question(None, "Xác nhận", f"Bạn có chắc chắn muốn xóa nhân viên {employee_code}?",
@@ -366,7 +350,6 @@ class Ui_informationUI(QObject):
             headers = {"Authorization": f"Bearer {access_token}"}
             response = requests.delete(api_url, headers=headers)
             if response.status_code == 204:
-                QMessageBox.information(None, "Thành công", "Đã xóa nhân viên!")
                 self.load_employees_from_api()
                 for key in self.employee_detail_ui.lineEdits:
                     self.employee_detail_ui.lineEdits[key].clear()
@@ -374,14 +357,12 @@ class Ui_informationUI(QObject):
                 self.employee_detail_ui.selected_image_path = None
                 self.employee_detail_ui.groupBox.setVisible(False)
             else:
-                error_message = response.json().get("detail", f"Xóa thất bại: {response.status_code}")
-                QMessageBox.warning(None, "Lỗi", error_message)
-                if response.status_code == 401 or response.status_code == 403:
-                    self.stacked_widget.setCurrentWidget(self.stacked_widget.widget(0))  # Quay lại loginUI
+                if response.status_code in (401, 403) and self.stacked_widget:
+                    self.logout_signal.emit()
         except requests.RequestException as e:
-            QMessageBox.critical(None, "Lỗi", f"Không thể kết nối đến API: {str(e)}")
+            print(f"Lỗi khi xóa nhân viên: {str(e)}")
         except Exception as e:
-            QMessageBox.critical(None, "Lỗi", f"Lỗi không xác định khi xóa nhân viên: {str(e)}")
+            print(f"Lỗi không xác định khi xóa nhân viên: {str(e)}")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
