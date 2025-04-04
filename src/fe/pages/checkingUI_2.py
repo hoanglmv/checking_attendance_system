@@ -24,8 +24,8 @@ class Ui_checkingUI_2(object):
         self.centralwidget.setObjectName("centralwidget")
 
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
-        self.horizontalLayout.setContentsMargins(10, 10, 10, 10)
-        self.horizontalLayout.setSpacing(10)
+        self.horizontalLayout.setContentsMargins(0,0,0,0)
+        self.horizontalLayout.setSpacing(0)
 
         # Sử dụng Sidebar từ components
         self.sidebar = Sidebar(parent=self.centralwidget)
@@ -37,8 +37,8 @@ class Ui_checkingUI_2(object):
         self.main.setObjectName("main")
         self.main.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding))
         self.verticalLayout = QtWidgets.QVBoxLayout(self.main)
-        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
-        self.verticalLayout.setSpacing(10)
+        self.verticalLayout.setContentsMargins(0,0,0,0)
+        self.verticalLayout.setSpacing(0)
 
         # Sử dụng Header từ components
         self.header = Header(parent=self.main)
@@ -51,12 +51,12 @@ class Ui_checkingUI_2(object):
         self.groupBox.setMaximumSize(QtCore.QSize(16777215, 50))
         self.groupBox.setTitle("")
         self.button_layout = QtWidgets.QHBoxLayout(self.groupBox)
-        self.button_layout.setContentsMargins(5, 5, 5, 5)
-        self.button_layout.setSpacing(8)
+        self.button_layout.setContentsMargins(10, 10, 10, 10)
+        self.button_layout.setSpacing(10)
 
         self.btn_day_attendance = QtWidgets.QPushButton(parent=self.groupBox)
-        self.btn_day_attendance.setMinimumSize(QtCore.QSize(150, 35))
-        self.btn_day_attendance.setMaximumSize(QtCore.QSize(150, 35))
+        self.btn_day_attendance.setMinimumSize(QtCore.QSize(180, 40))
+        self.btn_day_attendance.setMaximumSize(QtCore.QSize(180, 40))
         self.btn_day_attendance.setStyleSheet("""
             QPushButton {
                 background: #1E2A38;
@@ -85,8 +85,8 @@ class Ui_checkingUI_2(object):
         self.button_layout.addWidget(self.btn_day_attendance)
 
         self.btn_month_attendance = QtWidgets.QPushButton(parent=self.groupBox)
-        self.btn_month_attendance.setMinimumSize(QtCore.QSize(150, 35))
-        self.btn_month_attendance.setMaximumSize(QtCore.QSize(150, 35))
+        self.btn_month_attendance.setMinimumSize(QtCore.QSize(180, 40))
+        self.btn_month_attendance.setMaximumSize(QtCore.QSize(180, 40))
         self.btn_month_attendance.setStyleSheet("""
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #68D477, stop:1 #4CAF50);

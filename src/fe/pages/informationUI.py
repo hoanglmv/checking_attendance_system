@@ -50,7 +50,7 @@ class Ui_informationUI(QObject):
         self.main = QGroupBox(parent=self.centralwidget)
         self.main.setStyleSheet("background-color: #0B121F; border: none;")
         self.mainLayout = QVBoxLayout(self.main)
-        self.mainLayout.setContentsMargins(10, 10, 10, 10)
+        self.mainLayout.setContentsMargins(0,0,0,0)
         self.mainLayout.setSpacing(8)
         
         self.header = Header(parent=self.main)
@@ -66,17 +66,20 @@ class Ui_informationUI(QObject):
             QTabBar::tab {
                 background: #1E2A38;
                 color: #C0C0C0;
-                padding: 8px 16px;
                 border-radius: 6px;
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: 600;
-                margin: 3px;
+                margin: 2px 2px 8px 10px;
+                min-width: 180px;
+                min-height: 40px;
+                max-width: 180px;
+                max-height: 40px;
                 transition: all 0.3s ease;
             }
             QTabBar::tab:selected {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #68D477, stop:1 #4CAF50);
                 color: black;
-                font-size: 14px;
+                font-size: 13px;
                 border-bottom: 2px solid #4CAF50;
             }
             QTabBar::tab:hover {

@@ -13,7 +13,7 @@ time.sleep(1)
 # Chạy Frontend
 frontend_process = subprocess.Popen(
     ["python", "fe/main.py"],
-    cwd="src"
+    cwd=r"src"
 )
 
 backend_process.wait()
