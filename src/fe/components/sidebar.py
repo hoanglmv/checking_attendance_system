@@ -11,9 +11,9 @@ def get_project_root():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 class Sidebar(QGroupBox):
-    logout_signal = pyqtSignal()  # Tín hiệu để thông báo đăng xuất
-    attendance_signal = pyqtSignal()  # Tín hiệu khi nhấn nút "Điểm danh"
-    manage_signal = pyqtSignal()  # Tín hiệu khi nhấn nút "Quản lý"
+    logout_signal = pyqtSignal()  # Signal for logout
+    attendance_signal = pyqtSignal()  # Signal for "Attendance" button
+    manage_signal = pyqtSignal()  # Signal for "Manage" button
 
     def __init__(self, parent=None, stacked_widget=None):
         super().__init__(parent)
@@ -21,22 +21,31 @@ class Sidebar(QGroupBox):
         self.stacked_widget = stacked_widget
         self.setMinimumSize(QtCore.QSize(280, 0))
         self.setMaximumSize(QtCore.QSize(280, 16777215))
-        self.setStyleSheet("background-color: #122131;")
+        self.setStyleSheet("""
+            QGroupBox {
+                background-color: #1B2B40;
+                border: none;
+                border-radius: 10px;
+            }
+        """)
 
         self.verticalLayout = QVBoxLayout(self)
-        self.verticalLayout.setContentsMargins(35, 0, 35, 0)
-        self.verticalLayout.setSpacing(20)
+        self.verticalLayout.setContentsMargins(20, 20, 20, 20)
+        self.verticalLayout.setSpacing(15)
 
         # Logo
         self.logo = QLabel(self)
         self.logo.setMinimumSize(QtCore.QSize(200, 180))
         self.logo.setMaximumSize(QtCore.QSize(200, 180))
         self.logo.setStyleSheet("""
-            background-image: url(src/fe/Image_and_icon/logo.png);
-            background-repeat: no-repeat;
-            background-position: center;
+            QLabel {
+                background-image: url(src/fe/Image_and_icon/logo.png);
+                background-repeat: no-repeat;
+                background-position: center;
+                border: none;
+            }
         """)
-        self.verticalLayout.addWidget(self.logo)
+        self.verticalLayout.addWidget(self.logo, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
 
         # Button: Attendance
         self.fil_attendance = self.create_button_container()
@@ -45,7 +54,7 @@ class Sidebar(QGroupBox):
             "Điểm danh"
         )
         self.fil_attendance.layout().addWidget(self.btn_attendance)
-        self.btn_attendance.clicked.connect(self.attendance_signal.emit)  # Kết nối tín hiệu
+        self.btn_attendance.clicked.connect(self.attendance_signal.emit)
         self.verticalLayout.addWidget(self.fil_attendance)
 
         # Button: Manage
@@ -55,7 +64,7 @@ class Sidebar(QGroupBox):
             "Quản lý"
         )
         self.fil_manage.layout().addWidget(self.btn_manage)
-        self.btn_manage.clicked.connect(self.manage_signal.emit)  # Kết nối tín hiệu
+        self.btn_manage.clicked.connect(self.manage_signal.emit)
         self.verticalLayout.addWidget(self.fil_manage)
 
         # Spacer
@@ -74,7 +83,7 @@ class Sidebar(QGroupBox):
                 border: none;
                 border-radius: 5px;
                 color: white;
-                font: 12pt "Times New Roman";
+                font: bold 12pt "Arial";
                 padding: 10px 20px;
             }
             QPushButton:hover {
@@ -93,14 +102,21 @@ class Sidebar(QGroupBox):
         container = QGroupBox(self)
         container.setMinimumSize(QtCore.QSize(200, 58))
         container.setMaximumSize(QtCore.QSize(200, 58))
+        container.setStyleSheet("""
+            QGroupBox {
+                background-color: #223344;
+                border: none;
+                border-radius: 5px;
+            }
+        """)
         layout = QGridLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
         return container
 
     def create_button(self, icon_path, text):
         button = QPushButton(self)
-        button.setMinimumSize(QtCore.QSize(180, 32))
-        button.setMaximumSize(QtCore.QSize(180, 32))
+        button.setMinimumSize(QtCore.QSize(180, 40))
+        button.setMaximumSize(QtCore.QSize(180, 40))
         button.setText(text)
         button.setStyleSheet(f"""
             QPushButton {{
@@ -141,7 +157,7 @@ class Sidebar(QGroupBox):
             QMessageBox {
                 background-color: #1E2A38;
                 color: white;
-                font: 14pt "Times New Roman";
+                font: 14pt "Arial";
             }
             QMessageBox QLabel {
                 color: white;
@@ -151,7 +167,7 @@ class Sidebar(QGroupBox):
                 color: black;
                 padding: 8px 16px;
                 border-radius: 5px;
-                font: 12pt "Times New Roman";
+                font: bold 12pt "Arial";
                 border: 1px solid #68D477;
             }
             QMessageBox QPushButton:hover {
@@ -181,7 +197,7 @@ class Sidebar(QGroupBox):
                 QMessageBox {
                     background-color: #1E2A38;
                     color: white;
-                    font: 14pt "Times New Roman";
+                    font: 14pt "Arial";
                 }
                 QMessageBox QLabel {
                     color: white;
@@ -191,7 +207,7 @@ class Sidebar(QGroupBox):
                     color: white;
                     padding: 8px 16px;
                     border-radius: 5px;
-                    font: 12pt "Times New Roman";
+                    font: bold 12pt "Arial";
                     border: 1px solid #F44336;
                 }
                 QMessageBox QPushButton:hover {
