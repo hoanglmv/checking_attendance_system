@@ -104,7 +104,7 @@ class Sidebar(QGroupBox):
         container.setMaximumSize(QtCore.QSize(200, 58))
         container.setStyleSheet("""
             QGroupBox {
-                background-color: #223344;
+                background-color: #1B2B40;
                 border: none;
                 border-radius: 5px;
             }
@@ -120,7 +120,7 @@ class Sidebar(QGroupBox):
         button.setText(text)
         button.setStyleSheet(f"""
             QPushButton {{
-                background-color: #2E86C1;
+                
                 border: none;
                 border-radius: 5px;
                 color: white;
@@ -128,13 +128,13 @@ class Sidebar(QGroupBox):
                 padding: 8px 16px 8px 32px;
                 background-image: url({icon_path});
                 background-repeat: no-repeat;
-                background-position: 12px center;
+                background-position: 12px left;
             }}
             QPushButton:hover {{
-                background-color: #3498DB;
+                
             }}
             QPushButton:pressed {{
-                background-color: #2980B9;
+                
             }}
         """)
         button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
