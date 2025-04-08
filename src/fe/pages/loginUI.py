@@ -103,21 +103,21 @@ class Ui_loginUI(QObject):
             }
             QPushButton:hover {
                 background-color: #31445B;
-                border: 2px solid #FFD700;
+                border: 2px solid #9FEF00;
             }
         """
 
     def get_action_button_style(self):
         return """
             QPushButton {
-                color: #FFD700;
+                color: white;
                 font-size: 10pt;
                 background: transparent;
                 border: none;
             }
             QPushButton:hover {
                 text-decoration: underline;
-                color: #FFA500;
+                color: #9FEF00;
             }
         """
 

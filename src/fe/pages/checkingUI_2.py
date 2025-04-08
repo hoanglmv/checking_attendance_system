@@ -30,6 +30,7 @@ class Ui_checkingUI_2(object):
         # Sử dụng Sidebar từ components
         self.sidebar = Sidebar(parent=self.centralwidget)
         self.sidebar.fil_attendance.setStyleSheet("background-color: #68D477; \n border-radius: 5px;")
+        self.sidebar.fil_manage.setStyleSheet("background-color: #1B2B40; border-radius: 5px;")
         self.horizontalLayout.addWidget(self.sidebar)
 
         # Main content area

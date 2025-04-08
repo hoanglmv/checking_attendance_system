@@ -31,6 +31,7 @@ class Ui_checkingUI(object):
         
         self.sidebar = Sidebar(parent=self.centralwidget)
         self.sidebar.fil_attendance.setStyleSheet("background-color: #68D477; border-radius: 5px;")
+        self.sidebar.fil_manage.setStyleSheet("background-color: #1B2B40; border-radius: 5px;")
         self.horizontalLayout.addWidget(self.sidebar)       
         
         self.main = QtWidgets.QGroupBox(parent=self.centralwidget)
@@ -62,9 +63,9 @@ class Ui_checkingUI(object):
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #68D477, stop:1 #4CAF50);
                 color: black;
-                padding: 10px 20px;  /* Tăng padding để chữ không bị sát viền */
+                padding: 10px 20px;  
                 border-radius: 6px;
-                font-size: 13px;  /* Giảm font-size để chữ vừa với nút */
+                font-size: 13px;  
                 font-weight: 600;
                 border-bottom: 2px solid #4CAF50;
                 transition: all 0.3s ease;
@@ -88,15 +89,15 @@ class Ui_checkingUI(object):
 
         # Nút "Điểm danh theo tháng"
         self.btn_month_attendance = QtWidgets.QPushButton(parent=self.groupBox)
-        self.btn_month_attendance.setMinimumSize(QtCore.QSize(180, 40))  # Tăng kích thước để chữ không bị vướng
+        self.btn_month_attendance.setMinimumSize(QtCore.QSize(180, 40))  
         self.btn_month_attendance.setMaximumSize(QtCore.QSize(180, 40))
         self.btn_month_attendance.setStyleSheet("""
             QPushButton {
                 background: #1E2A38;
                 color: #C0C0C0;
-                padding: 10px 20px;  /* Tăng padding để chữ không bị sát viền */
+                padding: 10px 20px;  
                 border-radius: 6px;
-                font-size: 13px;  /* Giảm font-size để chữ vừa với nút */
+                font-size: 13px;  
                 font-weight: 600;
                 transition: all 0.3s ease;
             }
@@ -117,7 +118,6 @@ class Ui_checkingUI(object):
         self.btn_month_attendance.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.button_layout.addWidget(self.btn_month_attendance)
 
-        # Thêm khoảng trống để căn chỉnh
         self.button_layout.addStretch()
 
         self.verticalLayout.addWidget(self.groupBox)
@@ -209,7 +209,6 @@ class Ui_checkingUI(object):
         self.date_edit.setObjectName("date_edit")
         self.date_edit.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
 
-        # Vô hiệu hóa chỉnh sửa text nhưng vẫn cho phép chọn ngày qua lịch
         line_edit = QLineEdit(self.date_edit)
         line_edit.setReadOnly(True)
         self.date_edit.setLineEdit(line_edit)
@@ -247,13 +246,12 @@ class Ui_checkingUI(object):
         self.content.setTitle("")
         self.content.setObjectName("content")
         
-        # Cải thiện giao diện bảng nhân viên
         self.table = QtWidgets.QTableWidget(self.content)
         self.table.setColumnCount(8)
-        # Đổi tiêu đề cột "ID" thành "Mã nhân viên"
+
         self.table.setHorizontalHeaderLabels(["Mã nhân viên", "Họ và tên", "Chức vụ", "Muộn", "Giờ đến", "Giờ về", "Nghỉ có phép", "Nghỉ không phép"])
 
-        self.table.setColumnWidth(0, 100)  # Tăng chiều rộng cột "Mã nhân viên" để hiển thị employee_code
+        self.table.setColumnWidth(0, 100)  
         self.table.setColumnWidth(2, 300) 
         self.table.setColumnWidth(3, 60) 
         self.table.setColumnWidth(4, 100) 

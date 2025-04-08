@@ -5,7 +5,7 @@ from pages.registerUI import Ui_registerUI
 from pages.loginUI import Ui_loginUI
 from pages.informationUI import Ui_informationUI
 from pages.checkingUI import CheckingUI
-from pages.checkingUI_2 import CheckingUI_2  # Import từ ui.checkingUI_2
+from pages.checkingUI_2 import CheckingUI_2
 from pages.OTPPopup import OTPPopUp
 import requests
 import traceback
