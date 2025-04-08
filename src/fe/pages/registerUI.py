@@ -23,7 +23,17 @@ class Ui_registerUI(QObject):  # Kế thừa từ QObject
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_2.setFixedSize(500, 580)
         self.groupBox_2.setStyleSheet("background-color: #517078; border-radius: 10px;")
-        self.innerLayout = QtWidgets.QVBoxLayout(self.groupBox_2)
+
+        self.outerLayout = QtWidgets.QHBoxLayout(self.groupBox_2)
+
+        self.outerLayout.addStretch()
+
+        self.centerWidget = QtWidgets.QWidget()
+        self.centerWidget.setFixedSize(400, 580)
+        self.innerLayout = QtWidgets.QVBoxLayout(self.centerWidget)
+        self.outerLayout.addWidget(self.centerWidget)
+
+        self.outerLayout.addStretch()
 
         # Tiêu đề đăng ký
         self.label = QtWidgets.QLabel("Đăng ký", self.groupBox_2)
@@ -105,21 +115,21 @@ class Ui_registerUI(QObject):  # Kế thừa từ QObject
             }
             QPushButton:hover {
                 background-color: #31445B;
-                border: 2px solid #FFD700;
+                border: 2px solid #9FEF00;
             }
         """
 
     def get_login_button_style(self):
         return """
             QPushButton {
-                color: #FFD700;
+                color: #9FEF00;
                 font-size: 10pt;
                 background: transparent;
                 border: none;
             }
             QPushButton:hover {
                 text-decoration: underline;
-                color: #FFA500;
+                color: #9FEF00;
             }
         """
 
