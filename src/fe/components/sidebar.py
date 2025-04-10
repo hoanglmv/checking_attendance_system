@@ -1,4 +1,3 @@
-# sidebar.py
 import os
 import subprocess
 import requests
@@ -11,9 +10,9 @@ def get_project_root():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 class Sidebar(QGroupBox):
-    logout_signal = pyqtSignal()  # Signal for logout
-    attendance_signal = pyqtSignal()  # Signal for "Attendance" button
-    manage_signal = pyqtSignal()  # Signal for "Manage" button
+    logout_signal = pyqtSignal()       # Signal for logout
+    attendance_signal = pyqtSignal()   # Signal for "Attendance" button
+    manage_signal = pyqtSignal()       # Signal for "Manage" button
 
     def __init__(self, parent=None, stacked_widget=None):
         super().__init__(parent)
@@ -37,32 +36,29 @@ class Sidebar(QGroupBox):
         self.logo = QLabel(self)
         self.logo.setMinimumSize(QtCore.QSize(200, 180))
         self.logo.setMaximumSize(QtCore.QSize(200, 180))
-        self.logo.setStyleSheet("""
-            QLabel {
-                background-image: url(src/fe/Image_and_icon/logo.png);
+        # Lấy đường dẫn tuyệt đối cho logo, từ file hiện tại (components)
+        logo_base = os.path.dirname(os.path.abspath(__file__))
+        logo_path = os.path.normpath(os.path.join(logo_base, "..", "Image_and_icon", "logo.png")).replace("\\", "/")
+        self.logo.setStyleSheet(f"""
+            QLabel {{
+                background-image: url({logo_path});
                 background-repeat: no-repeat;
                 background-position: center;
                 border: none;
-            }
+            }}
         """)
         self.verticalLayout.addWidget(self.logo, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
 
         # Button: Attendance
         self.fil_attendance = self.create_button_container()
-        self.btn_attendance = self.create_button(
-            "src/fe/Image_and_icon/icons8-checking-30.png",
-            "  Điểm danh"
-        )
+        self.btn_attendance = self.create_button("icons8-checking-30.png", "  Điểm danh")
         self.fil_attendance.layout().addWidget(self.btn_attendance)
         self.btn_attendance.clicked.connect(self.attendance_signal.emit)
         self.verticalLayout.addWidget(self.fil_attendance)
 
         # Button: Manage
         self.fil_manage = self.create_button_container()
-        self.btn_manage = self.create_button(
-            "src/fe/Image_and_icon/icons8-management-30.png",
-            "  Quản lý"
-        )
+        self.btn_manage = self.create_button("icons8-management-30.png", "  Quản lý")
         self.fil_manage.layout().addWidget(self.btn_manage)
         self.btn_manage.clicked.connect(self.manage_signal.emit)
         self.verticalLayout.addWidget(self.fil_manage)
@@ -73,10 +69,7 @@ class Sidebar(QGroupBox):
 
         # Button: Logout
         self.fil_logout = self.create_button_container()
-        self.btn_logout = self.create_button(
-            "src/fe/Image_and_icon/icons8-logout-30.png",
-            "  Đăng xuất"
-        )
+        self.btn_logout = self.create_button("icons8-logout-30.png", "  Đăng xuất")
         self.btn_logout.setStyleSheet("""
             QPushButton {
                 border: none;
@@ -84,14 +77,12 @@ class Sidebar(QGroupBox):
                 color: white;
                 font: 15pt "Times New Roman";
                 padding: 8px 16px 8px 32px;
-
                 text-align: left;
             }
             QPushButton:hover {
                 background-color: #C0392B;
             }
         """)
-
         self.btn_logout.clicked.connect(self.logout)
         self.fil_logout.layout().addWidget(self.btn_logout)
         self.verticalLayout.addWidget(self.fil_logout)
@@ -111,17 +102,25 @@ class Sidebar(QGroupBox):
         layout.setContentsMargins(0, 0, 0, 0)
         return container
 
-    def create_button(self, icon_path, text):
+    def create_button(self, relative_icon_name, text):
         button = QPushButton(text, self)
         button.setMinimumSize(QSize(180, 40))
         button.setMaximumSize(QSize(180, 40))
 
-        # Set icon
+        # Lấy đường dẫn của file hiện tại (components)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        # Từ folder components, lùi 1 cấp để vào src/fe rồi đến folder Image_and_icon
+        icon_path = os.path.normpath(os.path.join(base_dir, "..", "Image_and_icon", relative_icon_name))
+        if not os.path.exists(icon_path):
+            print("❌ Không tìm thấy icon:", icon_path)
+        else:
+            print("✅ Icon tìm thấy:", icon_path)
+
         icon = QIcon(icon_path)
         button.setIcon(icon)
-        button.setIconSize(QSize(24, 24))  # điều chỉnh tùy bạn
+        button.setIconSize(QSize(24, 24))
 
-        # Style
+        # Style cho button
         button.setStyleSheet("""
             QPushButton {
                 border: none;
@@ -129,23 +128,17 @@ class Sidebar(QGroupBox):
                 color: white;
                 font: 15pt "Times New Roman";
                 padding: 8px 16px 8px 32px;
-
                 text-align: left;
             }
             QPushButton:hover {
-                
             }
         """)
-
-        # Đặt con trỏ chuột kiểu tay chỉ
         button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-
         return button
 
     def logout(self):
         settings = QSettings("MyApp", "LoginApp")
         access_token = settings.value("access_token")
-
         if not access_token:
             QMessageBox.warning(None, "Thông báo", "Bạn chưa đăng nhập!")
             return
@@ -205,7 +198,6 @@ class Sidebar(QGroupBox):
                     color: white;
                 }
                 QMessageBox QPushButton {
-                    
                     color: white;
                     padding: 8px 16px;
                     border-radius: 5px;
