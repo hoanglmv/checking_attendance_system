@@ -6,7 +6,7 @@ from pydantic import BaseModel
 load_dotenv()
 
 # Cấu hình Database
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:123456@localhost/mlattendance")
+DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:hoanglmvd@localhost/mlattendance")
 
 # Cấu hình bảo mật
 SECRET_KEY = os.getenv("SECRET_KEY", "4d419d387f139df1138c501a02eb315e2fcffcadb369e8b7881d6f80cb6f58e8")
