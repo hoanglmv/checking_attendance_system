@@ -3888,3 +3888,366 @@
 2025-04-10 10:17:49,620 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
 2025-04-10 10:18:30,190 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
 2025-04-10 10:18:30,210 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 10:23:02,945 - INFO - Kh\u1edfi t\u1ea1o CheckingUI_2
+2025-04-10 10:23:02,945 - INFO - B\u1eaft \u0111\u1ea7u setupUi trong Ui_checkingUI_2
+2025-04-10 10:23:03,063 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
+2025-04-10 10:23:03,063 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
+2025-04-10 10:23:32,868 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,305 - DEBUG - http://127.0.0.1:8000 "POST /auth/login HTTP/1.1" 200 299
+2025-04-10 10:23:33,415 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-10 10:23:33,417 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,426 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:23:33,430 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,455 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:23:33,461 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,600 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:23:33,617 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,622 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:23:33,639 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,671 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 10:23:33,679 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,735 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 10:23:33,738 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,764 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 10:23:33,781 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,801 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 10:23:33,803 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,822 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 10:23:33,832 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,854 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 10:23:33,872 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,884 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:23:33,888 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,917 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:23:33,923 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,930 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:23:33,951 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:23:33,965 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 10:24:39,531 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:24:39,549 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 10:24:40,657 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:24:40,669 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:24:40,675 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:24:40,697 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:24:40,708 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:24:40,713 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:24:40,734 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:24:40,750 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 10:27:22,224 - INFO - Kh\u1edfi t\u1ea1o CheckingUI_2
+2025-04-10 10:27:22,224 - INFO - B\u1eaft \u0111\u1ea7u setupUi trong Ui_checkingUI_2
+2025-04-10 10:27:22,330 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
+2025-04-10 10:27:22,331 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
+2025-04-10 10:27:31,675 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,282 - DEBUG - http://127.0.0.1:8000 "POST /auth/login HTTP/1.1" 200 299
+2025-04-10 10:27:32,398 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,415 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:27:32,420 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,446 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:27:32,452 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,564 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:27:32,581 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,597 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 10:27:32,598 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-10 10:27:32,599 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,610 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:27:32,615 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,629 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:27:32,633 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,638 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:27:32,656 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,663 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:27:32,892 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,957 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 10:27:32,973 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:32,996 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 10:27:32,999 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:33,025 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 10:27:33,048 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:33,069 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 10:27:33,073 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:33,090 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 10:27:33,095 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:27:33,114 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 10:31:12,097 - INFO - Kh\u1edfi t\u1ea1o CheckingUI_2
+2025-04-10 10:31:12,097 - INFO - B\u1eaft \u0111\u1ea7u setupUi trong Ui_checkingUI_2
+2025-04-10 10:31:12,201 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
+2025-04-10 10:31:12,201 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
+2025-04-10 10:31:29,616 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,041 - DEBUG - http://127.0.0.1:8000 "POST /auth/login HTTP/1.1" 200 299
+2025-04-10 10:31:30,152 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,167 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:31:30,171 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,223 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:31:30,228 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,371 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:31:30,390 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,408 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 10:31:30,410 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-10 10:31:30,414 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,425 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:31:30,427 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,445 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:31:30,450 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,453 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:31:30,472 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,477 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:31:30,496 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,522 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 10:31:30,524 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,544 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 10:31:30,548 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,569 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 10:31:30,593 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,622 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 10:31:30,626 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,658 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 10:31:30,666 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:31:30,708 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 10:41:47,420 - INFO - Kh\u1edfi t\u1ea1o CheckingUI_2
+2025-04-10 10:41:47,420 - INFO - B\u1eaft \u0111\u1ea7u setupUi trong Ui_checkingUI_2
+2025-04-10 10:41:47,507 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
+2025-04-10 10:41:47,508 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
+2025-04-10 10:41:58,220 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:58,824 - DEBUG - http://127.0.0.1:8000 "POST /auth/login HTTP/1.1" 200 299
+2025-04-10 10:41:58,935 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:58,945 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:41:58,950 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:58,976 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:41:58,983 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,102 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:41:59,121 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,130 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 10:41:59,132 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-10 10:41:59,136 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,144 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:41:59,147 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,161 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:41:59,167 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,171 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:41:59,193 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,201 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:41:59,222 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,253 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 10:41:59,256 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,277 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 10:41:59,281 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,301 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 10:41:59,319 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,336 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 10:41:59,338 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,357 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 10:41:59,360 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:41:59,380 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 10:50:05,230 - INFO - Kh\u1edfi t\u1ea1o CheckingUI_2
+2025-04-10 10:50:05,230 - INFO - B\u1eaft \u0111\u1ea7u setupUi trong Ui_checkingUI_2
+2025-04-10 10:50:05,338 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
+2025-04-10 10:50:05,339 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
+2025-04-10 10:50:14,902 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:15,402 - DEBUG - http://127.0.0.1:8000 "POST /auth/login HTTP/1.1" 200 299
+2025-04-10 10:50:15,516 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:15,543 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:50:15,550 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:15,573 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:50:15,577 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:15,699 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:50:15,720 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:15,733 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 10:50:15,734 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-10 10:50:15,737 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:15,744 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 10:50:15,749 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:15,766 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 10:50:15,769 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:15,773 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:50:15,792 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:15,798 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:50:15,816 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:15,843 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 10:50:15,850 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:16,186 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 10:50:16,191 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:16,289 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 10:50:16,386 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:16,420 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 10:50:16,424 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:16,451 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 10:50:16,454 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:50:16,474 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 10:53:30,435 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:53:30,440 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 10:53:34,750 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 10:53:34,771 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:04:36,816 - INFO - Kh\u1edfi t\u1ea1o CheckingUI_2
+2025-04-10 11:04:36,817 - INFO - B\u1eaft \u0111\u1ea7u setupUi trong Ui_checkingUI_2
+2025-04-10 11:04:36,948 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
+2025-04-10 11:04:36,948 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
+2025-04-10 11:04:46,671 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,105 - DEBUG - http://127.0.0.1:8000 "POST /auth/login HTTP/1.1" 200 299
+2025-04-10 11:04:47,213 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,221 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 11:04:47,224 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,259 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 11:04:47,263 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,352 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:04:47,366 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,375 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:04:47,377 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-10 11:04:47,380 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,388 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 11:04:47,390 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,403 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 11:04:47,406 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,409 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:04:47,425 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,428 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:04:47,444 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,463 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 11:04:47,466 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,480 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 11:04:47,484 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,499 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 11:04:47,515 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,532 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 11:04:47,535 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,550 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 11:04:47,554 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:04:47,569 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 11:10:06,825 - INFO - Kh\u1edfi t\u1ea1o CheckingUI_2
+2025-04-10 11:10:06,826 - INFO - B\u1eaft \u0111\u1ea7u setupUi trong Ui_checkingUI_2
+2025-04-10 11:10:06,986 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
+2025-04-10 11:10:06,986 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
+2025-04-10 11:10:19,916 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,496 - DEBUG - http://127.0.0.1:8000 "POST /auth/login HTTP/1.1" 200 299
+2025-04-10 11:10:20,644 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,653 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 11:10:20,658 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,696 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 11:10:20,700 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,803 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:10:20,820 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,832 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:10:20,833 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-10 11:10:20,836 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,846 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 11:10:20,848 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,865 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 11:10:20,869 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,874 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:10:20,892 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,897 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:10:20,914 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,946 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 11:10:20,949 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,973 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 11:10:20,976 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:20,994 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 11:10:21,012 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:21,031 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 11:10:21,033 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:21,052 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 11:10:21,055 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:10:21,074 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 11:17:16,501 - INFO - Kh\u1edfi t\u1ea1o CheckingUI_2
+2025-04-10 11:17:16,502 - INFO - B\u1eaft \u0111\u1ea7u setupUi trong Ui_checkingUI_2
+2025-04-10 11:17:16,619 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
+2025-04-10 11:17:16,619 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
+2025-04-10 11:17:25,242 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:25,670 - DEBUG - http://127.0.0.1:8000 "POST /auth/login HTTP/1.1" 200 299
+2025-04-10 11:17:25,783 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:25,794 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 11:17:25,798 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:25,836 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 11:17:25,845 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:25,964 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:17:25,980 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:25,989 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:17:25,992 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-10 11:17:25,995 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:26,003 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 11:17:26,009 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:26,020 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 11:17:26,028 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:26,031 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:17:26,049 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:26,052 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:17:26,069 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:26,096 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 11:17:26,098 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:26,117 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 11:17:26,119 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:26,139 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 11:17:26,155 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:26,177 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 11:17:26,180 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:26,203 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 11:17:26,209 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:17:26,228 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 11:18:47,392 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:18:47,412 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:18:49,601 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:18:49,614 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:18:50,239 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:18:50,249 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:19:02,068 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:19:02,073 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:19:02,361 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:19:02,364 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:19:04,449 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:19:04,466 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:19:06,543 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:19:06,563 - DEBUG - http://127.0.0.1:8000 "GET /attendance/daily?date=2025-04-11 HTTP/1.1" 200 396
+2025-04-10 11:19:09,205 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:19:09,229 - DEBUG - http://127.0.0.1:8000 "GET /attendance/daily?date=2026-04-11 HTTP/1.1" 200 396
+2025-04-10 11:20:20,869 - INFO - Kh\u1edfi t\u1ea1o CheckingUI_2
+2025-04-10 11:20:20,870 - INFO - B\u1eaft \u0111\u1ea7u setupUi trong Ui_checkingUI_2
+2025-04-10 11:20:20,964 - INFO - Hoàn t\u1ea5t setupUi trong Ui_checkingUI_2
+2025-04-10 11:20:20,965 - INFO - \u0110ã k\u1ebft n\u1ed1i tín hi\u1ec7u trong CheckingUI_2
+2025-04-10 11:20:33,088 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:33,537 - DEBUG - http://127.0.0.1:8000 "POST /auth/login HTTP/1.1" 200 299
+2025-04-10 11:20:33,683 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:33,694 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 11:20:33,697 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:33,736 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 11:20:33,742 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:33,912 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:20:33,933 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:33,948 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:20:33,950 - INFO - CheckingUI_2 nh\u1eadn tín hi\u1ec7u \u0111\u0103ng nh\u1eadp thành công
+2025-04-10 11:20:33,955 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:33,965 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 11:20:33,969 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:33,983 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 11:20:33,987 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:33,990 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:20:34,012 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:34,019 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:20:34,038 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:34,068 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 11:20:34,071 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:34,096 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 11:20:34,102 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:34,130 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 11:20:34,160 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:34,186 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/3 HTTP/1.1" 200 229
+2025-04-10 11:20:34,188 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:34,214 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/4 HTTP/1.1" 200 501
+2025-04-10 11:20:34,219 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:34,238 - DEBUG - http://127.0.0.1:8000 "GET /attendance/1/month/2025/5 HTTP/1.1" 200 515
+2025-04-10 11:20:48,610 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:48,621 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:20:49,707 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:49,716 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:20:58,430 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:20:58,440 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:21:00,328 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:21:00,335 - DEBUG - http://127.0.0.1:8000 "GET /employees/getall HTTP/1.1" 200 239
+2025-04-10 11:21:00,338 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:21:00,354 - DEBUG - http://127.0.0.1:8000 "GET /employees/departments HTTP/1.1" 200 11
+2025-04-10 11:21:00,357 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:21:00,361 - DEBUG - http://127.0.0.1:8000 "GET /avt_images/avt_2500001.jpg HTTP/1.1" 200 22134
+2025-04-10 11:21:00,376 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:21:00,384 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:21:03,336 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:21:03,346 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130
+2025-04-10 11:21:04,180 - DEBUG - Starting new HTTP connection (1): 127.0.0.1:8000
+2025-04-10 11:21:04,192 - DEBUG - http://127.0.0.1:8000 "GET /auth/me HTTP/1.1" 200 130

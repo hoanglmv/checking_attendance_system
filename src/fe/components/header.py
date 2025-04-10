@@ -1,35 +1,58 @@
-# header.py
 from PyQt6 import QtWidgets, QtCore
-from PyQt6.QtGui import QCursor
-from PyQt6.QtCore import QSettings, QTimer
+from PyQt6.QtGui import QCursor, QPixmap
+from PyQt6.QtCore import QSettings, QTimer, pyqtSignal
 import requests
 import subprocess
 import os
 import traceback
 import json
 from pages.adminPopup import AdminInfoPopup
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QListWidget, QPushButton
 from PyQt6.QtCore import Qt
 
 def get_project_root():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+
+class ClickableLabel(QLabel):
+    clicked = pyqtSignal()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+
+    def mousePressEvent(self, event):
+        self.clicked.emit()
+        super().mousePressEvent(event)
 
 class NotificationPopup(QDialog):
     def __init__(self, message, parent=None):
         super().__init__(parent)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Popup)
         self.setStyleSheet("background-color: #0D1B2A; color: white; border-radius: 10px;")
-        self.setFixedSize(300, 100)
+        self.setFixedSize(300, 120)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
 
+        # Tạo icon hiển thị tại Popup
+        try:
+            icon_path = os.path.join(get_project_root(), "src", "fe", "Image_and_icon", "icons8-bell-30.png")
+            pixmap = QPixmap(icon_path)
+            self.icon_label = QLabel(self)
+            self.icon_label.setPixmap(pixmap)
+            self.icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            layout.addWidget(self.icon_label)
+        except Exception as e:
+            print(f"Lỗi khi tải icon: {e}")
+
+        # Hiển thị nội dung thông báo
         self.label = QLabel(message, self)
         self.label.setStyleSheet("""
-            font-size: 14px; 
-            color: #9FEF00; 
-            background-color: rgba(159, 239, 0, 0.15); 
-            padding: 5px; 
+            font-size: 14px;
+            color: #9FEF00;
+            background-color: rgba(159, 239, 0, 0.15);
+            padding: 5px;
             border-radius: 5px;
         """)
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -59,6 +82,8 @@ class Header(QtWidgets.QGroupBox):
             self.process_checkin = None
             self.process_checkout = None
             self.notification_popup = None
+            # Danh sách lưu trữ các thông báo để xem lại
+            self.notifications = []
 
             self.horizontalLayout = QtWidgets.QHBoxLayout(self)
             self.horizontalLayout.setContentsMargins(15, 0, 15, 0)
@@ -67,7 +92,7 @@ class Header(QtWidgets.QGroupBox):
             self.header_title = QtWidgets.QLabel("Điểm danh", self)
             self.header_title.setFixedSize(QtCore.QSize(120, 37))
             self.header_title.setStyleSheet("color: white; font: 18pt 'Times New Roman';")
-            self.header_title.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+            self.header_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.horizontalLayout.addWidget(self.header_title)
             
             self.horizontalLayout.addStretch(1)
@@ -87,17 +112,19 @@ class Header(QtWidgets.QGroupBox):
 
             self.horizontalLayout.addSpacing(20)
             
-            self.checkin_notification = QtWidgets.QLabel("", self)
+            # Sử dụng ClickableLabel để có thể click xem lịch sử thông báo
+            self.checkin_notification = ClickableLabel("", self)
             self.checkin_notification.setStyleSheet("""
-                color: #9FEF00; 
-                font: 11pt 'Times New Roman'; 
-                background-color: rgba(159, 239, 0, 0.15); 
-                border-radius: 5px; 
+                color: #9FEF00;
+                font: 11pt 'Times New Roman';
+                background-color: rgba(159, 239, 0, 0.15);
+                border-radius: 5px;
                 padding: 5px;
             """)
-            self.checkin_notification.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+            self.checkin_notification.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.checkin_notification.setMaximumWidth(350)
             self.checkin_notification.setWordWrap(True)
+            self.checkin_notification.clicked.connect(self.show_notifications_dialog)
             self.horizontalLayout.addWidget(self.checkin_notification)
 
             self.horizontalLayout.addSpacing(20)
@@ -107,12 +134,12 @@ class Header(QtWidgets.QGroupBox):
             self.admin_frame_layout.setContentsMargins(0, 0, 0, 0)
             self.admin_frame_layout.setSpacing(5)
             self.admin_frame.setStyleSheet("background-color: transparent;")
-            self.admin_frame.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+            self.admin_frame.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
             self.admin_frame.mousePressEvent = self.show_admin_popup
 
             self.admin_name = QtWidgets.QLabel("Chưa đăng nhập", self.admin_frame)
             self.admin_name.setStyleSheet("color: white; font: 12pt 'Times New Roman'; font-weight: bold;")
-            self.admin_name.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+            self.admin_name.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
             self.admin_frame_layout.addWidget(self.admin_name)
             self.horizontalLayout.addWidget(self.admin_frame)
 
@@ -143,7 +170,9 @@ class Header(QtWidgets.QGroupBox):
                 else:
                     message = f"Đã check-in thành công cho {employee_full_name} lúc {check_in_time}"
                 
+                # Cập nhật thông báo lên label và lưu vào danh sách
                 self.checkin_notification.setText(message)
+                self.notifications.append(message)
                 
                 if self.notification_popup:
                     self.notification_popup.close()
@@ -156,6 +185,86 @@ class Header(QtWidgets.QGroupBox):
             except Exception as e:
                 print(f"Lỗi khi đọc file thông báo check-in: {str(e)}")
 
+    def show_notifications_dialog(self, event=None):
+        """
+        Hiển thị dropdown thông báo chỉ với tối đa 5 thông báo.
+        Có nút "Xem tất cả thông báo" để mở dialog hiển thị toàn bộ thông báo.
+        """
+        dialog = QDialog(self)
+        dialog.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Popup)
+        dialog.setStyleSheet("background-color: #192E44; color: white; border: 1px solid #9FEF00; border-radius: 5px;")
+        dialog.setFixedSize(300, 300)
+        
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(5, 5, 5, 5)
+        layout.setSpacing(5)
+        
+        list_widget = QListWidget(dialog)
+        list_widget.setStyleSheet("""
+            QListWidget { background-color: #192E44; border: none; }
+            QListWidget::item { background-color: transparent; padding: 5px; }
+            QListWidget::item:hover { background-color: #3D5A80; }
+        """)
+        # Nếu có hơn 5 thông báo, chỉ hiển thị 5 thông báo mới nhất.
+        notifications_to_show = self.notifications[-5:] if len(self.notifications) > 5 else self.notifications
+        if notifications_to_show:
+            for notification in notifications_to_show:
+                list_widget.addItem(notification)
+        else:
+            list_widget.addItem("Không có thông báo nào")
+        layout.addWidget(list_widget)
+        
+        btn_all = QPushButton("Xem tất cả thông báo", dialog)
+        btn_all.setStyleSheet("""
+            QPushButton { background-color: #2E86C1; border: none; border-radius: 5px; color: white; }
+            QPushButton:hover { background-color: #3498DB; }
+        """)
+        btn_all.clicked.connect(lambda: self.show_all_notifications(dialog))
+        layout.addWidget(btn_all)
+        
+        # Định vị dropdown ngay dưới label thông báo
+        global_pos = self.checkin_notification.mapToGlobal(QtCore.QPoint(0, self.checkin_notification.height()))
+        dialog.move(global_pos.x(), global_pos.y())
+        dialog.exec()
+
+    def show_all_notifications(self, parent_dialog=None):
+        """
+        Hiển thị dialog chứa toàn bộ danh sách thông báo.
+        """
+        if parent_dialog:
+            parent_dialog.close()
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Tất cả thông báo")
+        dialog.setStyleSheet("background-color: #192E44; color: white; border: 1px solid #9FEF00; border-radius: 5px;")
+        dialog.setFixedSize(350, 400)
+        
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(5)
+        
+        list_widget = QListWidget(dialog)
+        list_widget.setStyleSheet("""
+            QListWidget { background-color: #192E44; border: none; }
+            QListWidget::item { background-color: transparent; padding: 5px; }
+            QListWidget::item:hover { background-color: #3D5A80; }
+        """)
+        if self.notifications:
+            for notification in self.notifications:
+                list_widget.addItem(notification)
+        else:
+            list_widget.addItem("Không có thông báo nào")
+        layout.addWidget(list_widget)
+        
+        btn_close = QPushButton("Đóng", dialog)
+        btn_close.setStyleSheet("""
+            QPushButton { background-color: #2E86C1; border: none; border-radius: 5px; color: white; }
+            QPushButton:hover { background-color: #3498DB; }
+        """)
+        btn_close.clicked.connect(dialog.close)
+        layout.addWidget(btn_close)
+        
+        dialog.exec()
+
     def create_camera_section(self):
         try:
             container = QtWidgets.QWidget(self)
@@ -163,25 +272,25 @@ class Header(QtWidgets.QGroupBox):
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(15)
             
-            self.btn_checkin = QtWidgets.QPushButton("Chạy Check-in", self)
-            self.btn_checkin.setFixedSize(QtCore.QSize(130, 40))
+            self.btn_checkin = QtWidgets.QPushButton("CI", self)
+            self.btn_checkin.setFixedSize(QtCore.QSize(40, 40))
             self.btn_checkin.setStyleSheet("""
                 QPushButton { background-color: #2E86C1; border: none; border-radius: 5px; color: white; font: 11pt 'Times New Roman'; }
                 QPushButton:hover { background-color: #3498DB; border: 1px solid #FFFFFF; }
                 QPushButton:pressed { background-color: #2980B9; }
             """)
-            self.btn_checkin.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+            self.btn_checkin.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
             self.btn_checkin.clicked.connect(self.toggle_checkin)
             layout.addWidget(self.btn_checkin)
             
-            self.btn_checkout = QtWidgets.QPushButton("Chạy Check-out", self)
-            self.btn_checkout.setFixedSize(QtCore.QSize(130, 40))
+            self.btn_checkout = QtWidgets.QPushButton("CO", self)
+            self.btn_checkout.setFixedSize(QtCore.QSize(40, 40))
             self.btn_checkout.setStyleSheet("""
                 QPushButton { background-color: #2E86C1; border: none; border-radius: 5px; color: white; font: 11pt 'Times New Roman'; }
                 QPushButton:hover { background-color: #3498DB; border: 1px solid #FFFFFF; }
                 QPushButton:pressed { background-color: #2980B9; }
             """)
-            self.btn_checkout.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+            self.btn_checkout.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
             self.btn_checkout.clicked.connect(self.toggle_checkout)
             layout.addWidget(self.btn_checkout)
             
@@ -197,14 +306,14 @@ class Header(QtWidgets.QGroupBox):
                 working_dir = get_project_root()
                 checkin_path = os.path.join("src", "be_src", "app", "tool", "checkin.py")
                 self.process_checkin = subprocess.Popen(["python", checkin_path], cwd=working_dir)
-                self.btn_checkin.setText("Dừng Check-in")
+                self.btn_checkin.setText("CI")
                 print("Đã mở checkin.py")
             except Exception as e:
                 print(f"Lỗi khi mở checkin.py: {e}")
         else:
             self.process_checkin.terminate()
             self.process_checkin = None
-            self.btn_checkin.setText("Chạy Check-in")
+            self.btn_checkin.setText("CI")
             print("Đã đóng checkin.py")
 
     def toggle_checkout(self):
@@ -213,14 +322,14 @@ class Header(QtWidgets.QGroupBox):
                 working_dir = get_project_root()
                 checkout_path = os.path.join("src", "be_src", "app", "tool", "checkout.py")
                 self.process_checkout = subprocess.Popen(["python", checkout_path], cwd=working_dir)
-                self.btn_checkout.setText("Dừng Check-out")
+                self.btn_checkout.setText("CO")
                 print("Đã mở checkout.py")
             except Exception as e:
                 print(f"Lỗi khi mở checkout.py: {e}")
         else:
             self.process_checkout.terminate()
             self.process_checkout = None
-            self.btn_checkout.setText("Chạy Check-out")
+            self.btn_checkout.setText("CO")
             print("Đã đóng checkout.py")
 
     def load_admin_info(self):
@@ -290,7 +399,7 @@ class Header(QtWidgets.QGroupBox):
                 QPushButton { background-color: #34495E; border: 1px solid #9FEF00; border-radius: 5px; color: white; font: 11pt 'Times New Roman'; }
                 QPushButton:hover { background-color: #3D5A80; border: 1px solid #FFFFFF; }
             """)
-            text_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+            text_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
             layout.addWidget(text_button)
             return container
         except Exception as e:
