@@ -1,7 +1,7 @@
 import json
 from sqlalchemy.orm import Session
 from app.models.user import User
-from app.models.otp_codes import OTPCode
+from app.models.otp_codes import OTPCode  # Ensure this import is correct
 from app.schemas.user_schema import AdminCreate, AdminUpdate, AdminResponse
 from app.utils.security import get_password_hash, verify_password, generate_otp
 from app.services.email_service import send_otp_email, save_otp
@@ -200,3 +200,41 @@ def delete_unverified_accounts(db: Session):
         db.delete(user)
 
     db.commit()
+
+# Hàm xử lý yêu cầu quên mật khẩu
+def request_password_reset(db: Session, email: str) -> tuple[bool, str]:
+    admin = get_admin_by_email(db, email)
+    if not admin:
+        return False, "Email not found"
+    
+    # Tạo và gửi OTP
+    otp = generate_otp()
+    success, message = save_otp(db, email, otp)
+    if not success:
+        return False, message
+    
+    send_otp_email(email, otp)
+    return True, "OTP sent successfully"
+
+# Hàm xử lý reset mật khẩu
+def reset_user_password(db: Session, email: str, otp: str, new_password: str) -> tuple[bool, str]:
+    # Xác minh OTP
+    otp_record = db.query(OTPCode).filter(
+        OTPCode.email == email,
+        OTPCode.otp == otp,
+        OTPCode.expires_at > datetime.now()
+    ).first()
+    
+    if not otp_record:
+        return False, "Invalid or expired OTP"
+    
+    # Cập nhật mật khẩu
+    admin = get_admin_by_email(db, email)
+    if not admin:
+        return False, "User not found"
+    
+    admin.hashed_password = get_password_hash(new_password)
+    db.delete(otp_record)  # Xóa OTP đã sử dụng
+    db.commit()
+    
+    return True, "Password reset successfully"

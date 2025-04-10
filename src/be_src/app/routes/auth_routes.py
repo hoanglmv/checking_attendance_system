@@ -1,15 +1,17 @@
+from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, BackgroundTasks, Depends, Form, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.services.auth_service import (
-    create_admin_user, authenticate_user, get_admin_by_email, 
-    update_admin_info, send_otp_verification_email, verify_otp, register_admin
+    create_admin_user, authenticate_user, get_admin_by_email, request_password_reset, 
+    update_admin_info, send_otp_verification_email, verify_otp, register_admin, reset_user_password
 )
 from app.services.email_service import save_otp, verify_otp_code
-from app.schemas.user_schema import AdminCreate, AdminLogin, AdminUpdate, AdminResponse
+from app.schemas.user_schema import AdminCreate, AdminLogin, AdminUpdate, AdminResponse, ForgotPasswordRequest, ResetPasswordRequest
 from app.utils.security import create_access_token, generate_otp
-from app.utils.dependencies import get_current_admin, CurrentAdmin  # Thêm import CurrentAdmin
+from app.utils.dependencies import get_current_admin, CurrentAdmin
+from app.models.otp_codes import OTPCode
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -37,6 +39,24 @@ def verify_email_otp(email: str, otp: str, db: Session = Depends(get_db)):
     if success:
         return {"message": message}
     raise HTTPException(status_code=400, detail=message)
+
+# Endpoint xác minh OTP cho quên mật khẩu
+@router.post("/verify-otp-forgot-password")
+def verify_otp_forgot_password(email: str, otp: str, db: Session = Depends(get_db)):
+    print(f"Received email: {email}, otp: {otp} for /auth/verify-otp-forgot-password")
+    # Kiểm tra OTP
+    otp_entry = db.query(OTPCode).filter(
+        OTPCode.email == email,
+        OTPCode.otp == otp,
+        OTPCode.expires_at > datetime.now()
+    ).first()
+
+    if not otp_entry:
+        print(f"No OTP entry found for email: {email}, otp: {otp}")
+        raise HTTPException(status_code=400, detail="Invalid or expired OTP")
+
+    # Không xóa OTP ở đây, để endpoint /auth/reset-password xử lý
+    return {"message": "OTP verified successfully"}
 
 # Đăng nhập
 @router.post("/login")
@@ -114,3 +134,27 @@ def logout(current_admin: CurrentAdmin = Depends(get_current_admin)):
     - Frontend: Xóa access_token khỏi QSettings.
     """
     return {"message": "Logged out successfully"}
+
+@router.post("/forgot-password")
+def forgot_password(
+    request: ForgotPasswordRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
+    success, message = request_password_reset(db, request.email)
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    
+    return {"message": "OTP has been sent to your email. Please verify to reset your password."}
+
+@router.post("/reset-password")
+def reset_password(
+    request: ResetPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    print(f"Calling reset_user_password with email: {request.email}, otp: {request.otp}, new_password: {request.new_password}")
+    success, message = reset_user_password(db, request.email, request.otp, request.new_password)
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    
+    return {"message": "Password has been reset successfully"}
