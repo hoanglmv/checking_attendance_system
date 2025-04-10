@@ -58,11 +58,12 @@ class Ui_loginUI(QObject):
         self.register_button = QtWidgets.QPushButton("Đăng ký", self.groupBox_2)
         self.register_button.setStyleSheet(self.get_action_button_style())
         self.register_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.innerLayout.addLayout(self.actionLayout)
+        self.register_button.clicked.connect(self.open_register)
 
         self.forgot_button = QtWidgets.QPushButton("Quên mật khẩu", self.groupBox_2)
         self.forgot_button.setStyleSheet(self.get_action_button_style())
         self.forgot_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.forgot_button.clicked.connect(self.open_forgot_password)
 
         self.actionLayout.addWidget(self.register_button)
         self.actionLayout.addWidget(self.forgot_button)
@@ -72,6 +73,7 @@ class Ui_loginUI(QObject):
 
         self.mainLayout.addStretch()
 
+        # Sử dụng setLayout thay vì setCentralWidget
         loginUI.setLayout(self.mainLayout)
 
         self.error_label = QtWidgets.QLabel("", self.groupBox_2)
@@ -192,6 +194,20 @@ class Ui_loginUI(QObject):
             self.inputs[field].clear()
         self.error_label.setText("")
         print("Đã xóa các ô nhập liệu")
+
+    def get_main_window(self):
+        widget = self.centralwidget
+        while widget.parent():
+            widget = widget.parent()
+        return widget
+
+    def open_register(self):
+        main_window = self.get_main_window()
+        main_window.stacked_widget.setCurrentWidget(main_window.registerUI)
+
+    def open_forgot_password(self):
+        main_window = self.get_main_window()
+        main_window.stacked_widget.setCurrentWidget(main_window.forgotPasswordUI.enter_email_ui)
 
 if __name__ == "__main__":
     import sys

@@ -592,9 +592,8 @@ class CheckingUI(QtWidgets.QMainWindow):
         
         self.ui.date_edit.dateChanged.connect(self.on_date_changed)
 
-        # Tải dữ liệu điểm danh của ngày hôm nay ngay khi khởi tạo giao diện
-        if not self.ui.load_attendance_data():
-            QtWidgets.QMessageBox.warning(self, "Lỗi", "Không thể tải dữ liệu điểm danh. Vui lòng kiểm tra kết nối hoặc đăng nhập lại.")
+        # Không gọi load_attendance_data() ngay khi khởi tạo
+        print("Khởi tạo CheckingUI - Không tải dữ liệu điểm danh ngay lập tức")
 
     def load_data_and_switch_to_day(self):
         if self.ui.load_attendance_data():
@@ -604,6 +603,11 @@ class CheckingUI(QtWidgets.QMainWindow):
 
     def on_date_changed(self, date):
         self.ui.load_attendance_data(date.toString("yyyy-MM-dd"))
+
+    def load_initial_data(self):
+        # Phương thức này sẽ được gọi từ MainWindow sau khi đăng nhập thành công
+        if not self.ui.load_attendance_data():
+            QtWidgets.QMessageBox.warning(self, "Lỗi", "Không thể tải dữ liệu điểm danh. Vui lòng kiểm tra kết nối hoặc đăng nhập lại.")
 
 if __name__ == "__main__":
     import sys
