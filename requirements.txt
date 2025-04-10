@@ -17,8 +17,8 @@ typing-extensions
 uvicorn
 python-multipart  # Chỉ giữ một dòng này
 pyyaml
-pydicom
 starlette
 pymysql
 passlib
 sqlalchemy-utils
+email_validator
