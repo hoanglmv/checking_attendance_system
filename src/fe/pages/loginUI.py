@@ -1,6 +1,7 @@
+import os
 import requests
-from PyQt6 import QtCore, QtGui, QtWidgets
 import re
+from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtCore import QSettings, pyqtSignal, QObject
 from PyQt6.QtGui import QCursor
 from pages.informationUI import Ui_informationUI
@@ -14,8 +15,26 @@ class Ui_loginUI(QObject):
     def setupUi(self, loginUI):
         loginUI.setObjectName("loginUI")
         loginUI.resize(750, 574)
-        loginUI.setStyleSheet("background-color: #131A2D;")
 
+        # --- Tính đường dẫn tương đối đến ảnh background ---
+        # __file__ là đường dẫn đến loginUI.py
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        # đi lên 1 cấp (pages), vào thư mục Image_and_icon
+        background_path = os.path.normpath(
+            os.path.join(script_dir, "..", "Image_and_icon", "Background-login.jpg")
+        ).replace("\\", "/")
+
+        # Sử dụng hình nền từ file ảnh
+        loginUI.setStyleSheet(f"""
+            QWidget {{
+                background-image: url("{background_path}");
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+            }}
+        """)
+
+        # --- Phần còn lại giữ nguyên ---
         self.centralwidget = QtWidgets.QWidget(parent=loginUI)
         self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
 
@@ -26,16 +45,13 @@ class Ui_loginUI(QObject):
         self.groupBox_2.setStyleSheet("background-color: #517078; border-radius: 10px;")
 
         self.outerLayout = QtWidgets.QHBoxLayout(self.groupBox_2)
-
         self.outerLayout.addStretch()
 
         self.centerWidget = QtWidgets.QWidget()
         self.centerWidget.setFixedSize(400, 350)
         self.innerLayout = QtWidgets.QVBoxLayout(self.centerWidget)
         self.outerLayout.addWidget(self.centerWidget)
-
         self.outerLayout.addStretch()
-
 
         self.label = QtWidgets.QLabel("Đăng nhập", self.groupBox_2)
         self.label.setStyleSheet("color: white; font: bold 20pt 'Times New Roman';")
@@ -51,10 +67,8 @@ class Ui_loginUI(QObject):
             line_edit.setPlaceholderText(placeholder)
             line_edit.setFixedHeight(45)
             line_edit.setStyleSheet(self.input_style())
-
             if "password" in field:
                 line_edit.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
-
             self.inputs[field] = line_edit
             self.innerLayout.addWidget(line_edit)
 
@@ -65,26 +79,20 @@ class Ui_loginUI(QObject):
         self.innerLayout.addWidget(self.login_button, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
 
         self.actionLayout = QtWidgets.QHBoxLayout()
-        
         self.register_button = QtWidgets.QPushButton("Đăng ký", self.groupBox_2)
         self.register_button.setStyleSheet(self.get_action_button_style())
         self.register_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.register_button.clicked.connect(self.open_register)
-
         self.forgot_button = QtWidgets.QPushButton("Quên mật khẩu", self.groupBox_2)
         self.forgot_button.setStyleSheet(self.get_action_button_style())
         self.forgot_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.forgot_button.clicked.connect(self.open_forgot_password)
-
         self.actionLayout.addWidget(self.register_button)
         self.actionLayout.addWidget(self.forgot_button)
         self.innerLayout.addLayout(self.actionLayout)
 
         self.mainLayout.addWidget(self.groupBox_2, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
-
         self.mainLayout.addStretch()
-
-        # Sử dụng setLayout thay vì setCentralWidget
         loginUI.setLayout(self.mainLayout)
 
         self.error_label = QtWidgets.QLabel("", self.groupBox_2)
@@ -113,7 +121,7 @@ class Ui_loginUI(QObject):
                 border-radius: 5px;
                 background-color: #415A77;
                 padding: 5px;
-                margin: 0px 20px 0px 20px
+                margin: 0px 20px 0px 20px;
             }
             QPushButton:hover {
                 background-color: #31445B;
@@ -138,18 +146,15 @@ class Ui_loginUI(QObject):
     def validate_login_form(self):
         email = self.inputs["email"].text().strip()
         password = self.inputs["password"].text().strip()
-
         if not email or not password:
             self.show_error("Cần phải điền đầy đủ thông tin!")
             return
-
         if not self.validate_email(email):
             self.show_error("Email không hợp lệ!")
             return
-
         self.error_label.setText("")
         self.process_login(email, password)
-    
+
     def validate_email(self, email):
         email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
         return re.match(email_regex, email) is not None
@@ -165,47 +170,32 @@ class Ui_loginUI(QObject):
     def process_login(self, email, password):
         print(f"Bắt đầu đăng nhập với email: {email}")
         api_url = "http://127.0.0.1:8000/auth/login"
-        login_data = {
-            "email": email,
-            "password": password,
-        }
-
+        login_data = {"email": email, "password": password}
         try:
             response = requests.post(api_url, json=login_data)
             response.raise_for_status()
             data = response.json()
-
             if "access_token" in data:
                 settings = QSettings("MyApp", "LoginApp")
                 access_token = data["access_token"]
                 settings.setValue("access_token", access_token)
                 settings.sync()
-                print(f"Access Token saved and synced: {access_token}")
                 self.login_success.emit()
                 self.clear_inputs()
             else:
-                error_message = data.get("detail", "Đăng nhập thất bại! Kiểm tra lại thông tin.")
-                print(f"Lỗi đăng nhập: {error_message}")
-                self.show_error(error_message)
-
+                self.show_error(data.get("detail", "Đăng nhập thất bại! Kiểm tra lại thông tin."))
         except requests.RequestException as e:
             if hasattr(e, 'response') and e.response is not None:
-                error_message = e.response.json().get("detail", f"Không thể kết nối đến máy chủ: {str(e)}")
-                print(f"Lỗi kết nối đến API /auth/login: {error_message}")
-                self.show_error(error_message)
+                self.show_error(e.response.json().get("detail", str(e)))
             else:
-                print("Không thể kết nối đến máy chủ! Kiểm tra xem backend có đang chạy không.")
                 self.show_error("Không thể kết nối đến máy chủ! Kiểm tra xem backend có đang chạy không.")
         except Exception as e:
-            print(f"Lỗi không xác định trong process_login: {str(e)}")
             self.show_error(f"Lỗi không xác định: {str(e)}")
 
     def clear_inputs(self):
-        print("Xóa nội dung các ô nhập liệu")
         for field in self.inputs:
             self.inputs[field].clear()
         self.error_label.setText("")
-        print("Đã xóa các ô nhập liệu")
 
     def get_main_window(self):
         widget = self.centralwidget
