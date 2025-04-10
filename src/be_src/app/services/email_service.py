@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
-from app.models.otp_codes import OTPCode
+from app.models.otp_codes import OTPCode  # Ensure this import is correct
 from app.models.user import User
 import logging
 

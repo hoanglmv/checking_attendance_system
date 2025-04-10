@@ -7,15 +7,19 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QIntValidator, QFont
 from PyQt6.QtCore import Qt, pyqtSignal
 
-# API endpoint xác minh OTP
-API_URL = "http://127.0.0.1:8000/auth/verify-otp"
+# API endpoints
+VERIFY_OTP_URL = "http://127.0.0.1:8000/auth/verify-otp"
+VERIFY_OTP_FORGOT_PASSWORD_URL = "http://127.0.0.1:8000/auth/verify-otp-forgot-password"
+FORGOT_PASSWORD_URL = "http://127.0.0.1:8000/auth/forgot-password"
 
 class OTPPopUp(QDialog):
+    # Định nghĩa tín hiệu với một tham số str (email)
+    otp_verified = pyqtSignal(str)  
 
-    otp_verified = pyqtSignal()
-    def __init__(self, email):
+    def __init__(self, email, is_for_registration=True):
         super().__init__()
         self.email = email
+        self.is_for_registration = is_for_registration
         self.setWindowTitle("Nhập mã OTP")
         self.setFixedSize(400, 250)
         self.initUI()
@@ -57,17 +61,18 @@ class OTPPopUp(QDialog):
         # Nút Gửi lại OTP
         self.resend_btn = QPushButton("Gửi lại OTP")
         self.resend_btn.setStyleSheet(self.get_login_button_style())
+        self.resend_btn.clicked.connect(self.resend_otp)
         layout.addWidget(self.resend_btn, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.setLayout(layout)
 
     def focus_next(self, index, text):
-        """ Tự động chuyển sang ô tiếp theo khi nhập """
+        """Tự động chuyển sang ô tiếp theo khi nhập."""
         if text and index < 5:
             self.otp_inputs[index + 1].setFocus()
 
     def get_otp_code(self):
-        """ Lấy mã OTP từ các ô nhập """
+        """Lấy mã OTP từ các ô nhập."""
         return "".join([box.text() for box in self.otp_inputs])
 
     def verify_otp(self):
@@ -75,41 +80,51 @@ class OTPPopUp(QDialog):
 
         if len(otp_code) != 6:
             QMessageBox.warning(self, "Lỗi", "Vui lòng nhập đầy đủ 6 chữ số OTP!")
-            return # Không tiếp tục xử lý nếu OTP chưa đủ 6 số
+            return
 
         try:
-            email_cleaned = self.email.strip()  # Loại bỏ khoảng trắng/thừa ký tự
+            email_cleaned = self.email.strip()
             otp_code = self.get_otp_code().strip()
-            # Gửi yêu cầu xác minh OTP đến API
-            response = requests.post(API_URL, params={"email": email_cleaned, "otp": otp_code})
+            # Chọn URL dựa trên luồng
+            url = VERIFY_OTP_URL if self.is_for_registration else VERIFY_OTP_FORGOT_PASSWORD_URL
+            print(f"is_for_registration: {self.is_for_registration}, Using URL: {url}")
+            # Gửi yêu cầu xác minh OTP đến API qua query parameters
+            response = requests.post(url, params={"email": email_cleaned, "otp": otp_code})
+            
+            response.raise_for_status()
+            QMessageBox.information(self, "Thành Công", "Xác minh thành công!")
+            # Luôn phát tín hiệu với email, bất kể là đăng ký hay quên mật khẩu
+            self.otp_verified.emit(self.email)
+            self.accept()  # Đóng dialog sau khi xác minh thành công
+        except requests.RequestException as e:
+            error_message = e.response.json() if e.response else str(e)
+            print(f"Error response from server: {error_message}")
+            QMessageBox.warning(self, "Lỗi", str(error_message))
+            for box in self.otp_inputs:
+                box.clear()
+            self.otp_inputs[0].setFocus()
+        except Exception as e:
+            print(f"Lỗi không xác định trong verify_otp: {str(e)}")
+            QMessageBox.critical(self, "Lỗi", f"Có lỗi xảy ra: {str(e)}. Vui lòng thử lại!")
+            for box in self.otp_inputs:
+                box.clear()
+            self.otp_inputs[0].setFocus()
 
-            if response.status_code == 200:
-                QMessageBox.information(self, "Thành công", "Xác minh thành công!")
-                self.otp_verified.emit()  # Phát tín hiệu thành công
-                self.accept()  # Đóng cửa sổ OTP
-                
-            else:
-                # Lấy thông báo lỗi từ API hoặc hiển thị lỗi mặc định
-                error_msg = response.json().get("detail", "OTP không đúng, vui lòng nhập lại.")
-                QMessageBox.warning(self, "Lỗi", error_msg)  # Dùng warning thay vì critical
+    def resend_otp(self):
+        """Gửi lại mã OTP."""
+        try:
+            response = requests.post(FORGOT_PASSWORD_URL, json={"email": self.email})
+            response.raise_for_status()
+            QMessageBox.information(self, "Thành Công", "Mã OTP mới đã được gửi đến email của bạn!")
+        except requests.RequestException as e:
+            error_message = e.response.json().get("detail", "Không thể gửi mã OTP. Vui lòng thử lại.") if e.response else str(e)
+            QMessageBox.warning(self, "Lỗi", error_message)
+        except Exception as e:
+            print(f"Lỗi không xác định trong resend_otp: {str(e)}")
+            QMessageBox.critical(self, "Lỗi", f"Có lỗi xảy ra khi gửi lại OTP: {str(e)}. Vui lòng thử lại!")
 
-                # Xóa dữ liệu trong các ô nhập OTP để người dùng nhập lại
-                for box in self.otp_inputs:
-                    box.clear()
-
-                # Đưa con trỏ về ô nhập đầu tiên
-                self.otp_inputs[0].setFocus()
-
-                # Không gọi `reject()` hoặc `accept()` để tránh đóng cửa sổ
-
-        except requests.RequestException:
-            QMessageBox.warning(self, "Lỗi", "Không thể kết nối đến máy chủ, vui lòng thử lại!")
-
-            # Không cho phép đóng cửa sổ khi gặp lỗi mạng
-            return
-        
     def main_style(self):
-        """ Định dạng giao diện tổng thể """
+        """Định dạng giao diện tổng thể."""
         return """
             QDialog {
                 background-color: #1B263B;
@@ -118,7 +133,7 @@ class OTPPopUp(QDialog):
         """
 
     def input_style(self):
-        """ Định dạng ô nhập OTP """
+        """Định dạng ô nhập OTP."""
         return """
             QLineEdit {
                 border: 2px solid white;
@@ -136,7 +151,7 @@ class OTPPopUp(QDialog):
         """
 
     def get_button_style(self):
-        """ Định dạng nút xác minh """
+        """Định dạng nút xác minh."""
         return """
             QPushButton {
                 border: 2px solid white;
@@ -153,7 +168,7 @@ class OTPPopUp(QDialog):
         """
 
     def get_login_button_style(self):
-        """ Định dạng nút gửi lại OTP """
+        """Định dạng nút gửi lại OTP."""
         return """
             QPushButton {
                 color: #FFD700;
@@ -167,16 +182,21 @@ class OTPPopUp(QDialog):
             }
         """
 
-# Chạy thử pop-up
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     email = "user@example.com"
-    otp_dialog = OTPPopUp(email)
-
+    # Thử cho đăng ký
+    otp_dialog = OTPPopUp(email, is_for_registration=True)
     if otp_dialog.exec() == QDialog.DialogCode.Accepted:
-        print("✅ Xác minh thành công!")
+        print("✅ Xác minh thành công (đăng ký)!")
     else:
-        print("❌ Xác minh thất bại hoặc bị hủy.")
+        print("❌ Xác minh thất bại hoặc bị hủy (đăng ký).")
+    
+    # Thử cho quên mật khẩu
+    otp_dialog = OTPPopUp(email, is_for_registration=False)
+    if otp_dialog.exec() == QDialog.DialogCode.Accepted:
+        print("✅ Xác minh thành công (quên mật khẩu)!")
+    else:
+        print("❌ Xác minh thất bại hoặc bị hủy (quên mật khẩu).")
 
-    # ❌ KHÔNG dùng sys.exit() ở đây nếu bạn không muốn đóng toàn bộ ứng dụng
     app.exec()

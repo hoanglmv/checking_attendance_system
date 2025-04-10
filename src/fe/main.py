@@ -7,6 +7,7 @@ from pages.informationUI import Ui_informationUI
 from pages.checkingUI import CheckingUI
 from pages.checkingUI_2 import CheckingUI_2
 from pages.OTPPopup import OTPPopUp
+from pages.forgotPasswordUI import ForgotPasswordUI, EnterEmailUI, ResetPasswordUI
 import requests
 import traceback
 
@@ -17,34 +18,50 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("Checking Attendance System")
         self.setGeometry(100, 100, 1280, 720)
 
+        # Đặt màu nền cho MainWindow
+        self.setStyleSheet("background-color: #131A2D;")
+
         self.stacked_widget = QtWidgets.QStackedWidget(self)
         self.setCentralWidget(self.stacked_widget)
 
+        # Khởi tạo loginUI
         print("Khởi tạo loginUI")
         self.loginUI = QtWidgets.QWidget()
         self.ui_loginUI = Ui_loginUI()
         self.ui_loginUI.setupUi(self.loginUI)
         self.stacked_widget.addWidget(self.loginUI)
 
+        # Khởi tạo registerUI
         print("Khởi tạo registerUI")
         self.registerUI = QtWidgets.QWidget()
         self.ui_registerUI = Ui_registerUI()
         self.ui_registerUI.setupUi(self.registerUI)
         self.stacked_widget.addWidget(self.registerUI)
 
+        # Khởi tạo informationUI
         print("Khởi tạo informationUI")
         self.informationUI = QtWidgets.QWidget()
         self.ui_informationUI = Ui_informationUI()
         self.ui_informationUI.setupUi(self.informationUI, self.stacked_widget)
         self.stacked_widget.addWidget(self.informationUI)
 
+        # Khởi tạo checkingUI
         print("Khởi tạo checkingUI")
         self.checkingUI = CheckingUI()
         self.stacked_widget.addWidget(self.checkingUI)
 
+        # Khởi tạo checkingUI_2
         print("Khởi tạo checkingUI_2")
-        self.checkingUI_2 = CheckingUI_2(self.stacked_widget)  # Truyền stacked_widget
+        self.checkingUI_2 = CheckingUI_2(self.stacked_widget)
         self.stacked_widget.addWidget(self.checkingUI_2)
+
+        # Khởi tạo forgotPasswordUI
+        print("Khởi tạo forgotPasswordUI")
+        self.forgotPasswordUI = ForgotPasswordUI()
+        self.stacked_widget.addWidget(self.forgotPasswordUI.enter_email_ui)
+        # Placeholder cho reset_password_ui, sẽ được cập nhật sau khi tạo
+        self.reset_password_placeholder = QtWidgets.QWidget()
+        self.stacked_widget.addWidget(self.reset_password_placeholder)
 
         # Kết nối các sự kiện từ loginUI và registerUI
         if hasattr(self.ui_loginUI, "register_button"):
@@ -52,6 +69,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if hasattr(self.ui_registerUI, "login_button"):
             self.ui_registerUI.login_button.clicked.connect(self.goINSIDE_to_loginUI)
         self.ui_loginUI.login_success.connect(self.on_login_success)
+        if hasattr(self.ui_loginUI, "forgot_button"):
+            self.ui_loginUI.forgot_button.clicked.connect(self.go_to_forgot_passwordUI)
 
         # Kết nối tín hiệu từ các giao diện
         self.ui_informationUI.sidebar.logout_signal.connect(self.handle_logout)
@@ -73,6 +92,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # Kết nối sự kiện từ listChecking_2 đến attendance_calendar
         self.checkingUI_2.ui.employee_row.employeeList.itemClicked.connect(self.checkingUI_2.ui.content.on_employee_clicked)
 
+        # Kết nối tín hiệu từ ForgotPasswordUI
+        self.forgotPasswordUI.enter_email_ui.back_to_login.clicked.connect(self.goINSIDE_to_loginUI)
+        self.forgotPasswordUI.enter_email_ui.email_submitted.connect(self.open_otp_popup_for_forgot_password)
+
         self.check_login_status()
         self.otp_popup = None
 
@@ -85,10 +108,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if token:
             try:
                 print(f"Token đã sẵn sàng: {token}")
-                # Chuyển sang informationUI mặc định sau khi đăng nhập
                 self.stacked_widget.setCurrentWidget(self.informationUI)
                 QTimer.singleShot(100, self.load_information_ui_data)
-                # Gọi on_login_success cho checkingUI_2 để tải danh sách nhân viên
                 QTimer.singleShot(100, self.checkingUI_2.on_login_success)
             except Exception as e:
                 print(f"Lỗi khi chuyển giao diện hoặc tải dữ liệu: {str(e)}")
@@ -138,6 +159,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def go_to_registerUI(self):
         self.stacked_widget.setCurrentWidget(self.registerUI)
 
+    def go_to_forgot_passwordUI(self):
+        self.stacked_widget.setCurrentWidget(self.forgotPasswordUI.enter_email_ui)
+
     def go_to_checkingUI(self):
         print("Chuyển sang checkingUI")
         self.stacked_widget.setCurrentWidget(self.checkingUI)
@@ -170,7 +194,6 @@ class MainWindow(QtWidgets.QMainWindow):
             print(f"Lỗi trong go_to_checkingUI_2: {str(e)}")
             QtWidgets.QMessageBox.critical(None, "Lỗi", f"Có lỗi xảy ra khi chuyển sang CheckingUI_2: {str(e)}")
 
-    
     def go_to_informationUI(self):
         print("Chuyển sang informationUI")
         self.stacked_widget.setCurrentWidget(self.informationUI)
@@ -190,8 +213,31 @@ class MainWindow(QtWidgets.QMainWindow):
     def open_otp_popup(self, email):
         if self.otp_popup is not None:
             self.otp_popup.close()
-        self.otp_popup = OTPPopUp(email)
+        self.otp_popup = OTPPopUp(email, is_for_registration=True)
+        self.otp_popup.otp_verified.connect(self.on_otp_verified_for_registration)
         self.otp_popup.exec()
+
+    def open_otp_popup_for_forgot_password(self, email):
+        if self.otp_popup is not None:
+            self.otp_popup.close()
+        self.otp_popup = OTPPopUp(email, is_for_registration=False)
+        self.otp_popup.otp_verified.connect(self.on_otp_verified_for_forgot_password)
+        self.otp_popup.exec()
+
+    def on_otp_verified_for_registration(self):
+        print("OTP xác thực thành công cho đăng ký")
+        QtWidgets.QMessageBox.information(self, "Thành công", "Đăng ký thành công! Vui lòng đăng nhập.")
+        self.stacked_widget.setCurrentWidget(self.loginUI)
+        self.ui_loginUI.clear_inputs()
+
+    def on_otp_verified_for_forgot_password(self, email):
+        print("OTP xác thực thành công cho quên mật khẩu")
+        self.forgotPasswordUI.show_reset_password(email, self.otp_popup.get_otp_code())
+        # Thay thế placeholder bằng reset_password_ui thực sự
+        self.stacked_widget.removeWidget(self.reset_password_placeholder)
+        self.stacked_widget.addWidget(self.forgotPasswordUI.reset_password_ui)
+        self.forgotPasswordUI.reset_password_ui.password_reset_success.connect(self.goINSIDE_to_loginUI)
+        self.stacked_widget.setCurrentWidget(self.forgotPasswordUI.reset_password_ui)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
