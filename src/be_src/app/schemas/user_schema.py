@@ -44,8 +44,6 @@ class AdminResponse(BaseModel):
     phone: str
     position: str
     department: str
-    # Xóa status vì không tồn tại trong model User
-    # status: AdminStatus
 
     class Config:
         from_attributes = True  # Cho phép chuyển đổi từ SQLAlchemy model
@@ -57,3 +55,24 @@ class AttendanceCreate(BaseModel):
     employee_code: str
     date: str # Format: YYYY-MM-DD
     status: AttendanceStatus
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    otp: str
+    new_password: str
+    confirm_password: str
+
+    @field_validator('new_password')
+    def password_length(cls, v):
+        if len(v) < 8:  # Cập nhật thành 8 ký tự
+            raise ValueError('Password must be at least 8 characters')
+        return v
+
+    @field_validator('confirm_password')
+    def passwords_match(cls, v, info):
+        if 'new_password' in info.data and v != info.data['new_password']:
+            raise ValueError('Passwords do not match')
+        return v
