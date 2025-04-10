@@ -43,7 +43,7 @@ class Ui_informationUI(QObject):
         self.horizontalLayout.setSpacing(0)
         
         self.sidebar = Sidebar(parent=self.centralwidget, stacked_widget=self.stacked_widget)
-        self.sidebar.fil_attendance.setStyleSheet("border-radius: 5px; background-color: #1E2A38;")
+        self.sidebar.fil_attendance.setStyleSheet("border-radius: 5px; background-color: #1B2B40;")
         self.sidebar.fil_manage.setStyleSheet("background-color: #68D477; border-radius: 5px;")
         self.horizontalLayout.addWidget(self.sidebar)
         

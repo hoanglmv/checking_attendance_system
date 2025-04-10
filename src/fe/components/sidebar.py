@@ -4,7 +4,7 @@ import subprocess
 import requests
 from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import QGroupBox, QPushButton, QLabel, QVBoxLayout, QGridLayout, QSpacerItem, QSizePolicy, QMessageBox
-from PyQt6.QtCore import QSettings, pyqtSignal
+from PyQt6.QtCore import QSettings, pyqtSignal, QSize, Qt
 from PyQt6.QtGui import QCursor, QIcon
 
 def get_project_root():
@@ -50,8 +50,8 @@ class Sidebar(QGroupBox):
         # Button: Attendance
         self.fil_attendance = self.create_button_container()
         self.btn_attendance = self.create_button(
-            "src/fe/Image_and_icon/icons8-user-30.png",
-            "Điểm danh"
+            "src/fe/Image_and_icon/icons8-checking-30.png",
+            "  Điểm danh"
         )
         self.fil_attendance.layout().addWidget(self.btn_attendance)
         self.btn_attendance.clicked.connect(self.attendance_signal.emit)
@@ -60,8 +60,8 @@ class Sidebar(QGroupBox):
         # Button: Manage
         self.fil_manage = self.create_button_container()
         self.btn_manage = self.create_button(
-            "src/fe/Image_and_icon/icons8-user-30.png",
-            "Quản lý"
+            "src/fe/Image_and_icon/icons8-management-30.png",
+            "  Quản lý"
         )
         self.fil_manage.layout().addWidget(self.btn_manage)
         self.btn_manage.clicked.connect(self.manage_signal.emit)
@@ -75,25 +75,23 @@ class Sidebar(QGroupBox):
         self.fil_logout = self.create_button_container()
         self.btn_logout = self.create_button(
             "src/fe/Image_and_icon/icons8-logout-30.png",
-            "Đăng xuất"
+            "  Đăng xuất"
         )
         self.btn_logout.setStyleSheet("""
             QPushButton {
-                background-color: #E74C3C;
                 border: none;
                 border-radius: 5px;
                 color: white;
-                font: bold 12pt "Arial";
-                padding: 10px 20px;
+                font: 15pt "Times New Roman";
+                padding: 8px 16px 8px 32px;
+
+                text-align: left;
             }
             QPushButton:hover {
                 background-color: #C0392B;
             }
-            QPushButton:pressed {
-                background-color: #A93226;
-            }
         """)
-        self.btn_logout.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+
         self.btn_logout.clicked.connect(self.logout)
         self.fil_logout.layout().addWidget(self.btn_logout)
         self.verticalLayout.addWidget(self.fil_logout)
@@ -114,30 +112,34 @@ class Sidebar(QGroupBox):
         return container
 
     def create_button(self, icon_path, text):
-        button = QPushButton(self)
-        button.setMinimumSize(QtCore.QSize(180, 40))
-        button.setMaximumSize(QtCore.QSize(180, 40))
-        button.setText(text)
-        button.setStyleSheet(f"""
-            QPushButton {{
-                
+        button = QPushButton(text, self)
+        button.setMinimumSize(QSize(180, 40))
+        button.setMaximumSize(QSize(180, 40))
+
+        # Set icon
+        icon = QIcon(icon_path)
+        button.setIcon(icon)
+        button.setIconSize(QSize(24, 24))  # điều chỉnh tùy bạn
+
+        # Style
+        button.setStyleSheet("""
+            QPushButton {
                 border: none;
                 border-radius: 5px;
                 color: white;
                 font: 15pt "Times New Roman";
                 padding: 8px 16px 8px 32px;
-                background-image: url({icon_path});
-                background-repeat: no-repeat;
-                background-position: 12px left;
-            }}
-            QPushButton:hover {{
+
+                text-align: left;
+            }
+            QPushButton:hover {
                 
-            }}
-            QPushButton:pressed {{
-                
-            }}
+            }
         """)
-        button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+
+        # Đặt con trỏ chuột kiểu tay chỉ
+        button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+
         return button
 
     def logout(self):
@@ -203,7 +205,7 @@ class Sidebar(QGroupBox):
                     color: white;
                 }
                 QMessageBox QPushButton {
-                    background-color: #F44336;
+                    
                     color: white;
                     padding: 8px 16px;
                     border-radius: 5px;

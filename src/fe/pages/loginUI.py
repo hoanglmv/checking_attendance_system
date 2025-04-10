@@ -24,7 +24,18 @@ class Ui_loginUI(QObject):
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_2.setFixedSize(500, 350)
         self.groupBox_2.setStyleSheet("background-color: #517078; border-radius: 10px;")
-        self.innerLayout = QtWidgets.QVBoxLayout(self.groupBox_2)
+
+        self.outerLayout = QtWidgets.QHBoxLayout(self.groupBox_2)
+
+        self.outerLayout.addStretch()
+
+        self.centerWidget = QtWidgets.QWidget()
+        self.centerWidget.setFixedSize(400, 350)
+        self.innerLayout = QtWidgets.QVBoxLayout(self.centerWidget)
+        self.outerLayout.addWidget(self.centerWidget)
+
+        self.outerLayout.addStretch()
+
 
         self.label = QtWidgets.QLabel("Đăng nhập", self.groupBox_2)
         self.label.setStyleSheet("color: white; font: bold 20pt 'Times New Roman';")
@@ -102,24 +113,25 @@ class Ui_loginUI(QObject):
                 border-radius: 5px;
                 background-color: #415A77;
                 padding: 5px;
+                margin: 0px 20px 0px 20px
             }
             QPushButton:hover {
                 background-color: #31445B;
-                border: 2px solid #FFD700;
+                border: 2px solid #9FEF00;
             }
         """
 
     def get_action_button_style(self):
         return """
             QPushButton {
-                color: #FFD700;
+                color: white;
                 font-size: 10pt;
                 background: transparent;
                 border: none;
             }
             QPushButton:hover {
                 text-decoration: underline;
-                color: #FFA500;
+                color: #9FEF00;
             }
         """
 
