@@ -17,14 +17,11 @@ class Ui_loginUI(QObject):
         loginUI.resize(750, 574)
 
         # --- Tính đường dẫn tương đối đến ảnh background ---
-        # __file__ là đường dẫn đến loginUI.py
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        # đi lên 1 cấp (pages), vào thư mục Image_and_icon
         background_path = os.path.normpath(
-            os.path.join(script_dir, "..", "Image_and_icon", "Background-login.jpg")
+            os.path.join(script_dir, "..", "Image_and_icon", "Background-ogin.jpg")
         ).replace("\\", "/")
 
-        # Sử dụng hình nền từ file ảnh
         loginUI.setStyleSheet(f"""
             QWidget {{
                 background-image: url("{background_path}");
@@ -34,10 +31,8 @@ class Ui_loginUI(QObject):
             }}
         """)
 
-        # --- Phần còn lại giữ nguyên ---
         self.centralwidget = QtWidgets.QWidget(parent=loginUI)
         self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
-
         self.mainLayout.addStretch()
 
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
@@ -76,6 +71,7 @@ class Ui_loginUI(QObject):
         self.login_button.setFixedSize(250, 40)
         self.login_button.setStyleSheet(self.get_button_style())
         self.login_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.login_button.setDefault(True)  # Add this line to make Enter key work
         self.innerLayout.addWidget(self.login_button, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
 
         self.actionLayout = QtWidgets.QHBoxLayout()
