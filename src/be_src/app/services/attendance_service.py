@@ -1,6 +1,6 @@
 # E:\AttendanceCheckingApp\checking_attendance_system\src\be_src\app\services\attendance_service.py
 from fastapi import HTTPException
-from sqlalchemy import extract
+from sqlalchemy import distinct, extract
 from sqlalchemy.orm import Session
 from app.models.attendance import Attendance
 from app.schemas.attendance_schema import AttendanceCreate, AttendanceResponse, AttendanceUpdate, AttendanceMonthlyResponse
@@ -86,60 +86,85 @@ def check_in_employee(db: Session, attendance_data: AttendanceCreate):
 
 # Get danh sách điểm danh theo ngày 
 def get_attendance_by_date(db: Session, date: datetime):
-    records = db.query(Attendance).filter(
-        extract("year", Attendance.check_in_time) == date.year,
-        extract("month", Attendance.check_in_time) == date.month,
-        extract("day", Attendance.check_in_time) == date.day
-    ).all()
+    try:
+        # Chuyển đổi date thành định dạng date
+        attendance_date = date.date()
 
-    if not records:
-        return {"error": "No attendance records found for the selected date."}
-
-    grouped_by_department = {}
-    for record in records:
-        employee = db.query(Employee).filter(Employee.employee_code == record.employee_code).first()
-        if not employee:
-            continue
-        department = employee.department
-
-        if department not in grouped_by_department:
-            grouped_by_department[department] = {
-                "department": department,
-                "total_employees": 0,
-                "present_count": 0,
-                "late_count": 0,
-                "absent_count": 0,
-                "permission_absent_count": 0,
-                "employees": []
+        # Lấy tất cả nhân viên từ bảng employees
+        employees = db.query(Employee).all()
+        if not employees:
+            return {
+                "summary": {
+                    "total_employees": 0,
+                    "total_late": 0,
+                    "total_absent_with_permission": 0,
+                    "total_absent_without_permission": 0
+                },
+                "departments": {}
             }
 
-        grouped_by_department[department]["total_employees"] += 1
-        if record.is_absent:
-            grouped_by_department[department]["absent_count"] += 1
-        elif record.is_permission_absent:
-            grouped_by_department[department]["permission_absent_count"] += 1
-        else:
-            grouped_by_department[department]["present_count"] += 1
-            if record.is_late:
-                grouped_by_department[department]["late_count"] += 1
+        # Lấy dữ liệu điểm danh cho ngày được chọn
+        attendances = (
+            db.query(Attendance)
+            .filter(Attendance.date == attendance_date)
+            .all()
+        )
 
-        grouped_by_department[department]["employees"].append({
-            "employee_id": employee.id,
-            "employee_code": employee.employee_code,
-            "full_name": employee.full_name,
-            "position": employee.position,
-            "check_in_time": record.check_in_time.strftime("%H:%M:%S") if record.check_in_time else None,
-            "late": record.is_late,
-            "absent_with_permission": record.is_permission_absent,
-            "absent_without_permission": record.is_absent
-        })
+        # Tạo dictionary để ánh xạ employee_code với thông tin điểm danh
+        attendance_dict = {att.employee_code: att for att in attendances}
 
-    return list(grouped_by_department.values())
+        # Nhóm nhân viên theo phòng ban
+        departments = {}
+        total_late = 0
+        total_absent_with_permission = 0
+        total_absent_without_permission = 0
+
+        for emp in employees:
+            department = emp.department if emp.department else "Không xác định"
+            if department not in departments:
+                departments[department] = []
+
+            # Lấy thông tin điểm danh (nếu có)
+            att = attendance_dict.get(emp.employee_code)
+            employee_data = {
+                "employee_id": emp.id,
+                "employee_code": emp.employee_code,
+                "full_name": emp.full_name,
+                "position": emp.position,
+                "check_in_time": att.check_in_time.strftime("%H:%M:%S") if att and att.check_in_time else None,
+                "check_out_time": att.check_out_time.strftime("%H:%M:%S") if att and att.check_out_time else None,
+                "late": att.is_late if att else False,
+                "absent_with_permission": att.is_permission_absent if att else False,
+                "absent_without_permission": att.is_absent if att else False
+            }
+
+            departments[department].append(employee_data)
+
+            # Cập nhật thống kê
+            if att:
+                if att.is_late:
+                    total_late += 1
+                if att.is_permission_absent:
+                    total_absent_with_permission += 1
+                if att.is_absent:
+                    total_absent_without_permission += 1
+
+        total_employees = len(employees)
+
+        return {
+            "summary": {
+                "total_employees": total_employees,
+                "total_late": total_late,
+                "total_absent_with_permission": total_absent_with_permission,
+                "total_absent_without_permission": total_absent_without_permission
+            },
+            "departments": departments
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Lỗi khi lấy dữ liệu điểm danh: {str(e)}")
 
 # Get thông tin điểm danh theo tháng của một nhân viên 
-from fastapi import HTTPException
-from datetime import date, timedelta
-
 def get_attendance_by_month(db: Session, employee_id: int, month: int, year: int):
     try:
         # Lấy thông tin nhân viên dựa trên employee_id
@@ -218,3 +243,30 @@ def get_attendance_by_month(db: Session, employee_id: int, month: int, year: int
     except Exception as e:
         print(f"Error in get_attendance_by_month: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+# Sửa phương thức get_attendance_departments
+def get_attendance_departments(db: Session, date: str = None):
+    """
+    Lấy danh sách các phòng ban duy nhất dựa trên bản ghi điểm danh trong bảng attendances.
+    Nếu có date, lọc theo ngày được chỉ định.
+    """
+    try:
+        query = (
+            db.query(distinct(Employee.department))
+            .join(Attendance, Attendance.employee_code == Employee.employee_code)
+            .filter(Employee.department.isnot(None))
+        )
+        
+        # Nếu có date, lọc theo ngày
+        if date:
+            try:
+                attendance_date = datetime.strptime(date, "%Y-%m-%d").date()
+                query = query.filter(Attendance.date == attendance_date)
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+
+        departments = query.all()
+        result = [dept[0] for dept in departments]
+        return result if result else []
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Lỗi khi lấy danh sách phòng ban: {str(e)}")
