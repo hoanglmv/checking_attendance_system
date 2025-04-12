@@ -6,7 +6,7 @@ from app.core.database import SessionLocal
 from app.models import Employee, Attendance
 from app.schemas.attendance_schema import AttendanceResponse, AttendanceMonthlyResponse, AttendanceCreate, AttendanceUpdate
 from app.utils.dependencies import get_current_admin
-from app.services.attendance_service import check_in_employee, get_attendance_by_month
+from app.services.attendance_service import check_in_employee, get_attendance_by_month, get_attendance_departments
 
 from fastapi import status
 
@@ -188,3 +188,16 @@ def update_attendance_record(
     print(f"Sau khi commit: {record.__dict__}")
 
     return {"message": "Attendance record updated successfully"}, 200
+
+# Sửa endpoint /attendance/departments
+@router.get("/departments", response_model=list[str])
+def get_attendance_departments_route(
+    date: str = None,  # Thêm tham số date
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
+    """
+    Lấy danh sách các phòng ban duy nhất dựa trên bản ghi điểm danh trong bảng attendances.
+    Có thể lọc theo ngày nếu date được cung cấp (định dạng YYYY-MM-DD).
+    """
+    return get_attendance_departments(db, date)
