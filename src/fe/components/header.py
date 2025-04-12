@@ -1,6 +1,6 @@
 from PyQt6 import QtWidgets, QtCore
-from PyQt6.QtGui import QCursor, QPixmap
-from PyQt6.QtCore import QSettings, QTimer, pyqtSignal
+from PyQt6.QtGui import QCursor, QPixmap, QIcon
+from PyQt6.QtCore import QSettings, QTimer, pyqtSignal, QSize
 import requests
 import subprocess
 import os
@@ -35,9 +35,9 @@ class NotificationPopup(QDialog):
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
 
-        # Tạo icon hiển thị tại Popup
+        # Icon hiển thị tại Popup
         try:
-            icon_path = os.path.join(get_project_root(), "src", "fe", "Image_and_icon", "icons8-bell-30.png")
+            icon_path = r"D:\vhproj\checking_attendance_system\src\fe\Image_and_icon\icons8-bell-30.png"
             pixmap = QPixmap(icon_path)
             self.icon_label = QLabel(self)
             self.icon_label.setPixmap(pixmap)
@@ -46,7 +46,7 @@ class NotificationPopup(QDialog):
         except Exception as e:
             print(f"Lỗi khi tải icon: {e}")
 
-        # Hiển thị nội dung thông báo
+        # Nội dung thông báo
         self.label = QLabel(message, self)
         self.label.setStyleSheet("""
             font-size: 14px;
@@ -82,13 +82,13 @@ class Header(QtWidgets.QGroupBox):
             self.process_checkin = None
             self.process_checkout = None
             self.notification_popup = None
-            # Danh sách lưu trữ các thông báo để xem lại
             self.notifications = []
 
             self.horizontalLayout = QtWidgets.QHBoxLayout(self)
             self.horizontalLayout.setContentsMargins(15, 0, 15, 0)
             self.horizontalLayout.setSpacing(15)
             
+            # Tiêu đề
             self.header_title = QtWidgets.QLabel("Điểm danh", self)
             self.header_title.setFixedSize(QtCore.QSize(120, 37))
             self.header_title.setStyleSheet("color: white; font: 18pt 'Times New Roman';")
@@ -97,22 +97,34 @@ class Header(QtWidgets.QGroupBox):
             
             self.horizontalLayout.addStretch(1)
             
+            # Thông tin công ty và năm học
             self.company_container = self.create_info_section("HKPTT Company", 200)
             self.horizontalLayout.addWidget(self.company_container)
-            
             self.horizontalLayout.addSpacing(20)
-            
             self.year_container = self.create_info_section("2025-2026", 140)
             self.horizontalLayout.addWidget(self.year_container)
-            
             self.horizontalLayout.addSpacing(20)
 
+            # Nút CI / CO
             self.camera_container = self.create_camera_section()
             self.horizontalLayout.addWidget(self.camera_container)
-
             self.horizontalLayout.addSpacing(20)
-            
-            # Sử dụng ClickableLabel để có thể click xem lịch sử thông báo
+
+            # Nút chuông trên headbar
+            self.btn_notification = QPushButton(self)
+            icon_path = r"D:\vhproj\checking_attendance_system\src\fe\Image_and_icon\icons8-bell-30.png"
+            self.btn_notification.setIcon(QIcon(icon_path))
+            self.btn_notification.setIconSize(QSize(24, 24))
+            self.btn_notification.setStyleSheet("""
+                QPushButton { background: transparent; border: none; }
+                QPushButton:hover { background-color: rgba(255,255,255,0.1); border-radius: 4px; }
+            """)
+            self.btn_notification.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+            self.btn_notification.clicked.connect(self.show_notifications_dialog)
+            self.horizontalLayout.addWidget(self.btn_notification)
+            self.horizontalLayout.addSpacing(10)
+
+            # Label thông báo ngắn
             self.checkin_notification = ClickableLabel("", self)
             self.checkin_notification.setStyleSheet("""
                 color: #9FEF00;
@@ -129,6 +141,7 @@ class Header(QtWidgets.QGroupBox):
 
             self.horizontalLayout.addSpacing(20)
             
+            # Khung thông tin admin
             self.admin_frame = QtWidgets.QWidget(self)
             self.admin_frame_layout = QtWidgets.QHBoxLayout(self.admin_frame)
             self.admin_frame_layout.setContentsMargins(0, 0, 0, 0)
@@ -145,6 +158,7 @@ class Header(QtWidgets.QGroupBox):
 
             self.horizontalLayout.addStretch(1)
 
+            # Timer kiểm tra file notification
             self.checkin_timer = QTimer(self)
             self.checkin_timer.timeout.connect(self.check_checkin_notification)
             self.checkin_timer.start(1000)
@@ -161,16 +175,15 @@ class Header(QtWidgets.QGroupBox):
             try:
                 with open(temp_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                employee_full_name = data.get("full_name", "Unknown")
+                full_name = data.get("full_name", "Unknown")
                 check_in_time = data.get("check_in_time", "N/A")
                 status = data.get("status", "success")
                 
                 if status == "already_checked_in":
-                    message = f"Nhân viên {employee_full_name} đã điểm danh hôm nay rồi"
+                    message = f"Nhân viên {full_name} đã điểm danh hôm nay rồi"
                 else:
-                    message = f"Đã check-in thành công cho {employee_full_name} lúc {check_in_time}"
+                    message = f"Đã check-in thành công cho {full_name} lúc {check_in_time}"
                 
-                # Cập nhật thông báo lên label và lưu vào danh sách
                 self.checkin_notification.setText(message)
                 self.notifications.append(message)
                 
@@ -179,17 +192,12 @@ class Header(QtWidgets.QGroupBox):
                 self.notification_popup = NotificationPopup(message, self)
                 self.notification_popup.show_near(self)
                 
-                print(f"Đã cập nhật thông báo: {message}")
                 os.remove(temp_file)
                 QTimer.singleShot(5000, lambda: self.checkin_notification.setText(""))
             except Exception as e:
-                print(f"Lỗi khi đọc file thông báo check-in: {str(e)}")
+                print(f"Lỗi khi đọc file thông báo check-in: {e}")
 
     def show_notifications_dialog(self, event=None):
-        """
-        Hiển thị dropdown thông báo chỉ với tối đa 5 thông báo.
-        Có nút "Xem tất cả thông báo" để mở dialog hiển thị toàn bộ thông báo.
-        """
         dialog = QDialog(self)
         dialog.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Popup)
         dialog.setStyleSheet("background-color: #192E44; color: white; border: 1px solid #9FEF00; border-radius: 5px;")
@@ -205,16 +213,17 @@ class Header(QtWidgets.QGroupBox):
             QListWidget::item { background-color: transparent; padding: 5px; }
             QListWidget::item:hover { background-color: #3D5A80; }
         """)
-        # Nếu có hơn 5 thông báo, chỉ hiển thị 5 thông báo mới nhất.
-        notifications_to_show = self.notifications[-5:] if len(self.notifications) > 5 else self.notifications
-        if notifications_to_show:
-            for notification in notifications_to_show:
-                list_widget.addItem(notification)
+        latest = self.notifications[-5:] if len(self.notifications) > 5 else self.notifications
+        if latest:
+            for note in latest:
+                list_widget.addItem(note)
         else:
             list_widget.addItem("Không có thông báo nào")
         layout.addWidget(list_widget)
         
         btn_all = QPushButton("Xem tất cả thông báo", dialog)
+        btn_all.setIcon(QIcon(r"D:\vhproj\checking_attendance_system\src\fe\Image_and_icon\icons8-bell-30.png"))
+        btn_all.setIconSize(QSize(20, 20))
         btn_all.setStyleSheet("""
             QPushButton { background-color: #2E86C1; border: none; border-radius: 5px; color: white; }
             QPushButton:hover { background-color: #3498DB; }
@@ -222,15 +231,11 @@ class Header(QtWidgets.QGroupBox):
         btn_all.clicked.connect(lambda: self.show_all_notifications(dialog))
         layout.addWidget(btn_all)
         
-        # Định vị dropdown ngay dưới label thông báo
-        global_pos = self.checkin_notification.mapToGlobal(QtCore.QPoint(0, self.checkin_notification.height()))
-        dialog.move(global_pos.x(), global_pos.y())
+        pos = self.btn_notification.mapToGlobal(QtCore.QPoint(0, self.btn_notification.height()))
+        dialog.move(pos.x(), pos.y())
         dialog.exec()
 
     def show_all_notifications(self, parent_dialog=None):
-        """
-        Hiển thị dialog chứa toàn bộ danh sách thông báo.
-        """
         if parent_dialog:
             parent_dialog.close()
         dialog = QDialog(self)
@@ -249,8 +254,8 @@ class Header(QtWidgets.QGroupBox):
             QListWidget::item:hover { background-color: #3D5A80; }
         """)
         if self.notifications:
-            for notification in self.notifications:
-                list_widget.addItem(notification)
+            for note in self.notifications:
+                list_widget.addItem(note)
         else:
             list_widget.addItem("Không có thông báo nào")
         layout.addWidget(list_widget)
@@ -279,7 +284,6 @@ class Header(QtWidgets.QGroupBox):
                 QPushButton:hover { background-color: #3498DB; border: 1px solid #FFFFFF; }
                 QPushButton:pressed { background-color: #2980B9; }
             """)
-            self.btn_checkin.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
             self.btn_checkin.clicked.connect(self.toggle_checkin)
             layout.addWidget(self.btn_checkin)
             
@@ -290,13 +294,12 @@ class Header(QtWidgets.QGroupBox):
                 QPushButton:hover { background-color: #3498DB; border: 1px solid #FFFFFF; }
                 QPushButton:pressed { background-color: #2980B9; }
             """)
-            self.btn_checkout.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
             self.btn_checkout.clicked.connect(self.toggle_checkout)
             layout.addWidget(self.btn_checkout)
             
             return container
         except Exception as e:
-            print(f"Lỗi khi tạo camera section: {str(e)}")
+            print(f"Lỗi khi tạo camera section: {e}")
             traceback.print_exc()
             return QtWidgets.QWidget(self)
 
@@ -306,14 +309,12 @@ class Header(QtWidgets.QGroupBox):
                 working_dir = get_project_root()
                 checkin_path = os.path.join("src", "be_src", "app", "tool", "checkin.py")
                 self.process_checkin = subprocess.Popen(["python", checkin_path], cwd=working_dir)
-                self.btn_checkin.setText("CI")
                 print("Đã mở checkin.py")
             except Exception as e:
                 print(f"Lỗi khi mở checkin.py: {e}")
         else:
             self.process_checkin.terminate()
             self.process_checkin = None
-            self.btn_checkin.setText("CI")
             print("Đã đóng checkin.py")
 
     def toggle_checkout(self):
@@ -322,14 +323,12 @@ class Header(QtWidgets.QGroupBox):
                 working_dir = get_project_root()
                 checkout_path = os.path.join("src", "be_src", "app", "tool", "checkout.py")
                 self.process_checkout = subprocess.Popen(["python", checkout_path], cwd=working_dir)
-                self.btn_checkout.setText("CO")
                 print("Đã mở checkout.py")
             except Exception as e:
                 print(f"Lỗi khi mở checkout.py: {e}")
         else:
             self.process_checkout.terminate()
             self.process_checkout = None
-            self.btn_checkout.setText("CO")
             print("Đã đóng checkout.py")
 
     def load_admin_info(self):
@@ -337,54 +336,31 @@ class Header(QtWidgets.QGroupBox):
         try:
             settings = QSettings("MyApp", "LoginApp")
             access_token = settings.value("access_token", None)
-            print(f"Token trong load_admin_info: {access_token}")
             if not access_token:
-                print("Không tìm thấy access_token, không gọi API /auth/me")
                 self.admin_name.setText("Chưa đăng nhập")
-                self.admin_name.update()
                 return
             api_url = "http://127.0.0.1:8000/auth/me"
             headers = {"Authorization": f"Bearer {access_token}"}
             response = requests.get(api_url, headers=headers)
             if response.status_code == 200:
-                try:
-                    admin_info = response.json()
-                    full_name = admin_info.get("full_name", "Admin")
-                    if not full_name or not full_name.strip():
-                        full_name = "Admin"
-                    self.admin_name.setText(full_name)
-                    self.admin_name.update()
-                    print(f"Đã đặt tên admin là: {self.admin_name.text()}")
-                except ValueError as e:
-                    print(f"Lỗi khi parse JSON từ /auth/me: {str(e)}")
-                    self.admin_name.setText("Chưa đăng nhập")
-                    self.admin_name.update()
+                admin_info = response.json()
+                full_name = admin_info.get("full_name", "Admin") or "Admin"
+                self.admin_name.setText(full_name)
             else:
-                print(f"API /auth/me trả về lỗi: {response.status_code} - {response.text}")
                 self.admin_name.setText("Chưa đăng nhập")
-                self.admin_name.update()
-        except requests.RequestException as e:
-            print(f"Lỗi khi gọi API /auth/me: {str(e)}")
-            self.admin_name.setText("Chưa đăng nhập")
-            self.admin_name.update()
         except Exception as e:
-            print(f"Lỗi không xác định khi tải thông tin admin: {str(e)}")
-            traceback.print_exc()
+            print(f"Lỗi khi tải thông tin admin: {e}")
             self.admin_name.setText("Chưa đăng nhập")
-            self.admin_name.update()
 
     def refresh_admin_info(self):
-        print("Gọi refresh_admin_info")
         self.load_admin_info()
 
     def show_admin_popup(self, event):
         try:
-            print(f"Tên admin hiện tại trước khi mở popup: {self.admin_name.text()}")
             popup = AdminInfoPopup(self)
             popup.show_near(self.admin_frame)
         except Exception as e:
-            print(f"Lỗi khi hiển thị AdminInfoPopup: {str(e)}")
-            traceback.print_exc()
+            print(f"Lỗi khi hiển thị AdminInfoPopup: {e}")
 
     def create_info_section(self, text, width):
         try:
@@ -392,18 +368,17 @@ class Header(QtWidgets.QGroupBox):
             layout = QtWidgets.QHBoxLayout(container)
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)
-            text_button = QtWidgets.QPushButton(text, self)
-            text_button.setFixedSize(QtCore.QSize(width, 37))
-            self.header_title.setText("Điểm danh")
-            text_button.setStyleSheet("""
+            btn = QtWidgets.QPushButton(text, self)
+            btn.setFixedSize(QtCore.QSize(width, 37))
+            btn.setStyleSheet("""
                 QPushButton { background-color: #34495E; border: 1px solid #9FEF00; border-radius: 5px; color: white; font: 11pt 'Times New Roman'; }
                 QPushButton:hover { background-color: #3D5A80; border: 1px solid #FFFFFF; }
             """)
-            text_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-            layout.addWidget(text_button)
+            btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+            layout.addWidget(btn)
             return container
         except Exception as e:
-            print(f"Lỗi khi tạo info section: {str(e)}")
+            print(f"Lỗi khi tạo info section: {e}")
             traceback.print_exc()
             return QtWidgets.QWidget(self)
 
@@ -415,6 +390,6 @@ class Header(QtWidgets.QGroupBox):
             layout.setSpacing(0)
             return container
         except Exception as e:
-            print(f"Lỗi khi tạo icon section: {str(e)}")
+            print(f"Lỗi khi tạo icon section: {e}")
             traceback.print_exc()
             return QtWidgets.QWidget(self)
