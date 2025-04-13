@@ -1,4 +1,4 @@
-# Checking Attendance System
+# Introduction
 
 ## 1. Giới thiệu
 
