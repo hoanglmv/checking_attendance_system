@@ -1,10 +1,14 @@
 import os
 import requests
 import re
+import sys
+
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtCore import QSettings, pyqtSignal, QObject
-from PyQt6.QtGui import QCursor
-from pages.informationUI import Ui_informationUI
+from PyQt6.QtGui import QCursor, QMovie
+
+# Nếu bạn có import Ui_informationUI thì để nguyên, nếu không có, hãy xóa nó
+# from pages.informationUI import Ui_informationUI
 
 class Ui_loginUI(QObject):
     login_success = pyqtSignal()
@@ -14,31 +18,48 @@ class Ui_loginUI(QObject):
 
     def setupUi(self, loginUI):
         loginUI.setObjectName("loginUI")
-        loginUI.resize(750, 574)
+        loginUI.resize(900, 600)  # Thử đặt kích thước lớn hơn một chút
+        loginUI.setWindowTitle("Checking Attendance System")
 
-        # --- Tính đường dẫn tương đối đến ảnh background ---
+        # ========== Bước 1: Tạo layout chính cho loginUI ========== #
+        main_layout = QtWidgets.QVBoxLayout(loginUI)
+        main_layout.setContentsMargins(0, 0, 0, 0)  # loại bỏ viền
+        main_layout.setSpacing(0)                   # loại bỏ khoảng cách
+        loginUI.setLayout(main_layout)
+
+        # ========== Bước 2: Tạo một QWidget "container" dùng QGridLayout ========== #
+        container = QtWidgets.QWidget(loginUI)
+        grid = QtWidgets.QGridLayout(container)
+        grid.setContentsMargins(0, 0, 0, 0)
+        grid.setSpacing(0)
+        container.setLayout(grid)
+        main_layout.addWidget(container)
+
+        # ========== Bước 3: Tạo QLabel để hiển thị QMovie (ảnh GIF) ========== #
+        self.bg_label = QtWidgets.QLabel(container)
+        self.bg_label.setScaledContents(True)  # Cho phép co giãn toàn bộ ảnh
+        # Xây dựng đường dẫn tương đối cho file GIF
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        background_path = os.path.normpath(
-            os.path.join(script_dir, "..", "Image_and_icon", "Background-ogin.jpg")
-        ).replace("\\", "/")
+        gif_path = os.path.normpath(os.path.join(script_dir, "..", "Image_and_icon", "CSS-Particles.gif"))
+        self.movie = QMovie(gif_path)
+        self.bg_label.setMovie(self.movie)
+        self.movie.start()
 
-        loginUI.setStyleSheet(f"""
-            QWidget {{
-                background-image: url("{background_path}");
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: cover;
-            }}
-        """)
+        # Thêm bg_label vào grid (vị trí 0,0)
+        grid.addWidget(self.bg_label, 0, 0)
+        # Đưa bg_label “xuống dưới cùng”, để các widget khác hiển thị phía trên
+        self.bg_label.lower()
 
-        self.centralwidget = QtWidgets.QWidget(parent=loginUI)
-        self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
-        self.mainLayout.addStretch()
-
-        self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
+        # ========== Bước 4: Tạo GroupBox cho giao diện đăng nhập và đặt vào layout ========== #
+        self.groupBox_2 = QtWidgets.QGroupBox(container)
         self.groupBox_2.setFixedSize(500, 350)
         self.groupBox_2.setStyleSheet("background-color: #517078; border-radius: 10px;")
 
+        # Thêm groupBox_2 vào đúng vị trí (vẫn ô grid (0,0)), 
+        # nhưng canh giữa (AlignCenter) để nó nằm “trên” background.
+        grid.addWidget(self.groupBox_2, 0, 0, QtCore.Qt.AlignmentFlag.AlignCenter)
+
+        # ========== Bước 5: Bên trong groupBox_2, ta tạo layout + các widget đăng nhập ========== #
         self.outerLayout = QtWidgets.QHBoxLayout(self.groupBox_2)
         self.outerLayout.addStretch()
 
@@ -71,26 +92,26 @@ class Ui_loginUI(QObject):
         self.login_button.setFixedSize(250, 40)
         self.login_button.setStyleSheet(self.get_button_style())
         self.login_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.login_button.setDefault(True)  # Add this line to make Enter key work
+        self.login_button.setDefault(True)  # Cho phép nhấn Enter để đăng nhập
         self.innerLayout.addWidget(self.login_button, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
 
+        # ========== Khu vực các button "Đăng ký" và "Quên mật khẩu" ========== #
         self.actionLayout = QtWidgets.QHBoxLayout()
         self.register_button = QtWidgets.QPushButton("Đăng ký", self.groupBox_2)
         self.register_button.setStyleSheet(self.get_action_button_style())
         self.register_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.register_button.clicked.connect(self.open_register)
+
         self.forgot_button = QtWidgets.QPushButton("Quên mật khẩu", self.groupBox_2)
         self.forgot_button.setStyleSheet(self.get_action_button_style())
         self.forgot_button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.forgot_button.clicked.connect(self.open_forgot_password)
+
         self.actionLayout.addWidget(self.register_button)
         self.actionLayout.addWidget(self.forgot_button)
         self.innerLayout.addLayout(self.actionLayout)
 
-        self.mainLayout.addWidget(self.groupBox_2, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.mainLayout.addStretch()
-        loginUI.setLayout(self.mainLayout)
-
+        # ========== Label báo lỗi hoặc thành công ========== #
         self.error_label = QtWidgets.QLabel("", self.groupBox_2)
         self.error_label.setStyleSheet("color: red; font-size: 12pt;")
         self.error_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
@@ -98,6 +119,9 @@ class Ui_loginUI(QObject):
 
         self.login_button.clicked.connect(self.validate_login_form)
 
+    # ------------------------------------------------------------------------------
+    # Các hàm style
+    # ------------------------------------------------------------------------------
     def input_style(self):
         return """
             border: 2px solid white;
@@ -117,7 +141,7 @@ class Ui_loginUI(QObject):
                 border-radius: 5px;
                 background-color: #415A77;
                 padding: 5px;
-                margin: 0px 20px 0px 20px;
+                margin: 0px 20px;
             }
             QPushButton:hover {
                 background-color: #31445B;
@@ -139,6 +163,9 @@ class Ui_loginUI(QObject):
             }
         """
 
+    # ------------------------------------------------------------------------------
+    # Các hàm logic
+    # ------------------------------------------------------------------------------
     def validate_login_form(self):
         email = self.inputs["email"].text().strip()
         password = self.inputs["password"].text().strip()
@@ -194,7 +221,7 @@ class Ui_loginUI(QObject):
         self.error_label.setText("")
 
     def get_main_window(self):
-        widget = self.centralwidget
+        widget = self.groupBox_2
         while widget.parent():
             widget = widget.parent()
         return widget
@@ -207,8 +234,10 @@ class Ui_loginUI(QObject):
         main_window = self.get_main_window()
         main_window.stacked_widget.setCurrentWidget(main_window.forgotPasswordUI.enter_email_ui)
 
+# ------------------------------------------------------------------------------
+# Chạy thử
+# ------------------------------------------------------------------------------
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
     loginUI = QtWidgets.QWidget()
     ui = Ui_loginUI()

@@ -3,6 +3,10 @@ import sys
 import requests
 from PyQt6 import QtWidgets, QtGui, QtCore
 from PyQt6.QtCore import QObject
+
+# Đường dẫn background GIF
+BACKGROUND_GIF_PATH = r"D:\vhproj\checking_attendance_system\src\fe\Image_and_icon\CSS-Particles.gif"
+
 from pages.OTPPopup import OTPPopUp
 
 class Ui_registerUI(QObject):  # Kế thừa từ QObject
@@ -12,7 +16,20 @@ class Ui_registerUI(QObject):  # Kế thừa từ QObject
     def setupUi(self, registerUI):
         registerUI.setObjectName("registerUI")
         registerUI.resize(750, 950)
+        # Thiết lập background mặc định (đã có màu), sau đó ta sẽ chồng background động lên
         registerUI.setStyleSheet("background-color: #131A2D;")
+        
+        # Thêm QLabel làm background với QMovie
+        self.bg_label = QtWidgets.QLabel(registerUI)
+        self.movie = QtGui.QMovie(BACKGROUND_GIF_PATH)
+        self.bg_label.setMovie(self.movie)
+        self.movie.start()
+        self.bg_label.setScaledContents(True)
+        self.bg_label.setGeometry(registerUI.rect())
+        self.bg_label.lower()  # Đưa background về dưới cùng
+        
+        # Cài đặt eventFilter để cập nhật kích thước background khi cửa sổ thay đổi
+        registerUI.installEventFilter(self)
         
         self.centralwidget = QtWidgets.QWidget(parent=registerUI)
         self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -25,14 +42,12 @@ class Ui_registerUI(QObject):  # Kế thừa từ QObject
         self.groupBox_2.setStyleSheet("background-color: #517078; border-radius: 10px;")
 
         self.outerLayout = QtWidgets.QHBoxLayout(self.groupBox_2)
-
         self.outerLayout.addStretch()
 
         self.centerWidget = QtWidgets.QWidget()
         self.centerWidget.setFixedSize(400, 580)
         self.innerLayout = QtWidgets.QVBoxLayout(self.centerWidget)
         self.outerLayout.addWidget(self.centerWidget)
-
         self.outerLayout.addStretch()
 
         # Tiêu đề đăng ký
@@ -92,6 +107,13 @@ class Ui_registerUI(QObject):  # Kế thừa từ QObject
         self.error_label.setStyleSheet("color: red; font-size: 12pt;")
         self.error_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.innerLayout.addWidget(self.error_label)
+
+    def eventFilter(self, obj, event):
+        # Cập nhật lại kích thước của background khi cửa sổ thay đổi
+        if event.type() == QtCore.QEvent.Type.Resize:
+            obj_rect = obj.rect()
+            self.bg_label.setGeometry(obj_rect)
+        return super().eventFilter(obj, event)
 
     def input_style(self):
         return """
