@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import (
     QApplication, QDialog, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit,
     QPushButton, QMessageBox, QWidget, QGroupBox
 )
-from PyQt6.QtGui import QIntValidator, QFont, QCursor
+from PyQt6.QtGui import QIntValidator, QFont, QCursor, QMovie
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
 # API endpoints
@@ -14,19 +14,36 @@ VERIFY_OTP_URL = "http://127.0.0.1:8000/auth/verify-otp"
 VERIFY_OTP_FORGOT_PASSWORD_URL = "http://127.0.0.1:8000/auth/verify-otp-forgot-password"
 RESET_PASSWORD_URL = "http://127.0.0.1:8000/auth/reset-password"
 
+BACKGROUND_GIF_PATH = r"D:\vhproj\checking_attendance_system\src\fe\Image_and_icon\CSS-Particles.gif"
+
 class EnterEmailUI(QWidget):
     email_submitted = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
+        self.set_background()   # Thiết lập background cho widget
         self.initUI()
 
+    def set_background(self):
+        # Tạo QLabel để hiển thị background động
+        self.bg_label = QLabel(self)
+        self.movie = QMovie(BACKGROUND_GIF_PATH)
+        self.bg_label.setMovie(self.movie)
+        self.movie.start()
+        self.bg_label.setScaledContents(True)
+        self.bg_label.setGeometry(self.rect())
+        self.bg_label.lower()  # Đưa background xuống dưới các widget khác
+
+    def resizeEvent(self, event):
+        self.bg_label.setGeometry(self.rect())
+        return super().resizeEvent(event)
+
     def initUI(self):
-        self.setStyleSheet("background-color: #131A2D;")
+        # Layout chính của widget, các widget con sẽ được đặt phía trên background
         self.mainLayout = QVBoxLayout(self)
         self.mainLayout.addStretch()
 
-        # Tạo QGroupBox giống LoginUI
+        # Tạo QGroupBox như giao diện đăng nhập
         self.groupBox_2 = QGroupBox(self)
         self.groupBox_2.setFixedSize(500, 350)
         self.groupBox_2.setStyleSheet("background-color: #517078; border-radius: 10px;")
@@ -147,8 +164,21 @@ class OTPPopUp(QDialog):
         self.is_for_registration = is_for_registration
         self.setWindowTitle("Nhập mã OTP")
         self.setFixedSize(400, 250)
+        self.set_background()   # Thiết lập background cho dialog
         self.initUI()
-        self.setStyleSheet(self.main_style())
+
+    def set_background(self):
+        self.bg_label = QLabel(self)
+        self.movie = QMovie(BACKGROUND_GIF_PATH)
+        self.bg_label.setMovie(self.movie)
+        self.movie.start()
+        self.bg_label.setScaledContents(True)
+        self.bg_label.setGeometry(self.rect())
+        self.bg_label.lower()
+
+    def resizeEvent(self, event):
+        self.bg_label.setGeometry(self.rect())
+        return super().resizeEvent(event)
 
     def initUI(self):
         layout = QVBoxLayout()
@@ -199,9 +229,7 @@ class OTPPopUp(QDialog):
         try:
             email_cleaned = self.email.strip()
             otp_code = self.get_otp_code().strip()
-            print(f"is_for_registration: {self.is_for_registration}")
             url = VERIFY_OTP_URL if self.is_for_registration else VERIFY_OTP_FORGOT_PASSWORD_URL
-            print(f"Using URL: {url}")
             response = requests.post(url, params={"email": email_cleaned, "otp": otp_code})
             response.raise_for_status()
             QMessageBox.information(self, "Thành Công", "Xác minh thành công!")
@@ -209,7 +237,6 @@ class OTPPopUp(QDialog):
             self.accept()
         except requests.RequestException as e:
             error_message = e.response.json() if e.response else str(e)
-            print(f"Error response from server: {error_message}")
             QMessageBox.warning(self, "Lỗi", str(error_message))
             for box in self.otp_inputs:
                 box.clear()
@@ -223,14 +250,6 @@ class OTPPopUp(QDialog):
         except requests.RequestException as e:
             error_message = e.response.json().get("detail", "Không thể gửi mã OTP. Vui lòng thử lại.") if e.response else str(e)
             QMessageBox.warning(self, "Lỗi", error_message)
-
-    def main_style(self):
-        return """
-            QDialog {
-                background-color: #1B263B;
-                border-radius: 10px;
-            }
-        """
 
     def input_style(self):
         return """
@@ -286,14 +305,27 @@ class ResetPasswordUI(QWidget):
         super().__init__()
         self.email = email
         self.otp = otp
+        self.set_background()   # Thiết lập background cho widget
         self.initUI()
 
+    def set_background(self):
+        self.bg_label = QLabel(self)
+        self.movie = QMovie(BACKGROUND_GIF_PATH)
+        self.bg_label.setMovie(self.movie)
+        self.movie.start()
+        self.bg_label.setScaledContents(True)
+        self.bg_label.setGeometry(self.rect())
+        self.bg_label.lower()
+
+    def resizeEvent(self, event):
+        self.bg_label.setGeometry(self.rect())
+        return super().resizeEvent(event)
+
     def initUI(self):
-        self.setStyleSheet("background-color: #131A2D;")
         self.mainLayout = QVBoxLayout(self)
         self.mainLayout.addStretch()
 
-        # Tạo QGroupBox giống LoginUI
+        # Tạo QGroupBox như giao diện đăng nhập
         self.groupBox_2 = QGroupBox(self)
         self.groupBox_2.setFixedSize(500, 350)
         self.groupBox_2.setStyleSheet("background-color: #517078; border-radius: 10px;")
@@ -419,5 +451,7 @@ class ForgotPasswordUI(QObject):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    forgot_password_ui = ForgotPasswordUI()
+    # Ví dụ khởi chạy giao diện nhập email cho chức năng quên mật khẩu
+    forgot_password_ui = EnterEmailUI()
+    forgot_password_ui.show()
     app.exec()
