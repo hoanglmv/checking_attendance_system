@@ -47,7 +47,7 @@ transform = transforms.Compose([
 ])
 
 # Mở camera
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # Ngưỡng khoảng cách để xác định trùng khớp (có thể cần điều chỉnh)
 THRESHOLD = 0.9
